@@ -207,9 +207,9 @@ class Main():
         return True
 
     def changeToken(self, imgService):
-        tokenImgServices = {'rruu','smms'}
+        tokenImgServices = {'rruu', 'smms'}
         if imgService not in tokenImgServices:
-            print('不是合法的图床',imgService)
+            print('不是合法的图床', imgService)
             return False
         token = input("请输入新的访问令牌：")
         sysConfig = Config()
@@ -223,4 +223,26 @@ class Main():
         print("已成功更新访问令牌")
         return True
 
-            
+    def scanAndCreateIndex(self):
+        '''扫描图片并构建图床索引'''
+        imgExt = {'jpg', 'png', 'gif', 'jpeg', 'svg', 'bmp'}
+        imageFiles = []
+        images = []
+        for dir in os.listdir():
+            if os.path.isfile(dir):
+                fileName, _, fileExt = dir.rpartition('.')
+                if fileExt in imgExt:
+                    imageFiles.append((fileName, dir))
+                    images.append(dir)
+        if len(imageFiles) == 0:
+            print("没有找到可以处理的图片")
+            return True
+        imgService = SmmsImg()
+        results = {}
+        imgService.multiUploadImage(images, results)
+        with open(file='markdown_img_index.md', mode='w', encoding='UTF-8') as fopen:
+            for imgName, imgFile in imageFiles:
+                webImgUrl = results[imgFile]
+                print("!["+imgName+"]("+webImgUrl+")", file=fopen)
+        print("已成功生成网络图床索引文件：markdown_img_index.md")
+        return True

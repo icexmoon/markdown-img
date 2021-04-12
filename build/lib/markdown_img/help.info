@@ -10,3 +10,4 @@
 -c  --change_token 替换图床访问令牌
     rruu    如优图床。
     smms    sm.ms图床。
+-s  --scan 扫描当前目录的图片并生成网络图床索引

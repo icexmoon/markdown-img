@@ -3,7 +3,8 @@ import sys
 import os
 from .main import Main
 try:
-    opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hi:c:', ['mode=', 'help','img_service=','change_token='])
+    opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hi:c:s', [
+                                   'mode=', 'help', 'img_service=', 'change_token=', 'scan'])
 except getopt.GetoptError as e:
     print("获取参数信息出错，错误提示：", e.msg)
     exit()
@@ -29,6 +30,8 @@ else:
             mainProcess.changeImgService(argVal)
         elif argKey == '--change_token' or argKey == '-c':
             mainProcess.changeToken(argVal)
+        elif argKey == '--scan' or argKey == '-s':
+            mainProcess.scanAndCreateIndex()
         else:
             mainProcess.main()
         break

@@ -89,7 +89,18 @@ pip install --upgrade markdown-img-icexmoon
 
 1. 执行`python -m markdown_img -c smms`
 
-   > 具体参数可以查看帮助文档。
+> 具体参数可以查看帮助文档。
+
+### 扫描图片并创建索引
+
+如果你需要将某个目录下的图片全部上传到网络图床，并创建一个markdown文件作为索引文件，那使用这个功能就没错了。
+
+```shell
+python -m markdown_img -s
+```
+
+> - 每次运行都会重新生成索引文件。
+> - 生成的索引文件名为`markdown_img_index.md`，请确保不要自定义同名文件在目标目录下。
 
 ## 更新日志
 
@@ -114,3 +125,7 @@ pip install --upgrade markdown-img-icexmoon
 修复了某些情况下配置文件为空会导致JSON解析异常的bug。
 
 添加了更新图床访问令牌的功能。
+
+### 0.1.3
+
+添加扫描图片并创建网络图床索引的功能。
