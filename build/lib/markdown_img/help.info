@@ -7,3 +7,6 @@
     ali     阿里图床，访问速度快（非正常提供服务，稳定性不保证）。
     rruu    如优图床。
     vimcn   Vim-CN图床，访问速度偏慢。
+-c  --change_token 替换图床访问令牌
+    rruu    如优图床。
+    smms    sm.ms图床。

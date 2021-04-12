@@ -3,7 +3,7 @@ import sys
 import os
 from .main import Main
 try:
-    opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hi:', ['mode=', 'help','img_service='])
+    opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hi:c:', ['mode=', 'help','img_service=','change_token='])
 except getopt.GetoptError as e:
     print("获取参数信息出错，错误提示：", e.msg)
     exit()
@@ -27,6 +27,8 @@ else:
                 print("错误的mode参数")
         elif argKey == '--img_service' or argKey == '-i':
             mainProcess.changeImgService(argVal)
+        elif argKey == '--change_token' or argKey == '-c':
+            mainProcess.changeToken(argVal)
         else:
             mainProcess.main()
         break

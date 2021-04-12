@@ -45,8 +45,13 @@ class Config():
     def __getMainConfig(self, real=False):
         if len(Config.mainConfig) == 0 or real == True:
             if os.path.exists(self.__getConfigFile()):
-                with open(file=self.__getConfigFile(), mode='r', encoding='UTF-8') as fopen:
-                    Config.mainConfig = json.loads(fopen.read())
+                try:
+                    with open(file=self.__getConfigFile(), mode='r', encoding='UTF-8') as fopen:
+                            Config.mainConfig = json.loads(fopen.read())
+                except json.decoder.JSONDecodeError:
+                    #json解析异常的，设置为默认并重写配置文件
+                    Config.mainConfig['img_service'] = 'smms'
+                    self.writeMainConfig()
             else:
                 # 不存在配置文件的，给予默认配置
                 Config.mainConfig['img_service'] = 'smms'

@@ -53,7 +53,7 @@ print(uploadToRruu(imgPath))
 
 目前只测试了[**Vim-CN**](https://img.vim-cn.com/)和[**如优图床**](https://img.rruu.net/)，不过如优图床本身是支持多种图床调用的。
 
-![image-20210411165903626](https://img.rruu.net/image/607305172df44)
+![image-20210411165903626](https://i.loli.net/2021/04/12/kNfMGzIrOsL7meC.png)
 
 不过测试的时候发现并不是那么美好，比如bilibili就需要登录，否则会调用失败。
 
@@ -61,7 +61,7 @@ print(uploadToRruu(imgPath))
 
 需要说明的是使用如优图床API需要注册，使用注册后的token就可以调用，每个账户的图床容量是10G，不清楚容量满了影响不影响通过如优API调用其它图床。
 
-![image-20210411170555232](https://img.rruu.net/image/6073052013eaa)
+![image-20210411170555232](https://i.loli.net/2021/04/12/4CJS3XyEqebwQuD.png)
 
 不过如优的注册很宽泛，只要邮箱，也就是说容量满了你可以再注册一个账号。
 

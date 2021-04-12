@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: markdown-img-icexmoon
-Version: 0.1.1
+Version: 0.1.2
 Summary: A program for find and upload images in markdown file and will replace them.
 Home-page: https://github.com/icexmoon/markdown-img
 Author: icexmoon
@@ -89,8 +89,16 @@ Description: # Markdown-img使用指南
         
         1. 执行`python -m markdown_img -i ali`
         
-           > - 具体的图床标识可以查看帮助文档。
-           > - 需要访问令牌的图床服务切换后使用中会提示输入相应的访问令牌。
+        > - 具体的图床标识可以查看帮助文档。
+        > - 需要访问令牌的图床服务切换后使用中会提示输入相应的访问令牌。
+        
+        ### 更新图床访问令牌
+        
+        如果图床令牌设置错误，或者在图床官网重新生成了新的访问令牌，可以在程序中更新相应的访问令牌。
+        
+        1. 执行`python -m markdown_img -c smms`
+        
+           > 具体参数可以查看帮助文档。
         
         ## 更新日志
         
@@ -109,6 +117,12 @@ Description: # Markdown-img使用指南
         > 如优图床的容量为单账号10G，不过注册只需要邮箱，可以注册多个账号。
         
         加入从图床副本恢复本地markdown图片的功能，具体使用方式见帮助文档。
+        
+        ### 0.1.2
+        
+        修复了某些情况下配置文件为空会导致JSON解析异常的bug。
+        
+        添加了更新图床访问令牌的功能。
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License

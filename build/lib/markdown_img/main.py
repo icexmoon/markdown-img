@@ -205,3 +205,22 @@ class Main():
         sysConfig.writeMainConfig()
         print('图床已切换')
         return True
+
+    def changeToken(self, imgService):
+        tokenImgServices = {'rruu','smms'}
+        if imgService not in tokenImgServices:
+            print('不是合法的图床',imgService)
+            return False
+        token = input("请输入新的访问令牌：")
+        sysConfig = Config()
+        if imgService == 'rruu':
+            sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
+        elif imgService == 'smms':
+            sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
+        else:
+            pass
+        sysConfig.writeMainConfig()
+        print("已成功更新访问令牌")
+        return True
+
+            
