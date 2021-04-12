@@ -1,7 +1,8 @@
-from config import Config
+from .config import Config
 import os
-from smms_img import SmmsImg
-from user_exception import UserException
+from .smms_img import SmmsImg
+from .user_exception import UserException
+from .download_help import DownloadHelp
 
 
 class Main():
@@ -52,6 +53,18 @@ class Main():
                     localImages.add(content)
                     self.findLocalImageFile(content, localImages)
 
+    def findImagesInStr(self, line: str, localImages: list):
+        '''递归查找某段字符串中中括号包裹的内容是否为本地图片'''
+        linePart = line.partition('(')
+        if len(linePart[2]) > 0:
+            secondPart = linePart[2].partition(')')
+            content = secondPart[0]
+            if len(content) > 0:
+                # print(content)
+                if content.endswith('.png'):
+                    localImages.append(content)
+                    self.findImagesInStr(content, localImages)
+
     def dealMdFile(self, mdFile: str):
         imgDict = dict()
         localImages = set()
@@ -75,24 +88,41 @@ class Main():
                 copyFileOpen.write(line)
         copyFileOpen.close()
 
+    def findImgsInMdFile(self, mdFile):
+        '''查找markdown文件中的图片列表'''
+        localImages = list()
+        # 逐行扫描，查找本地图片
+        with open(file=mdFile, mode='r', encoding='UTF-8') as fopen:
+            for line in fopen:
+                # 去除行尾的换行
+                subLine = line[0:len(line)-1]
+                self.findImagesInStr(subLine, localImages)
+        return localImages
+
     def dealUserException(self, userExp: UserException):
         sysConfig = Config()
-        if userExp.getErrorCode() == UserException.CODE_NO_CONFIG:
+        if userExp.getErrorCode() == UserException.CODE_NO_SMMS_TOKEN:
             token = input("缺少你的sm.ms访问令牌，请输入：")
-            sysConfig.writeSmmsToken(token)
+            sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
+            sysConfig.writeMainConfig()
+            # sysConfig.writeSmmsToken(token)
             print("访问令牌已保存，请重新运行程序")
-            exit()
+        elif userExp.getErrorCode() == UserException.CODE_NO_RRUU_TOKEN:
+            token = input("缺少你的如优图床访问令牌，请输入：")
+            sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
+            sysConfig.writeMainConfig()
+            print("访问令牌已保存，请重新运行程序")
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
             print("上传图片到sm.ms失败，请检查日志文件", sysConfig.getErrorLogFilePath())
-            exit()
+        elif userExp.getErrorCode() == UserException.CODE_TIMEOUT:
+            print(userExp.getErrorMsg())
         else:
             print("未定义错误，请联系开发者")
-            exit()
+        exit()
 
     def main(self):
         # 检索当前目录中的markdown文件
         for dir in os.listdir():
-            # print(dir)
             if os.path.isfile(dir):
                 if self.isOrigMdFile(dir):
                     # 复制一份拷贝，如果有，则不覆盖
@@ -106,4 +136,72 @@ class Main():
                             self.dealUserException(e)
                         print("已成功处理markdown文件", dir)
         print("所有markdown文档已处理完毕")
-        exit()
+
+    def outputHelpInfo(self):
+        sysConfig = Config()
+        dirPath = sysConfig.getCurrentDirPath()
+        with open(file=dirPath+'\\help.info', mode='r', encoding='UTF-8') as helpFileOpen:
+            content = helpFileOpen.read()
+            print(content)
+
+    def imgRecovery(self):
+        '''使用图床备份中的图片来修复本地的图片库'''
+        # 检索当前目录的markdown原始文件
+        for dir in os.listdir():
+            if os.path.isfile(dir) and self.isOrigMdFile(dir):
+                copyFilePath = self.getCopyFilePath(dir)
+                if os.path.exists(copyFilePath):
+                    # 如果存在图床备份，进行还原操作
+                    try:
+                        if self.recoveryImgsInMarkdown(copyFilePath, dir):
+                            print("已成功还原markdown文件", dir, "的本地图库")
+                    except UserException as e:
+                        self.dealUserException(e)
+        print("所有markdown文档已处理完毕")
+
+    def copyImgFromWeb(self, webImg, localImgPath):
+        if localImgPath[0:4] == 'http' or webImg[0:4] != 'http':
+            return
+        if not os.path.exists(localImgPath):
+            downloader = DownloadHelp()
+            downloader.chunkDownload(webImg, localImgPath, timeout=2)
+
+    def recoveryImgsInMarkdown(self, copyFilePath: 'copied markdown file path', orignalFile: 'orignal markdown file'):
+        '''使用图床图片还原本地图库'''
+        # 读取图床备份图片列表
+        copyImages = self.findImgsInMdFile(copyFilePath)
+        # 读取本地markdown文件原始地址列表
+        orignalImages = self.findImgsInMdFile(orignalFile)
+        # 还原本地图片库
+        if len(copyImages) == len(orignalImages):
+            # 如果图片数目正好对等，处理
+            imgLength = len(copyImages)
+            for i in range(0, imgLength):
+                self.copyImgFromWeb(copyImages[i], orignalImages[i])
+            return True
+        else:
+            # 输出错误信息
+            print('文件', orignalFile, '中的图片数目与备份中的数目不相符，请自行确认')
+            return False
+
+    def changeImgService(self, selectedService):
+        supportedService = {'smms', 'ali', 'rruu', 'vimcn'}
+        if selectedService not in supportedService:
+            print('不支持的图床服务', selectedService)
+            return False
+        sysConfig = Config()
+        if selectedService == 'rruu':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_RRUU)
+        elif selectedService == 'ali':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_ALI)
+        elif selectedService == 'vimcn':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_VIMCN)
+        else:
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_SMMS)
+        sysConfig.writeMainConfig()
+        print('图床已切换')
+        return True

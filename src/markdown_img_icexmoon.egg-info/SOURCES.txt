@@ -1,9 +1,12 @@
+LICENSE
 README.md
 pyproject.toml
 setup.cfg
 setup.py
 src/markdown_img/__init__.py
 src/markdown_img/config.py
+src/markdown_img/download_help.py
+src/markdown_img/help.info
 src/markdown_img/main.py
 src/markdown_img/smms_img.py
 src/markdown_img/user_exception.py

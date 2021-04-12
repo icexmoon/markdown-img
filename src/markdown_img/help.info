@@ -1,0 +1,4 @@
+-h  --help  输出帮助信息
+-md --mode  选择运行模式
+    img_recove  使用图床的备份修复本地图片库
+    normal      正常模式

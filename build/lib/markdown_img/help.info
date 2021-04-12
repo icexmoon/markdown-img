@@ -1,0 +1,9 @@
+-h  --help  输出帮助信息
+-m  --mode  选择运行模式
+    img_recove  使用图床的备份修复本地图片库
+    normal      正常模式
+-i  --img_service 选择图床服务商
+    smms    sm.ms图床，默认图床服务，稳定性好，访问速度一般。
+    ali     阿里图床，访问速度快（非正常提供服务，稳定性不保证）。
+    rruu    如优图床。
+    vimcn   Vim-CN图床，访问速度偏慢。
