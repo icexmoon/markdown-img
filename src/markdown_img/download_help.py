@@ -1,7 +1,7 @@
 import sys
 from urllib import request
 import requests
-from user_exception import UserException
+from .user_exception import UserException
 
 
 class DownloadHelp():

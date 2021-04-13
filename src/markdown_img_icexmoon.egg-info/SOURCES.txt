@@ -9,6 +9,7 @@ src/markdown_img/download_help.py
 src/markdown_img/help.info
 src/markdown_img/main.py
 src/markdown_img/smms_img.py
+src/markdown_img/time_helper.py
 src/markdown_img/user_exception.py
 src/markdown_img_icexmoon.egg-info/PKG-INFO
 src/markdown_img_icexmoon.egg-info/SOURCES.txt

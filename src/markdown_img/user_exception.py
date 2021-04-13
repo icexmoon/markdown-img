@@ -3,6 +3,8 @@ class UserException (Exception):
     CODE_NO_CONFIG = 1
     CODE_UPLOAD_ERROR = 2
     CODE_TIMEOUT = 3
+    CODE_NO_SMMS_TOKEN = 4
+    CODE_NO_RRUU_TOKEN = 5
 
     def __init__(self, errorCode: int, errorMsg: str = ""):
         self.errorCode = errorCode

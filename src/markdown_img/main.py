@@ -1,8 +1,9 @@
-from config import Config
+from .config import Config
 import os
-from smms_img import SmmsImg
-from user_exception import UserException
-from download_help import DownloadHelp
+from .smms_img import SmmsImg
+from .user_exception import UserException
+from .download_help import DownloadHelp
+from .time_helper import TimeHelper
 
 
 class Main():
@@ -101,9 +102,16 @@ class Main():
 
     def dealUserException(self, userExp: UserException):
         sysConfig = Config()
-        if userExp.getErrorCode() == UserException.CODE_NO_CONFIG:
+        if userExp.getErrorCode() == UserException.CODE_NO_SMMS_TOKEN:
             token = input("缺少你的sm.ms访问令牌，请输入：")
-            sysConfig.writeSmmsToken(token)
+            sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
+            sysConfig.writeMainConfig()
+            # sysConfig.writeSmmsToken(token)
+            print("访问令牌已保存，请重新运行程序")
+        elif userExp.getErrorCode() == UserException.CODE_NO_RRUU_TOKEN:
+            token = input("缺少你的如优图床访问令牌，请输入：")
+            sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
+            sysConfig.writeMainConfig()
             print("访问令牌已保存，请重新运行程序")
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
             print("上传图片到sm.ms失败，请检查日志文件", sysConfig.getErrorLogFilePath())
@@ -113,21 +121,23 @@ class Main():
             print("未定义错误，请联系开发者")
         exit()
 
-    def main(self):
+    def main(self, refresh = False):
         # 检索当前目录中的markdown文件
         for dir in os.listdir():
             if os.path.isfile(dir):
                 if self.isOrigMdFile(dir):
-                    # 复制一份拷贝，如果有，则不覆盖
-                    # copyFileName = self.getCopyFileName(dir)
+                    # 如果副本存在，刷新模式下且原md文件更新过的，删除副本，重新生成，否则不处理
                     copyFilePath = self.getCopyFilePath(dir)
-                    if not os.path.exists(copyFilePath):
-                        # 对拷贝进行处理
-                        try:
-                            self.dealMdFile(dir)
-                        except UserException as e:
-                            self.dealUserException(e)
-                        print("已成功处理markdown文件", dir)
+                    if os.path.exists(copyFilePath):
+                        if refresh and TimeHelper.compareTwoFilsLastModifyTime(dir,copyFilePath) > 0:
+                            os.remove(copyFilePath)
+                        else:
+                            continue
+                    try:
+                        self.dealMdFile(dir)
+                    except UserException as e:
+                        self.dealUserException(e)
+                    print("已成功处理markdown文件", dir)
         print("所有markdown文档已处理完毕")
 
     def outputHelpInfo(self):
@@ -176,3 +186,66 @@ class Main():
             # 输出错误信息
             print('文件', orignalFile, '中的图片数目与备份中的数目不相符，请自行确认')
             return False
+
+    def changeImgService(self, selectedService):
+        supportedService = {'smms', 'ali', 'rruu', 'vimcn'}
+        if selectedService not in supportedService:
+            print('不支持的图床服务', selectedService)
+            return False
+        sysConfig = Config()
+        if selectedService == 'rruu':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_RRUU)
+        elif selectedService == 'ali':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_ALI)
+        elif selectedService == 'vimcn':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_VIMCN)
+        else:
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_SMMS)
+        sysConfig.writeMainConfig()
+        print('图床已切换')
+        return True
+
+    def changeToken(self, imgService):
+        tokenImgServices = {'rruu', 'smms'}
+        if imgService not in tokenImgServices:
+            print('不是合法的图床', imgService)
+            return False
+        token = input("请输入新的访问令牌：")
+        sysConfig = Config()
+        if imgService == 'rruu':
+            sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
+        elif imgService == 'smms':
+            sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
+        else:
+            pass
+        sysConfig.writeMainConfig()
+        print("已成功更新访问令牌")
+        return True
+
+    def scanAndCreateIndex(self):
+        '''扫描图片并构建图床索引'''
+        imgExt = {'jpg', 'png', 'gif', 'jpeg', 'svg', 'bmp'}
+        imageFiles = []
+        images = []
+        for dir in os.listdir():
+            if os.path.isfile(dir):
+                fileName, _, fileExt = dir.rpartition('.')
+                if fileExt in imgExt:
+                    imageFiles.append((fileName, dir))
+                    images.append(dir)
+        if len(imageFiles) == 0:
+            print("没有找到可以处理的图片")
+            return True
+        imgService = SmmsImg()
+        results = {}
+        imgService.multiUploadImage(images, results)
+        with open(file='markdown_img_index.md', mode='w', encoding='UTF-8') as fopen:
+            for imgName, imgFile in imageFiles:
+                webImgUrl = results[imgFile]
+                print("!["+imgName+"]("+webImgUrl+")", file=fopen)
+        print("已成功生成网络图床索引文件：markdown_img_index.md")
+        return True
