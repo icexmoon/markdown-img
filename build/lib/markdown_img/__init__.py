@@ -12,7 +12,6 @@ mainProcess = Main()
 if len(opts) == 0:
     mainProcess.main()
 else:
-    # print(opts)
     for opt in opts:
         argKey = opt[0]
         argVal = opt[1]
@@ -24,6 +23,8 @@ else:
                 mainProcess.imgRecovery()
             elif mode == 'normal':
                 mainProcess.main()
+            elif mode == 'refresh':
+                mainProcess.main(True)
             else:
                 print("错误的mode参数")
         elif argKey == '--img_service' or argKey == '-i':

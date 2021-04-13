@@ -3,6 +3,7 @@ import os
 from .smms_img import SmmsImg
 from .user_exception import UserException
 from .download_help import DownloadHelp
+from .time_helper import TimeHelper
 
 
 class Main():
@@ -120,21 +121,23 @@ class Main():
             print("未定义错误，请联系开发者")
         exit()
 
-    def main(self):
+    def main(self, refresh = False):
         # 检索当前目录中的markdown文件
         for dir in os.listdir():
             if os.path.isfile(dir):
                 if self.isOrigMdFile(dir):
-                    # 复制一份拷贝，如果有，则不覆盖
-                    # copyFileName = self.getCopyFileName(dir)
+                    # 如果副本存在，刷新模式下且原md文件更新过的，删除副本，重新生成，否则不处理
                     copyFilePath = self.getCopyFilePath(dir)
-                    if not os.path.exists(copyFilePath):
-                        # 对拷贝进行处理
-                        try:
-                            self.dealMdFile(dir)
-                        except UserException as e:
-                            self.dealUserException(e)
-                        print("已成功处理markdown文件", dir)
+                    if os.path.exists(copyFilePath):
+                        if refresh and TimeHelper.compareTwoFilsLastModifyTime(dir,copyFilePath) > 0:
+                            os.remove(copyFilePath)
+                        else:
+                            continue
+                    try:
+                        self.dealMdFile(dir)
+                    except UserException as e:
+                        self.dealUserException(e)
+                    print("已成功处理markdown文件", dir)
         print("所有markdown文档已处理完毕")
 
     def outputHelpInfo(self):
