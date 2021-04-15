@@ -7,6 +7,8 @@ class Config():
     PARAM_SMMS_TOKEN = 'smms_token'
     PARAM_RRUU_TOKEN = 'rruu_token'
     PARAM_IMG_SERVICE = 'img_service'
+    PARAM_YUJIAN_TOKEN = 'yujian_token'
+    IMG_SERVICE_YUJIAN = 'yujian'
     IMG_SERVICE_SMMS = 'smms'
     IMG_SERVICE_RRUU = 'rruu'
     IMG_SERVICE_ALI = 'ali'
@@ -80,6 +82,12 @@ class Config():
         token = self.getConfigParam(Config.PARAM_RRUU_TOKEN)
         if token == '':
             raise UserException(UserException.CODE_NO_RRUU_TOKEN)
+        return token
+
+    def getYujianToken(self):
+        token = self.getConfigParam(Config.PARAM_YUJIAN_TOKEN)
+        if token == '':
+            raise UserException(UserException.CODE_NO_YUJIAN_TOKEN)
         return token
 
     def getSmmsToken(self):

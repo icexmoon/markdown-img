@@ -85,7 +85,7 @@ pip install --upgrade markdown-img-icexmoon
 
 可以切换图床服务，以备某个图床不可用或者访问不稳定。
 
-目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)。
+目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)。
 
 1. 执行`python -m markdown_img -i ali`
 
@@ -163,4 +163,10 @@ python -m markdown_img -m refresh
 
 在生成的图片索引中加入换行以区分图片。
 
-加入的引用模块检测，安装时如果缺少相应模块会自动安装。
+加入引用模块检测，安装时如果缺少相应模块会自动安装。
+
+### 0.1.8
+
+加入遇见图床支持。
+
+阿里图床的API调用替换为遇见图床。

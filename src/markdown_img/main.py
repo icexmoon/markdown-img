@@ -114,15 +114,22 @@ class Main():
             sysConfig.writeMainConfig()
             print("访问令牌已保存，请重新运行程序")
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
-            currentImgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
-            print("上传图片到"+str(currentImgService)+"失败，请检查日志文件", sysConfig.getErrorLogFilePath())
+            currentImgService = sysConfig.getConfigParam(
+                Config.PARAM_IMG_SERVICE)
+            print("上传图片到"+str(currentImgService)+"失败，请检查日志文件",
+                  sysConfig.getErrorLogFilePath())
         elif userExp.getErrorCode() == UserException.CODE_TIMEOUT:
             print(userExp.getErrorMsg())
+        elif userExp.getErrorCode() == UserException.CODE_NO_YUJIAN_TOKEN:
+            token = input("缺少你的遇见图床访问令牌，请输入：")
+            sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
+            sysConfig.writeMainConfig()
+            print("访问令牌已保存，请重新运行程序")
         else:
             print("未定义错误，请联系开发者")
         exit()
 
-    def main(self, refresh = False):
+    def main(self, refresh=False):
         # 检索当前目录中的markdown文件
         for dir in os.listdir():
             if os.path.isfile(dir):
@@ -130,7 +137,7 @@ class Main():
                     # 如果副本存在，刷新模式下且原md文件更新过的，删除副本，重新生成，否则不处理
                     copyFilePath = self.getCopyFilePath(dir)
                     if os.path.exists(copyFilePath):
-                        if refresh and TimeHelper.compareTwoFilsLastModifyTime(dir,copyFilePath) > 0:
+                        if refresh and TimeHelper.compareTwoFilsLastModifyTime(dir, copyFilePath) > 0:
                             os.remove(copyFilePath)
                         else:
                             continue
@@ -189,7 +196,7 @@ class Main():
             return False
 
     def changeImgService(self, selectedService):
-        supportedService = {'smms', 'ali', 'rruu', 'vimcn'}
+        supportedService = {'smms', 'ali', 'rruu', 'vimcn', 'yujian'}
         if selectedService not in supportedService:
             print('不支持的图床服务', selectedService)
             return False
@@ -203,6 +210,9 @@ class Main():
         elif selectedService == 'vimcn':
             sysConfig.setConfigParam(
                 Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_VIMCN)
+        elif selectedService == 'yujian':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_YUJIAN)
         else:
             sysConfig.setConfigParam(
                 Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_SMMS)
@@ -211,7 +221,7 @@ class Main():
         return True
 
     def changeToken(self, imgService):
-        tokenImgServices = {'rruu', 'smms'}
+        tokenImgServices = {'rruu', 'smms', 'yujian'}
         if imgService not in tokenImgServices:
             print('不是合法的图床', imgService)
             return False
@@ -221,6 +231,8 @@ class Main():
             sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
         elif imgService == 'smms':
             sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
+        elif imgService == 'yujian':
+            sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
         else:
             pass
         sysConfig.writeMainConfig()
