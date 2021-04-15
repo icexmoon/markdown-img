@@ -114,7 +114,8 @@ class Main():
             sysConfig.writeMainConfig()
             print("访问令牌已保存，请重新运行程序")
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
-            print("上传图片到sm.ms失败，请检查日志文件", sysConfig.getErrorLogFilePath())
+            currentImgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
+            print("上传图片到"+str(currentImgService)+"失败，请检查日志文件", sysConfig.getErrorLogFilePath())
         elif userExp.getErrorCode() == UserException.CODE_TIMEOUT:
             print(userExp.getErrorMsg())
         else:
@@ -242,7 +243,10 @@ class Main():
             return True
         imgService = SmmsImg()
         results = {}
-        imgService.multiUploadImage(images, results)
+        try:
+            imgService.multiUploadImage(images, results)
+        except UserException as e:
+            self.dealUserException(e)
         with open(file='markdown_img_index.md', mode='w', encoding='UTF-8') as fopen:
             for imgName, imgFile in imageFiles:
                 webImgUrl = results[imgFile]

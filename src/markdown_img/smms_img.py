@@ -1,6 +1,7 @@
 from .config import Config
 from .user_exception import UserException
 import requests
+import json
 
 
 class SmmsImg():
@@ -45,7 +46,14 @@ class SmmsImg():
         r = requests.post('https://img.rruu.net/api/upload',
                           data={'apiType': apiType, 'privateStorage': '', 'token': token}, files=files)
         imgOpen.close()
-        respJson = r.json()
+        try:
+            respJson = r.json()
+        except json.decoder.JSONDecodeError as e:
+            self.sysConfig.writeErrorLog("接口解析错误："+str(e)+"\n返回信息："+r.text)
+            raise UserException(UserException.CODE_UPLOAD_ERROR)
+        except Exception as e:
+            self.sysConfig.writeErrorLog("未知的接口调用错误:"+str(e))
+            raise UserException(UserException.CODE_UPLOAD_ERROR)
         urls = {}
         if str(respJson['code']).strip() == '200' and str(respJson['msg']).strip() == 'success':
             urls['rruu'] = respJson['data']['url']['distribute']
