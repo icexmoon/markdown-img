@@ -250,6 +250,6 @@ class Main():
         with open(file='markdown_img_index.md', mode='w', encoding='UTF-8') as fopen:
             for imgName, imgFile in imageFiles:
                 webImgUrl = results[imgFile]
-                print("!["+imgName+"]("+webImgUrl+")", file=fopen)
+                print("!["+imgName+"]("+webImgUrl+")\n", file=fopen)
         print("已成功生成网络图床索引文件：markdown_img_index.md")
         return True

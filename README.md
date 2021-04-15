@@ -46,6 +46,10 @@ pip install --upgrade markdown-img-icexmoon
 
 ## 功能
 
+> 已添加控制台短命令支持，所有功能均可以通过`pymdimg`快速调用。<br/>
+>
+> 比如`pymdimg -h`和`python -m markdown_img -h`功能完全一致。
+
 ### 查看帮助文档
 
 1. 执行`python -m markdown_img -h`。
@@ -115,7 +119,7 @@ python -m markdown_img -s
 python -m markdown_img -m refresh
 ```
 
-> 会扫描当前目录下的原始md文件，如果没有副本，直接创建。如果有副本，但是原始文件比副本"新"，则从新创建副本。
+> 会扫描当前目录下的原始md文件，如果没有副本，直接创建。如果有副本，但是原始文件比副本"新"，则重新创建副本。
 
 ## 更新日志
 
@@ -152,3 +156,11 @@ python -m markdown_img -m refresh
 ### 0.1.6
 
 修复rruu图床接口挂掉导致直接输出异常到控制台的问题。
+
+### 0.1.7
+
+加入短命令支持。
+
+在生成的图片索引中加入换行以区分图片。
+
+加入的引用模块检测，安装时如果缺少相应模块会自动安装。

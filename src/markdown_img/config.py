@@ -87,15 +87,6 @@ class Config():
         if token == '':
             raise UserException(UserException.CODE_NO_SMMS_TOKEN)
         return token
-        # if not os.path.exists(self.getSmmsTokenFile()):
-        #     raise UserException(UserException.CODE_NO_CONFIG)
-        # configFileOpen = open(file=self.getSmmsTokenFile(), mode='r')
-        # token = configFileOpen.readline()
-        # configFileOpen.close()
-        # if len(token) <= 4:
-        #     raise UserException(UserException.CODE_NO_CONFIG)
-        # token = token[0:len(token)-1]
-        # return token
 
     def writeSmmsToken(self, token: str):
         with open(file=self.getSmmsTokenFile(), mode='w') as configFileOpen:
