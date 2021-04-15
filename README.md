@@ -4,6 +4,7 @@
 
 - pypi：<https://pypi.org/project/markdown-img-icexmoon/>
 - github：<https://github.com/icexmoon/markdown-img>
+- 个人博客：<https://blog.icexmoon.xyz/>
 
 ## 用途
 
@@ -15,7 +16,7 @@
 
 - 本程序不会改变原始markdown文件，请放心使用。
 
-- 对于已经生成副本的原始文件，本程序不会再次处理，如果需要重新生成副本，请手动删除相应的已生成副本。
+- ~~对于已经生成副本的原始文件，本程序不会再次处理，如果需要重新生成副本，请手动删除相应的已生成副本。~~此功能已添加，具体请查看功能：刷新图床副本。
 
 - 本程序依赖于`sm.ms`图床，请自行注册账号并生成token。
 
