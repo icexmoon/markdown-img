@@ -4,7 +4,7 @@
 
 - pypi：<https://pypi.org/project/markdown-img-icexmoon/>
 - github：<https://github.com/icexmoon/markdown-img>
-- 个人博客：<https://blog.icexmoon.xyz/>
+- 个人博客：<https://blog.icexmoon.xyz/?p=99>
 
 ## 用途
 
@@ -30,7 +30,7 @@
 
 - `sm.ms`国内访问不算友好，生成的markdown拷贝立即在网络上发布可能会显示防盗链等图片挂掉的情况，那是因为国内CDN比较慢，等一段时间就好了。
 
-- 本程序使用Python编写，需要安装Python运行环境，如果不知道如何安装的，可以阅读[**windows下的python环境安装**](https://blog.icexmoon.xyz/?p=101)。
+- 本程序使用Python编写，需要安装Python运行环境，如果不知道如何安装，可以阅读[**windows下的python环境安装**](https://blog.icexmoon.xyz/?p=101)。
 
 ## 安装
 
@@ -170,3 +170,11 @@ python -m markdown_img -m refresh
 加入遇见图床支持。
 
 阿里图床的API调用替换为遇见图床。
+
+### 0.1.9
+
+修复了只能处理png，不能识别并处理其他格式的图片的问题。
+
+### 0.2.0
+
+修复了不能识别html`<img/>`标签的问题，现在对img标签中的图片也可以正常处理了。

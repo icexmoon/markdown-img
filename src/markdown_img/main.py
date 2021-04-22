@@ -4,6 +4,7 @@ from .smms_img import SmmsImg
 from .user_exception import UserException
 from .download_help import DownloadHelp
 from .time_helper import TimeHelper
+import re
 
 
 class Main():
@@ -42,27 +43,53 @@ class Main():
         SysConfig = Config()
         return SysConfig.getMarkdownImgDirPath()+'\\'+copyFileName
 
+    def isImgFileName(self, file):
+        imgExts = ('.png', '.gif', '.jpg', '.jpeg', '.svg', '.bmp')
+        for imgExt in imgExts:
+            if file.endswith(imgExt):
+                return True
+        return False
+
+    def findHtmlImg(self, line, onlyLocal) -> list:
+        '''从字符串中查找html标签中的本地图片'''
+        findImgs = []
+        pattern = re.compile(r"<img src=\"(.+?)\"(.*)/>")
+        for matched in pattern.finditer(line):
+            imgFile = matched.group(1)
+            if self.isImgFileName(imgFile):
+                if not onlyLocal:
+                    findImgs.append(imgFile)
+                elif os.path.exists(imgFile):
+                    findImgs.append(imgFile)
+                else:
+                    pass
+        return findImgs
+
     def findLocalImageFile(self, line: str, localImages: set):
         '''递归查找某段字符串中中括号包裹的内容是否为本地图片'''
+        htmlImgs = self.findHtmlImg(line,True)
+        if htmlImgs:
+            localImages.update(htmlImgs)
         linePart = line.partition('(')
         if len(linePart[2]) > 0:
             secondPart = linePart[2].partition(')')
             content = secondPart[0]
             if len(content) > 0:
-                # print(content)
-                if content.endswith('.png') and os.path.exists(content):
+                if self.isImgFileName(content) and os.path.exists(content):
                     localImages.add(content)
                     self.findLocalImageFile(content, localImages)
 
     def findImagesInStr(self, line: str, localImages: list):
         '''递归查找某段字符串中中括号包裹的内容是否为本地图片'''
+        htmlImgs = self.findHtmlImg(line,False)
+        if htmlImgs:
+            localImages.update(htmlImgs)
         linePart = line.partition('(')
         if len(linePart[2]) > 0:
             secondPart = linePart[2].partition(')')
             content = secondPart[0]
             if len(content) > 0:
-                # print(content)
-                if content.endswith('.png'):
+                if self.isImgFileName(content):
                     localImages.append(content)
                     self.findImagesInStr(content, localImages)
 
