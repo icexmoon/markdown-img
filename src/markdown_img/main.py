@@ -67,7 +67,7 @@ class Main():
 
     def findLocalImageFile(self, line: str, localImages: set):
         '''递归查找某段字符串中中括号包裹的内容是否为本地图片'''
-        htmlImgs = self.findHtmlImg(line,True)
+        htmlImgs = self.findHtmlImg(line, True)
         if htmlImgs:
             localImages.update(htmlImgs)
         linePart = line.partition('(')
@@ -81,7 +81,7 @@ class Main():
 
     def findImagesInStr(self, line: str, localImages: list):
         '''递归查找某段字符串中中括号包裹的内容是否为本地图片'''
-        htmlImgs = self.findHtmlImg(line,False)
+        htmlImgs = self.findHtmlImg(line, False)
         if htmlImgs:
             localImages.update(htmlImgs)
         linePart = line.partition('(')
@@ -223,7 +223,7 @@ class Main():
             return False
 
     def changeImgService(self, selectedService):
-        supportedService = {'smms', 'ali', 'rruu', 'vimcn', 'yujian'}
+        supportedService = {'smms', 'ali', 'rruu', 'vimcn', 'yujian', 'ali2'}
         if selectedService not in supportedService:
             print('不支持的图床服务', selectedService)
             return False
@@ -234,6 +234,9 @@ class Main():
         elif selectedService == 'ali':
             sysConfig.setConfigParam(
                 Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_ALI)
+        elif selectedService == 'ali2':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_ALI2)
         elif selectedService == 'vimcn':
             sysConfig.setConfigParam(
                 Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_VIMCN)

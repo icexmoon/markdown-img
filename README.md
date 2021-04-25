@@ -46,7 +46,7 @@ pip install --upgrade markdown-img-icexmoon
 
 ## 功能
 
-> 已添加控制台短命令支持，所有功能均可以通过`pymdimg`快速调用。<br/>
+> 已添加控制台短命令支持，所有功能均可以通过`pymdimg`快速调用。
 >
 > 比如`pymdimg -h`和`python -m markdown_img -h`功能完全一致。
 
@@ -178,3 +178,7 @@ python -m markdown_img -m refresh
 ### 0.2.0
 
 修复了不能识别html`<img/>`标签的问题，现在对img标签中的图片也可以正常处理了。
+
+### 0.2.1
+
+添加了阿里图床（如优线路）。

@@ -57,7 +57,7 @@ class SmmsImg():
             urls['ali'] = respJson['data']['url']['ali']
         else:
             return False
-        if self.sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE) == Config.IMG_SERVICE_ALI:
+        if self.sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE) == Config.IMG_SERVICE_ALI2:
             return urls['ali']
         return urls['rruu']
 
@@ -97,6 +97,8 @@ class SmmsImg():
                 webImage = ''
                 if imgService == Config.IMG_SERVICE_ALI:
                     webImage = self.uploadToYujian(localImg)
+                elif imgService == Config.IMG_SERVICE_ALI2:
+                    webImage = self.uploadToRruu(localImg)
                 elif imgService == Config.IMG_SERVICE_RRUU:
                     webImage = self.uploadToRruu(localImg)
                 elif imgService == Config.IMG_SERVICE_VIMCN:

@@ -12,6 +12,7 @@ class Config():
     IMG_SERVICE_SMMS = 'smms'
     IMG_SERVICE_RRUU = 'rruu'
     IMG_SERVICE_ALI = 'ali'
+    IMG_SERVICE_ALI2 = 'ali2'
     IMG_SERVICE_VIMCN = 'vimcn'
     smmsTokenFile = ""
     configFile = ""
