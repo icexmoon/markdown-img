@@ -2,6 +2,7 @@ from .config import Config
 from .user_exception import UserException
 import requests
 import json
+from concurrent import futures
 
 
 class SmmsImg():
@@ -90,28 +91,40 @@ class SmmsImg():
 
     def multiUploadImage(self, images: list, results: dict):
         '''批量上传图片'''
-        if len(images) <= 10:
-            for localImg in images:
-                imgService = self.sysConfig.getConfigParam(
-                    Config.PARAM_IMG_SERVICE)
-                webImage = ''
-                if imgService == Config.IMG_SERVICE_ALI:
-                    webImage = self.uploadToYujian(localImg)
-                elif imgService == Config.IMG_SERVICE_ALI2:
-                    webImage = self.uploadToRruu(localImg)
-                elif imgService == Config.IMG_SERVICE_RRUU:
-                    webImage = self.uploadToRruu(localImg)
-                elif imgService == Config.IMG_SERVICE_VIMCN:
-                    webImage = self.uploadToVimCn(localImg)
-                elif imgService == Config.IMG_SERVICE_YUJIAN:
-                    webImage = self.uploadToYujian(localImg)
-                else:
-                    webImage = self.uploadToSmms(localImg)
-                if webImage == False:
-                    raise UserException(
-                        UserException.CODE_UPLOAD_ERROR, "文件上传出错")
-                else:
-                    results[localImg] = webImage
+        MAX_SAME_TIME_DEAL = 10
+        if len(images) <= MAX_SAME_TIME_DEAL:
+            maxThreadWorks = min(len(images), MAX_SAME_TIME_DEAL)
+            with futures.ThreadPoolExecutor(max_workers=maxThreadWorks) as futuresExecutor:
+                futureMap = {}
+                for localImg in images:
+                    future = futuresExecutor.submit(self.uploadOne,localImg)
+                    futureMap[future] = localImg
+                futureDone = futures.as_completed(futureMap)
+                for future in futureDone:
+                    webImage = future.result()
+                    if webImage == False:
+                        raise UserException(
+                            UserException.CODE_UPLOAD_ERROR, "文件上传出错")
+                    else:
+                        results[futureMap[future]] = webImage
         else:
-            self.multiUploadImage(images[0:10], results)
-            self.multiUploadImage(images[10:len(images)], results)
+            self.multiUploadImage(images[0:MAX_SAME_TIME_DEAL], results)
+            self.multiUploadImage(images[MAX_SAME_TIME_DEAL:len(images)], results)
+
+    def uploadOne(self, localImg):
+        imgService = self.sysConfig.getConfigParam(
+            Config.PARAM_IMG_SERVICE)
+        webImage = False
+        if imgService == Config.IMG_SERVICE_ALI:
+            webImage = self.uploadToYujian(localImg)
+        elif imgService == Config.IMG_SERVICE_ALI2:
+            webImage = self.uploadToRruu(localImg)
+        elif imgService == Config.IMG_SERVICE_RRUU:
+            webImage = self.uploadToRruu(localImg)
+        elif imgService == Config.IMG_SERVICE_VIMCN:
+            webImage = self.uploadToVimCn(localImg)
+        elif imgService == Config.IMG_SERVICE_YUJIAN:
+            webImage = self.uploadToYujian(localImg)
+        else:
+            webImage = self.uploadToSmms(localImg)
+        return webImage

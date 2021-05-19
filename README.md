@@ -182,3 +182,7 @@ python -m markdown_img -m refresh
 ### 0.2.1
 
 添加了阿里图床（如优线路）。
+
+### 0.2.2
+
+用futures实现多线程。
