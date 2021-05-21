@@ -6,8 +6,8 @@ from .main import Main
 
 def main():
     try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hi:c:s', [
-            'mode=', 'help', 'img_service=', 'change_token=', 'scan'])
+        opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hvi:c:s', [
+            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan'])
     except getopt.GetoptError as e:
         print("获取参数信息出错，错误提示：", e.msg)
         exit()
@@ -20,6 +20,11 @@ def main():
             argVal = opt[1]
             if argKey == '--help' or argKey == '-h':
                 mainProcess.outputHelpInfo()
+            elif argKey == '--version' or argKey == '-v':
+                import pkg_resources
+                version = pkg_resources.get_distribution(
+                    'markdown-img-icexmoon').version
+                print("version:{}".format(version))
             elif argKey == '--mode' or argKey == '-m':
                 mode = argVal
                 if mode == 'img_recove':

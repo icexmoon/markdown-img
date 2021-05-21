@@ -54,6 +54,10 @@ pip install --upgrade markdown-img-icexmoon
 
 1. 执行`python -m markdown_img -h`。
 
+### 查看版本信息
+
+执行`pymdimg -v`或`pymdimg --version`。
+
 ### 生成图床markdown副本
 
 本程序的主要功能，将扫描命令行工作目录下的markdown文件，会将其中的本地图片替换为图床图片后生成一个图床副本，生成的副本会存储在工作目录下的`markdown_img`文件夹中。
@@ -186,3 +190,9 @@ python -m markdown_img -m refresh
 ### 0.2.2
 
 用futures实现多线程。
+
+### 0.2.3
+
+- 修复了目录下有无图片的md文件会导致异常的问题。
+
+- 添加版本显示功能。
