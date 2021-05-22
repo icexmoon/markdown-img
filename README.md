@@ -24,6 +24,8 @@
 
 - 因为`sm.ms`图床接口有调用限制，如果出现图片上传出错的情况，可能是上传频繁导致，请等待1分钟以上时间后重新使用本程序。
 
+- 已添加腾讯云对象存储作为图床，使用时需要输入相应的必须参数用于连接，具体参数获取可以阅读[**腾讯云对象存储的相关文档**](https://cloud.tencent.com/document/product/436/7751#.E6.9C.AF.E8.AF.AD.E4.BF.A1.E6.81.AF)，此外还需要将对象存储服务设置为私有写公有读。
+
 - 目前本程序只支持windows。
 
   > 理论上支持所有能运行Python的平台，但目前并没有在其它平台测试过。
@@ -89,12 +91,13 @@ pip install --upgrade markdown-img-icexmoon
 
 可以切换图床服务，以备某个图床不可用或者访问不稳定。
 
-目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)。
+目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储（推广链接）**](https://curl.qcloud.com/empEScHz)。
 
 1. 执行`python -m markdown_img -i ali`
 
 > - 具体的图床标识可以查看帮助文档。
 > - 需要访问令牌的图床服务切换后使用中会提示输入相应的访问令牌。
+> - 使用腾讯云OSS需要一些必要信息，具体请阅读注意事项。
 
 ### 更新图床访问令牌
 
@@ -194,5 +197,8 @@ python -m markdown_img -m refresh
 ### 0.2.3
 
 - 修复了目录下有无图片的md文件会导致异常的问题。
-
 - 添加版本显示功能。
+
+### 0.2.4
+
+添加了腾讯云对象存储作为图床。

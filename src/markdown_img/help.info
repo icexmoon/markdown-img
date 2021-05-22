@@ -11,8 +11,10 @@
     rruu    如优图床。
     vimcn   Vim-CN图床，访问速度偏慢。
     yujian  遇见图床。
+    qcloud  腾讯云对象存储（需要提供必要连接信息，如果不知道如何获取，请阅读https://cloud.tencent.com/document/product/436/7751#.E6.9C.AF.E8.AF.AD.E4.BF.A1.E6.81.AF）
 -c  --change_token 替换图床访问令牌
     rruu    如优图床。
     smms    sm.ms图床。
     yujian  遇见图床。
+    qcloud  腾讯云对象存储
 -s  --scan 扫描当前目录的图片并生成网络图床索引

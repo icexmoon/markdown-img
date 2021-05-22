@@ -8,12 +8,19 @@ class Config():
     PARAM_RRUU_TOKEN = 'rruu_token'
     PARAM_IMG_SERVICE = 'img_service'
     PARAM_YUJIAN_TOKEN = 'yujian_token'
+    PARAM_QCLOUD_INFO = 'qcloud_info'
+    QCLOUD_INFO_SECRET_KEY = 'secret_key'
+    QCLOUD_INFO_SECRET_ID = 'secret_id'
+    QCLOUD_INFO_REGION = 'region'
+    QCLOUD_INFO_BUCKET = 'bucket'
+    QCLOUD_INFO_DES_DIR = 'des_dir'
     IMG_SERVICE_YUJIAN = 'yujian'
     IMG_SERVICE_SMMS = 'smms'
     IMG_SERVICE_RRUU = 'rruu'
     IMG_SERVICE_ALI = 'ali'
     IMG_SERVICE_ALI2 = 'ali2'
     IMG_SERVICE_VIMCN = 'vimcn'
+    IMG_SERVICE_QCLOUD = 'qcloud'
     smmsTokenFile = ""
     configFile = ""
     mainConfig = {}
@@ -96,6 +103,12 @@ class Config():
         if token == '':
             raise UserException(UserException.CODE_NO_SMMS_TOKEN)
         return token
+
+    def getQCloudInfo(self):
+        info = self.getConfigParam(Config.PARAM_QCLOUD_INFO)
+        if info == '':
+            raise UserException(UserException.CODE_NO_QCLOUD_INFO)
+        return info
 
     def writeSmmsToken(self, token: str):
         with open(file=self.getSmmsTokenFile(), mode='w') as configFileOpen:

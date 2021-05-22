@@ -3,12 +3,30 @@ from .user_exception import UserException
 import requests
 import json
 from concurrent import futures
+import qcloud_cos.cos_exception
+from .qcloud_client import QcloudClient
 
 
 class SmmsImg():
     def __init__(self):
         self.sysConfig = Config()
-        pass
+        self.qclient = None
+
+    def uploadToQCloud(self, path: str) -> str:
+        '''上传到腾讯云'''
+        clientInfo = self.sysConfig.getQCloudInfo()
+        if self.qclient == None:
+            # print(clientInfo)
+            # exit()
+            self.qclient = QcloudClient(clientInfo[Config.QCLOUD_INFO_SECRET_ID], clientInfo[Config.QCLOUD_INFO_SECRET_KEY],
+                                        clientInfo[Config.QCLOUD_INFO_REGION], clientInfo[Config.QCLOUD_INFO_BUCKET])
+        try:
+            url = self.qclient.upload(
+                path, clientInfo[Config.QCLOUD_INFO_DES_DIR])
+        except qcloud_cos.cos_exception.CosServiceError as e:
+            self.sysConfig.writeErrorLog(str(e))
+            return False
+        return url
 
     def uploadToSmms(self, path: str) -> str:
         '''上传本地图片到smms,并返回网络图片地址'''
@@ -94,16 +112,20 @@ class SmmsImg():
         MAX_SAME_TIME_DEAL = 10
         if len(images) <= MAX_SAME_TIME_DEAL:
             maxThreadWorks = min(len(images), MAX_SAME_TIME_DEAL)
-            #fixed 如果有没有图片的md文件，直接不做处理。
+            # fixed 如果有没有图片的md文件，直接不做处理。
             if maxThreadWorks > 0:
                 with futures.ThreadPoolExecutor(max_workers=maxThreadWorks) as futuresExecutor:
                     futureMap = {}
                     for localImg in images:
-                        future = futuresExecutor.submit(self.uploadOne,localImg)
+                        future = futuresExecutor.submit(
+                            self.uploadOne, localImg)
                         futureMap[future] = localImg
                     futureDone = futures.as_completed(futureMap)
                     for future in futureDone:
-                        webImage = future.result()
+                        try:
+                            webImage = future.result()
+                        except UserException as e:
+                            raise e
                         if webImage == False:
                             raise UserException(
                                 UserException.CODE_UPLOAD_ERROR, "文件上传出错")
@@ -111,7 +133,8 @@ class SmmsImg():
                             results[futureMap[future]] = webImage
         else:
             self.multiUploadImage(images[0:MAX_SAME_TIME_DEAL], results)
-            self.multiUploadImage(images[MAX_SAME_TIME_DEAL:len(images)], results)
+            self.multiUploadImage(
+                images[MAX_SAME_TIME_DEAL:len(images)], results)
 
     def uploadOne(self, localImg):
         imgService = self.sysConfig.getConfigParam(
@@ -127,6 +150,8 @@ class SmmsImg():
             webImage = self.uploadToVimCn(localImg)
         elif imgService == Config.IMG_SERVICE_YUJIAN:
             webImage = self.uploadToYujian(localImg)
+        elif imgService == Config.IMG_SERVICE_QCLOUD:
+            webImage = self.uploadToQCloud(localImg)
         else:
             webImage = self.uploadToSmms(localImg)
         return webImage

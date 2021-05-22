@@ -152,6 +152,18 @@ class Main():
             sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
             sysConfig.writeMainConfig()
             print("访问令牌已保存，请重新运行程序")
+        elif userExp.getErrorCode() == UserException.CODE_NO_QCLOUD_INFO:
+            qcloudInfo = {}
+            print("缺少腾讯云OSS必须的连接信息，请按提示逐一输入：")
+            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("请输入secret_id：")
+            qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY] = input(
+                "请输入secret_key：")
+            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("请输入region：")
+            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("请输入bucket：")
+            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("请输入目标存储目录：")
+            sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qcloudInfo)
+            sysConfig.writeMainConfig()
+            print("腾讯云OSS信息已保存，请重新运行程序")
         else:
             print("未定义错误，请联系开发者")
         exit()
@@ -223,7 +235,8 @@ class Main():
             return False
 
     def changeImgService(self, selectedService):
-        supportedService = {'smms', 'ali', 'rruu', 'vimcn', 'yujian', 'ali2'}
+        supportedService = {'smms', 'ali', 'rruu',
+                            'vimcn', 'yujian', 'ali2', 'qcloud'}
         if selectedService not in supportedService:
             print('不支持的图床服务', selectedService)
             return False
@@ -243,6 +256,9 @@ class Main():
         elif selectedService == 'yujian':
             sysConfig.setConfigParam(
                 Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_YUJIAN)
+        elif selectedService == 'qcloud':
+            sysConfig.setConfigParam(
+                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_QCLOUD)
         else:
             sysConfig.setConfigParam(
                 Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_SMMS)
@@ -251,20 +267,30 @@ class Main():
         return True
 
     def changeToken(self, imgService):
-        tokenImgServices = {'rruu', 'smms', 'yujian'}
+        tokenImgServices = {'rruu', 'smms', 'yujian','qcloud'}
         if imgService not in tokenImgServices:
             print('不是合法的图床', imgService)
             return False
-        token = input("请输入新的访问令牌：")
         sysConfig = Config()
-        if imgService == 'rruu':
-            sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
-        elif imgService == 'smms':
-            sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
-        elif imgService == 'yujian':
-            sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
+        if imgService != 'qcloud':
+            token = input("请输入新的访问令牌：")
+            if imgService == 'rruu':
+                sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
+            elif imgService == 'smms':
+                sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
+            elif imgService == 'yujian':
+                sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
+            else:
+                pass
         else:
-            pass
+            qcloudInfo = {}
+            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("请输入新的secret_id：")
+            qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY] = input(
+                "请输入新的secret_key：")
+            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("请输入新的region：")
+            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("请输入新的bucket：")
+            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("请输入新的目标存储目录：")
+            sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qcloudInfo)
         sysConfig.writeMainConfig()
         print("已成功更新访问令牌")
         return True
