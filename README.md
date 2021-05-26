@@ -56,7 +56,7 @@ pip install --upgrade markdown-img-icexmoon
 
 1. 执行`python -m markdown_img -h`。
 
-### 查看版本信息
+### 查看版本及配置信息
 
 执行`pymdimg -v`或`pymdimg --version`。
 
@@ -105,7 +105,9 @@ pip install --upgrade markdown-img-icexmoon
 
 1. 执行`python -m markdown_img -c smms`
 
-> 具体参数可以查看帮助文档。
+> - 具体参数可以查看帮助文档。
+>
+> - 部分图床配置如果是多项，可以使用子命令仅修改其中单一配置，比如仅修改腾讯云的存储目录：`pymdimg -c qcloud --des_dir image`，如果目标目录中间有空格，需要给将其用英文双引号包起来，比如这样：`pymdimg -c qcloud --des_dir "我 love 你"`。更新完配置后可以使用`pymdimg -v`确认配置是否已经设置正确。
 
 ### 扫描图片并创建索引
 
@@ -202,3 +204,9 @@ python -m markdown_img -m refresh
 ### 0.2.4
 
 添加了腾讯云对象存储作为图床。
+
+### 0.2.5
+
+- 添加了修改腾讯云图床的子命令。
+- 修改查看版本命令，增加程序相关配置信息的显示。
+- 修改帮助文档。

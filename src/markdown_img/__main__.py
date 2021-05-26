@@ -4,10 +4,17 @@ import os
 from .main import Main
 
 
+def getOptionVal(options, key):
+    for optKey, optVal in options:
+        if optKey == key:
+            return optVal
+    return None
+
+
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hvi:c:s', [
-            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan'])
+            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan', 'des_dir='])
     except getopt.GetoptError as e:
         print("获取参数信息出错，错误提示：", e.msg)
         exit()
@@ -21,10 +28,7 @@ def main():
             if argKey == '--help' or argKey == '-h':
                 mainProcess.outputHelpInfo()
             elif argKey == '--version' or argKey == '-v':
-                import pkg_resources
-                version = pkg_resources.get_distribution(
-                    'markdown-img-icexmoon').version
-                print("version:{}".format(version))
+                mainProcess.printSysInfo()
             elif argKey == '--mode' or argKey == '-m':
                 mode = argVal
                 if mode == 'img_recove':
@@ -38,7 +42,12 @@ def main():
             elif argKey == '--img_service' or argKey == '-i':
                 mainProcess.changeImgService(argVal)
             elif argKey == '--change_token' or argKey == '-c':
-                mainProcess.changeToken(argVal)
+                optDesDirVal = getOptionVal(opts, '--des_dir')
+                if argVal == 'qcloud' and optDesDirVal is not None:
+                    mainProcess.changeImgServiceOption(
+                        argVal, {'des_dir': optDesDirVal})
+                else:
+                    mainProcess.changeToken(argVal)
             elif argKey == '--scan' or argKey == '-s':
                 mainProcess.scanAndCreateIndex()
             else:

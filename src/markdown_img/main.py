@@ -321,3 +321,49 @@ class Main():
                 print("!["+imgName+"]("+webImgUrl+")\n", file=fopen)
         print("已成功生成网络图床索引文件：markdown_img_index.md")
         return True
+
+    def changeImgServiceOption(self, imgServiceFlag, options):
+        '''修改图床服务的部分配置'''
+        sysConfig = Config()
+        if imgServiceFlag == Config.IMG_SERVICE_QCLOUD:
+            try:
+                qCloudInfo = sysConfig.getQCloudInfo()
+            except UserException as e:
+                self.dealUserException(e)
+            if Config.QCLOUD_INFO_DES_DIR in options and options[Config.QCLOUD_INFO_DES_DIR]:
+                qCloudInfo[Config.QCLOUD_INFO_DES_DIR] = options[Config.QCLOUD_INFO_DES_DIR]
+            sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qCloudInfo)
+        sysConfig.writeMainConfig()
+        print('图床配置已更新')
+
+    def printSysInfo(self):
+        '''打印当前系统相关信息'''
+        sysConfig = Config()
+        import pkg_resources
+        version = pkg_resources.get_distribution(
+            'markdown-img-icexmoon').version
+        print("软件版本：{}".format(version))
+        try:
+            imgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
+            print("当前使用的图床：{}".format(imgService))
+            print("图床的相关配置信息：")
+            if imgService!= Config.IMG_SERVICE_QCLOUD:
+                if imgService == Config.IMG_SERVICE_ALI or imgService == Config.IMG_SERVICE_YUJIAN:
+                    token = sysConfig.getYujianToken()
+                elif imgService == Config.IMG_SERVICE_ALI2 or imgService == Config.IMG_SERVICE_RRUU:
+                    token = sysConfig.getRruuToken()
+                elif imgService == Config.IMG_SERVICE_SMMS:
+                    token = sysConfig.getSmmsToken()
+                else:
+                    token = ''
+                print("\t访问令牌：{}".format(token))
+            else:
+                #显示腾讯云相关配置信息
+                qcloudInfo = sysConfig.getQCloudInfo()
+                print("\t存储桶：{}".format(qcloudInfo[Config.QCLOUD_INFO_BUCKET]))
+                print("\tsecret_id:{}".format(qcloudInfo[Config.QCLOUD_INFO_SECRET_ID]))
+                print("\tsecret_key:{}".format(qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY]))
+                print("\t地域：{}".format(qcloudInfo[Config.QCLOUD_INFO_REGION]))
+                print("\t存储目录：{}".format(qcloudInfo[Config.QCLOUD_INFO_DES_DIR]))
+        except UserException as e:
+            self.dealUserException(e)
