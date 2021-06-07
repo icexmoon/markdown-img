@@ -7,6 +7,7 @@ class UserException (Exception):
     CODE_NO_RRUU_TOKEN = 5
     CODE_NO_YUJIAN_TOKEN = 6
     CODE_NO_QCLOUD_INFO = 7
+    CODE_ERROR_INPUT = 8
 
     def __init__(self, errorCode: int, errorMsg: str = ""):
         self.errorCode = errorCode

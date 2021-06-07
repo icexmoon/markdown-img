@@ -16,13 +16,12 @@ class SmmsImg():
         '''上传到腾讯云'''
         clientInfo = self.sysConfig.getQCloudInfo()
         if self.qclient == None:
-            # print(clientInfo)
-            # exit()
             self.qclient = QcloudClient(clientInfo[Config.QCLOUD_INFO_SECRET_ID], clientInfo[Config.QCLOUD_INFO_SECRET_KEY],
                                         clientInfo[Config.QCLOUD_INFO_REGION], clientInfo[Config.QCLOUD_INFO_BUCKET])
         try:
+            useUrlEncode = self.sysConfig.getConfigParam(Config.PARAM_USE_URL_ENCODE)
             url = self.qclient.upload(
-                path, clientInfo[Config.QCLOUD_INFO_DES_DIR])
+                path, clientInfo[Config.QCLOUD_INFO_DES_DIR], useUrlEncode)
         except qcloud_cos.cos_exception.CosServiceError as e:
             self.sysConfig.writeErrorLog(str(e))
             return False

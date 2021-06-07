@@ -164,6 +164,8 @@ class Main():
             sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qcloudInfo)
             sysConfig.writeMainConfig()
             print("腾讯云OSS信息已保存，请重新运行程序")
+        elif userExp.getErrorCode() == UserException.CODE_ERROR_INPUT:
+            print(userExp.getErrorMsg())
         else:
             print("未定义错误，请联系开发者")
         exit()
@@ -336,6 +338,21 @@ class Main():
         sysConfig.writeMainConfig()
         print('图床配置已更新')
 
+    def changeMainPrams(self, params:dict):
+        '''用户修改主配置参数'''
+        sysConfig = Config()
+        for key, value in params.items():
+            if key == Config.PARAM_USE_URL_ENCODE:
+                if value == 'yes':
+                    sysConfig.setConfigParam(Config.PARAM_USE_URL_ENCODE, True)
+                elif value == 'no':
+                    sysConfig.setConfigParam(Config.PARAM_USE_URL_ENCODE, False)
+                else:
+                    exp = UserException(UserException.CODE_ERROR_INPUT,"输入的值{}不合法，请阅读帮助文档。".format(value))
+                    self.dealUserException(exp)
+        sysConfig.writeMainConfig()
+        print('相关配置已更新')
+
     def printSysInfo(self):
         '''打印当前系统相关信息'''
         sysConfig = Config()
@@ -346,6 +363,11 @@ class Main():
         try:
             imgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
             print("当前使用的图床：{}".format(imgService))
+            isUsedUrlEncode = sysConfig.getConfigParam(Config.PARAM_USE_URL_ENCODE)
+            useUrlEncodeText = '否'
+            if isUsedUrlEncode:
+                useUrlEncodeText = '是'
+            print("是否开启URL ENCODE：{}".format(useUrlEncodeText))
             print("图床的相关配置信息：")
             if imgService!= Config.IMG_SERVICE_QCLOUD:
                 if imgService == Config.IMG_SERVICE_ALI or imgService == Config.IMG_SERVICE_YUJIAN:

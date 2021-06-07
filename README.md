@@ -54,7 +54,7 @@ pip install --upgrade markdown-img-icexmoon
 
 ### 查看帮助文档
 
-1. 执行`python -m markdown_img -h`。
+- 执行`python -m markdown_img -h`。
 
 ### 查看版本及配置信息
 
@@ -74,6 +74,7 @@ pip install --upgrade markdown-img-icexmoon
 > - 图床token存储在程序所在目录的`main.config`文件中，如果需要修改的可以自行修改，也可以删除该配置文件后重新运行程序输入。
 > - <del>目前仍不支持根据文件新旧程度重新生成markdown副本的功能，如果原文件改变，需要手动删除副本后重新生成。</del>此功能已添加，详情见功能：刷新图床副本。
 > - 稍后会丰富并完善程序的相关命令参数。
+> - 如果目标图床返回的URL中包含中文或者空格等特殊字符，并且你的markdown文本编辑器无法正常预览相应的图片，则可能需要使用URL ENCODE进行处理，开启此功能的方法为`pymdimg -u yes`，开启后重新生成副本即可。此功能目前仅作用域腾讯云OSS，因为其他图床不会返回中文url。
 
 ### 从图床恢复本地图库
 
@@ -210,3 +211,7 @@ python -m markdown_img -m refresh
 - 添加了修改腾讯云图床的子命令。
 - 修改查看版本命令，增加程序相关配置信息的显示。
 - 修改帮助文档。
+
+### 0.2.6
+
+增加使用URL ENCODE处理图片url的功能。

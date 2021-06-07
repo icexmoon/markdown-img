@@ -4,6 +4,7 @@ import json
 
 
 class Config():
+    PARAM_USE_URL_ENCODE = 'use_url_encode'
     PARAM_SMMS_TOKEN = 'smms_token'
     PARAM_RRUU_TOKEN = 'rruu_token'
     PARAM_IMG_SERVICE = 'img_service'
@@ -52,6 +53,12 @@ class Config():
             Config.configFile = self.getCurrentDirPath()+'\\main.config'
         return Config.configFile
 
+    def __resetMainConfig(self):
+        '''重置主配置为默认值'''
+        Config.mainConfig[Config.PARAM_IMG_SERVICE] = 'smms'
+        Config.mainConfig[Config.PARAM_USE_URL_ENCODE] = False
+
+
     def __getMainConfig(self, real=False):
         if len(Config.mainConfig) == 0 or real == True:
             if os.path.exists(self.__getConfigFile()):
@@ -60,11 +67,14 @@ class Config():
                             Config.mainConfig = json.loads(fopen.read())
                 except json.decoder.JSONDecodeError:
                     #json解析异常的，设置为默认并重写配置文件
-                    Config.mainConfig['img_service'] = 'smms'
+                    # Config.mainConfig['img_service'] = 'smms'
+                    # Config.mainConfig[Config.PARAM_USE_URL_ENCODE] = True
+                    self.__resetMainConfig()
                     self.writeMainConfig()
             else:
                 # 不存在配置文件的，给予默认配置
-                Config.mainConfig['img_service'] = 'smms'
+                # Config.mainConfig['img_service'] = 'smms'
+                self.__resetMainConfig()
         return Config.mainConfig
 
     def getConfigParam(self, param):
