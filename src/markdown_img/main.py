@@ -342,11 +342,9 @@ class Main():
         '''用户修改主配置参数'''
         sysConfig = Config()
         for key, value in params.items():
-            if key == Config.PARAM_USE_URL_ENCODE:
-                if value == 'yes':
-                    sysConfig.setConfigParam(Config.PARAM_USE_URL_ENCODE, True)
-                elif value == 'no':
-                    sysConfig.setConfigParam(Config.PARAM_USE_URL_ENCODE, False)
+            if key == Config.PARAM_URL_ENCODE_MODE:
+                if value in (Config.URL_ENCODE_MODE_NONE,Config.URL_ENCODE_MODE_ONLY_SPACE,Config.URL_ENCODE_MODE_STANDARD):
+                    sysConfig.setConfigParam(Config.PARAM_URL_ENCODE_MODE, value)
                 else:
                     exp = UserException(UserException.CODE_ERROR_INPUT,"输入的值{}不合法，请阅读帮助文档。".format(value))
                     self.dealUserException(exp)
@@ -363,11 +361,15 @@ class Main():
         try:
             imgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
             print("当前使用的图床：{}".format(imgService))
-            isUsedUrlEncode = sysConfig.getConfigParam(Config.PARAM_USE_URL_ENCODE)
-            useUrlEncodeText = '否'
-            if isUsedUrlEncode:
-                useUrlEncodeText = '是'
-            print("是否开启URL ENCODE：{}".format(useUrlEncodeText))
+            urlEncodeMode = sysConfig.getConfigParam(Config.PARAM_URL_ENCODE_MODE)
+            urlEncodeModeText = ''
+            if urlEncodeMode == Config.URL_ENCODE_MODE_NONE:
+                urlEncodeModeText = '不使用'
+            elif urlEncodeMode == Config.URL_ENCODE_MODE_ONLY_SPACE:
+                urlEncodeModeText = '仅对空格使用'
+            else:
+                urlEncodeModeText = '对非ASCII字符均进行编码'
+            print("是否使用URL ENCODE：{}".format(urlEncodeModeText))
             print("图床的相关配置信息：")
             if imgService!= Config.IMG_SERVICE_QCLOUD:
                 if imgService == Config.IMG_SERVICE_ALI or imgService == Config.IMG_SERVICE_YUJIAN:

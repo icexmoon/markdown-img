@@ -51,7 +51,7 @@ def main():
             elif argKey == '--scan' or argKey == '-s':
                 mainProcess.scanAndCreateIndex()
             elif argKey == '--url_encode' or argKey == '-u':
-                params = {'use_url_encode':argVal}
+                params = {'url_encode_mode':argVal}
                 mainProcess.changeMainPrams(params)
             else:
                 mainProcess.main()

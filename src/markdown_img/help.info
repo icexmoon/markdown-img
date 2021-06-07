@@ -21,5 +21,6 @@
         --des_dir 仅更新腾讯云oss上的存储目录
 -s  --scan 扫描当前目录的图片并生成网络图床索引
 -u  --url_encode 是否使用URL ENCODE对图片url进行编码
-    yes 是
-    no 否
+    none 不使用
+    only_space 仅对空格使用
+    standard 对非ASCII字符均进行编码

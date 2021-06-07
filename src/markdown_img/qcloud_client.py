@@ -5,6 +5,7 @@ import logging
 import os
 import qcloud_cos
 import urllib.parse
+from .config import Config
 
 
 class QcloudClient():
@@ -25,7 +26,7 @@ class QcloudClient():
         # 参照下文的描述。或者参照 Demo 程序，详见 https://github.com/tencentyun/cos-python-sdk-v5/blob/master/qcloud_cos/demo.py
         self.bucket = bucket
 
-    def upload(self, path: str, desPath: str, useUrlEncode: bool = False):
+    def upload(self, path: str, desPath: str, urlEncodeMod: str = Config.URL_ENCODE_MODE_NONE):
         # 文件流简单上传（不支持超过5G的文件，推荐使用下方高级上传接口）
         # 强烈建议您以二进制模式(binary mode)打开文件,否则可能会导致错误
         fileName = os.path.basename(path)
@@ -40,9 +41,14 @@ class QcloudClient():
                 )
             except qcloud_cos.cos_exception.CosServiceError as e:
                 raise e
-        if useUrlEncode:
+        if urlEncodeMod == Config.URL_ENCODE_MODE_STANDARD:
             desPath = urllib.parse.quote(desPath)
             fileName = urllib.parse.quote(fileName)
+        elif urlEncodeMod == Config.URL_ENCODE_MODE_ONLY_SPACE:
+            desPath = desPath.replace(' ','%20')
+            fileName = fileName.replace(' ','%20')
+        else:
+            pass
         url = "https://{}.cos.{}.myqcloud.com/{}/{}".format(
                 self.bucket, self.region, desPath, fileName)
         return url

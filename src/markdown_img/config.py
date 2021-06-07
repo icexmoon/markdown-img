@@ -4,12 +4,16 @@ import json
 
 
 class Config():
-    PARAM_USE_URL_ENCODE = 'use_url_encode'
+    # PARAM_USE_URL_ENCODE = 'use_url_encode'
     PARAM_SMMS_TOKEN = 'smms_token'
     PARAM_RRUU_TOKEN = 'rruu_token'
     PARAM_IMG_SERVICE = 'img_service'
     PARAM_YUJIAN_TOKEN = 'yujian_token'
     PARAM_QCLOUD_INFO = 'qcloud_info'
+    PARAM_URL_ENCODE_MODE = 'url_encode_mode'
+    URL_ENCODE_MODE_NONE = 'none'
+    URL_ENCODE_MODE_ONLY_SPACE = 'only_space'
+    URL_ENCODE_MODE_STANDARD = 'standard'
     QCLOUD_INFO_SECRET_KEY = 'secret_key'
     QCLOUD_INFO_SECRET_ID = 'secret_id'
     QCLOUD_INFO_REGION = 'region'
@@ -56,7 +60,7 @@ class Config():
     def __resetMainConfig(self):
         '''重置主配置为默认值'''
         Config.mainConfig[Config.PARAM_IMG_SERVICE] = 'smms'
-        Config.mainConfig[Config.PARAM_USE_URL_ENCODE] = False
+        Config.mainConfig[Config.PARAM_URL_ENCODE_MODE] = Config.URL_ENCODE_MODE_NONE
 
 
     def __getMainConfig(self, real=False):
@@ -67,13 +71,10 @@ class Config():
                             Config.mainConfig = json.loads(fopen.read())
                 except json.decoder.JSONDecodeError:
                     #json解析异常的，设置为默认并重写配置文件
-                    # Config.mainConfig['img_service'] = 'smms'
-                    # Config.mainConfig[Config.PARAM_USE_URL_ENCODE] = True
                     self.__resetMainConfig()
                     self.writeMainConfig()
             else:
                 # 不存在配置文件的，给予默认配置
-                # Config.mainConfig['img_service'] = 'smms'
                 self.__resetMainConfig()
         return Config.mainConfig
 
@@ -83,7 +84,12 @@ class Config():
         if param in mainConfig:
             return mainConfig[param]
         else:
-            return ''
+            value = ''
+            if param == Config.PARAM_URL_ENCODE_MODE:
+                defaultValue = Config.URL_ENCODE_MODE_NONE
+                self.setConfigParam(param, defaultValue)
+                value = defaultValue
+            return value
 
     def setConfigParam(self, param, value):
         '''设置配置参数'''
