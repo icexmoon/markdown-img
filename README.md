@@ -1,137 +1,136 @@
-# Markdown-img使用指南
+# Markdown-img User's Guide
 
-## 项目地址
+English|[**简体中文**](https://github.com/icexmoon/markdown-img/main/README_cn.md)
+
+## Project Address
 
 - pypi：<https://pypi.org/project/markdown-img-icexmoon/>
 - github：<https://github.com/icexmoon/markdown-img>
-- 个人博客：<https://blog.icexmoon.xyz/?p=99>
+- Personal Blog：<https://blog.icexmoon.xyz/?p=99>
 
-## 用途
+## Usage
 
-本程序用于扫描工作目录下的markdown文件，查找其中的本地图片并自动上传到`sm.ms`图床，并生成一个使用网络图片替换本地图片的markdown副本，存放于`当前工作目录/markdown_image`目录下。
+This program is used to scan the markdown files in the working directory, find the local images in them and upload them to the `sm.ms` image bed automatically, and generate a copy of the markdown using the network images to replace the local images, which is stored in the `current_working_directory/markdown_image` directory.
 
-通过以上方式实现自动批量markdown图片处理工作，以方便之后把markdown内容在网络传播。
+By the above way, we can realize the automatic batch markdown image processing work to facilitate the later dissemination of markdown contents on the web.
 
-## 注意事项
+## Notes for details
 
-- 本程序不会改变原始markdown文件，请放心使用。
+- This program will not change the original markdown file, please feel free to use it.
 
-- <del>对于已经生成副本的原始文件，本程序不会再次处理，如果需要重新生成副本，请手动删除相应的已生成副本。</del>此功能已添加，具体请查看功能：刷新图床副本。
+- This program relies on `sm.ms` image bed, please register your account and generate token by yourself.
 
-- 本程序依赖于`sm.ms`图床，请自行注册账号并生成token。
+  > Support for other image beds has been added, see features for details, but the default is still using sm.ms image bed.
 
-  > 已加入其它图床支持，详情见功能，不过默认依然使用sm.ms图床。
+- Because the `sm.ms` image bed interface has a call limit, if there is a picture upload error, it may be caused by frequent uploads, please wait for more than 1 minute and reuse this program.
 
-- 因为`sm.ms`图床接口有调用限制，如果出现图片上传出错的情况，可能是上传频繁导致，请等待1分钟以上时间后重新使用本程序。
+- Tencent Cloud Object Storage has been added as a image bed, when using it, you need to enter the corresponding mandatory parameters for connection, you can read the [**Tencent Cloud OSS User Guide**](https://blog.icexmoon.xyz/?p=151) for specific parameters, in addition, you need to set the object storage service to private write public read.
 
-- 已添加腾讯云对象存储作为图床，使用时需要输入相应的必须参数用于连接，具体参数获取可以阅读[**腾讯云OSS使用指南**](https://blog.icexmoon.xyz/?p=151)，此外还需要将对象存储服务设置为私有写公有读。
+- Currently this program only supports windows.
 
-- 目前本程序只支持windows。
+  > Theoretically supports all platforms that can run Python, but has not been tested on other platforms at this time.
 
-  > 理论上支持所有能运行Python的平台，但目前并没有在其它平台测试过。
+- `sm.ms` access is not considered friendly in China, generated markdown copy immediately published on the network may show anti-theft chain and other images hanging, that is because the domestic CDN is relatively slow, wait for a period of time on the good.
 
-- `sm.ms`国内访问不算友好，生成的markdown拷贝立即在网络上发布可能会显示防盗链等图片挂掉的情况，那是因为国内CDN比较慢，等一段时间就好了。
+- This program is written in Python, you need to install the Python runtime environment, if you don't know how to install, you can read the [**python environment installation under windows**](https://blog.icexmoon.xyz/?p=101).
 
-- 本程序使用Python编写，需要安装Python运行环境，如果不知道如何安装，可以阅读[**windows下的python环境安装**](https://blog.icexmoon.xyz/?p=101)。
-
-## 安装
+## Install
 
 ```shell
 pip install markdown-img-icexmoon
 ```
 
-## 更新
+## Update
 
 ```shell
 pip install --upgrade markdown-img-icexmoon
 ```
 
-## 功能
+## Function
 
-> 已添加控制台短命令支持，所有功能均可以通过`pymdimg`快速调用。
+> Added console short command support, all functions can be called quickly via `pymdimg`.
 >
-> 比如`pymdimg -h`和`python -m markdown_img -h`功能完全一致。
+> For example, `pymdimg -h` is exactly the same as `python -m markdown_img -h`.
 
-### 查看帮助文档
+### View the help file
 
-- 执行`python -m markdown_img -h`。
+- Execute `python -m markdown_img -h`。
 
-### 查看版本及配置信息
+### View version and configuration information
 
-执行`pymdimg -v`或`pymdimg --version`。
+Excute `pymdimg -v` or `pymdimg --version`.
 
-### 生成图床markdown副本
+### Generate a markdown copy of the image bed
 
-本程序的主要功能，将扫描命令行工作目录下的markdown文件，会将其中的本地图片替换为图床图片后生成一个图床副本，生成的副本会存储在工作目录下的`markdown_img`文件夹中。
+The main function of this program, will scan the markdown file in the command line working directory, will replace the local image in it with a bed image and then generate a copy of the bed, the generated copy will be stored in the `markdown_img` folder in the working directory.
 
-1. 使用CMD定位到将要处理的markdown文件目录。
-2. 执行`python -m markdown_img`。
-3. 第一次运行程序会提示你输入图床token。
-4. 输入后再次执行步骤2。
-5. 等待处理。
-6. 完毕后查看`工作目录/markdown_img`目录。
+1. Use CMD to locate the directory where the markdown file will be processed.
+2. Execute `python -m markdown_img`.
+3. The first time you run the program you will be prompted to enter the markdown token.
+4. Enter it and execute step 2 again.
+5. Wait for processing.
+6. When you are done, check the `working_directory/markdown_img` directory.
 
-> - 图床token存储在程序所在目录的`main.config`文件中，如果需要修改的可以自行修改，也可以删除该配置文件后重新运行程序输入。
-> - <del>目前仍不支持根据文件新旧程度重新生成markdown副本的功能，如果原文件改变，需要手动删除副本后重新生成。</del>此功能已添加，详情见功能：刷新图床副本。
-> - 稍后会丰富并完善程序的相关命令参数。
-> - 如果目标图床返回的URL中包含中文或者空格等特殊字符，并且你的markdown文本编辑器无法正常预览相应的图片，则可能需要使用URL ENCODE进行处理，开启此功能的方法为`pymdimg -u standard`，开启后重新生成副本即可。此功能目前仅作用域腾讯云OSS，因为其他图床不会返回中文url。
+> - The token is stored in the `main.config` file in the directory where the program is located. You can modify it yourself if you need to, or you can delete the configuration file and run the program again to enter it.
+> - The command parameters of the program will be enriched and refined later.
+> - If the URL returned by the target image bed contains special characters such as Chinese or spaces, and your markdown text editor cannot preview the corresponding image properly, you may need to use URL ENCODE to process it, turn on this function by `pymdimg -u standard`, and regenerate the copy after turning on. This feature currently only works with Tencent OSS, because other image beds will not return Chinese URLs.
 
-### 从图床恢复本地图库
+### Restore local gallery from the image bed
 
-如果图床副本完好，但本体markdown文件关联的本地图片丢失的，可以利用此功能尝试恢复。
+If the copy of the image bed is intact, but the local images associated with the native markdown file are missing, you can use this function to try to recover them.
 
-1. 切换命令行工作目录到要恢复的markdown文件目录。
-2. 执行`python -m markdown_img -m img_recove`
-3. 等待处理。
-4. 完毕后查看本地markdown文件图片是否恢复。
+1. Switch the command line working directory to the directory of the markdown file you want to restore.
+2. Excute`python -m markdown_img -m img_recove`
+3. Wait for processing.
+4. Check if the local markdown file image is restored after it is finished.
 
-> - 因为网络图床不稳定，虽然程序本身有超时重连机制，但如果恢复的图片过多，很可能处理中断，只需要重新运行程序即可。
-> - 恢复逻辑为对比副本和原本中的图片出现顺序，1对1恢复，所以务必保证两者没有差异，程序会在两者数量不同时中断并提示用户手动确认。
+> - Because the network image bed is unstable, although the program itself has a timeout reconnection mechanism, if too many images are recovered, it is likely that the processing will be interrupted and the program will simply need to be rerun.
+> - The recovery logic is to compare the order of appearance of the images in the copy and the original, and recover them 1 to 1. So it is important to ensure that there is no difference between the two, and the program will interrupt when the number of both is different and prompt the user to confirm manually.
 
-### 切换图床服务
+### Switching the image bed service
 
-可以切换图床服务，以备某个图床不可用或者访问不稳定。
+You can switch the image bed service in case a certain image bed is not available or the access is unstable.
 
-目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储（推广链接）**](https://curl.qcloud.com/empEScHz)。
+Currently supported image beds are [**sm.ms**](https://sm.ms/), Ali, [**RuYu**](https://img.rruu.net/), [**Vim-CN**](https://img.vim-cn.com/), [**meet**](https://www.hualigs.cn/), [**Tencent cloud object storage**](https://curl.qcloud.com/empEScHz) (promotional link).
 
-1. 执行`python -m markdown_img -i ali`
+- Excute`python -m markdown_img -i ali`
 
-> - 具体的图床标识可以查看帮助文档。
-> - 需要访问令牌的图床服务切换后使用中会提示输入相应的访问令牌。
-> - 使用腾讯云OSS需要一些必要信息，具体请阅读注意事项。
+> - You can check the help documentation for the specific image bed logo.
+> - Access tokens are required to switch the bed service and will be prompted to enter the appropriate access token in use.
+> - Some necessary information is required to use Tencent Cloud OSS, please read the notes for details.
 
-### 更新图床访问令牌
+### Update the image bed access token
 
-如果图床令牌设置错误，或者在图床官网重新生成了新的访问令牌，可以在程序中更新相应的访问令牌。
+If a wrong access token is set for the image bed token, or if a new access token is regenerated on the image bed website, you can update the corresponding access token in the program.
 
-1. 执行`python -m markdown_img -c smms`
+- Excute `python -m markdown_img -c smms`
 
-> - 具体参数可以查看帮助文档。
+> - You can check the help documentation for specific parameters.
 >
-> - 部分图床配置如果是多项，可以使用子命令仅修改其中单一配置，比如仅修改腾讯云的存储目录：`pymdimg -c qcloud --des_dir image`，如果目标目录中间有空格，需要给将其用英文双引号包起来，比如这样：`pymdimg -c qcloud --des_dir "我 love 你"`。更新完配置后可以使用`pymdimg -v`确认配置是否已经设置正确。
+> - Part of the image bed configuration if more than one, you can use subcommands to modify only a single configuration, for example, only modify the Tencent cloud storage directory: `pymdimg -c qcloud --des_dir image`, if there are spaces in the middle of the target directory, you need to give will be wrapped in English double quotes, such as this: `pymdimg -c qcloud --des_dir "我 love 你"`. After updating the configuration you can use `pymdimg -v` to confirm that the configuration has been set correctly.
 
-### 扫描图片并创建索引
+### Scan images and create indexes
 
-如果你需要将某个目录下的图片全部上传到网络图床，并创建一个markdown文件作为索引文件，那使用这个功能就没错了。
+If you need to upload all the images in a directory to a webbed and create a markdown file as an index file, then this is the right function to use.
 
 ```shell
 python -m markdown_img -s
 ```
 
-> - 每次运行都会重新生成索引文件。
-> - 生成的索引文件名为`markdown_img_index.md`，请确保不要自定义同名文件在目标目录下。
+> - The index file will be regenerated each time it is run.
+> - The name of the generated index file is `markdown_img_index.md`, please make sure not to customize the file with the same name in the target directory.
 
-### 刷新图床副本
+### Refreshing a copy of the image bed
 
-如果你的原始md文件已更新，不想手动删除相应的副本文件，想自动重新生成，可以使用此功能。
+If your original md file has been updated and you don't want to delete the corresponding copy file manually and want to regenerate it automatically, you can use this function.
 
 ```shell
 python -m markdown_img -m refresh
 ```
 
-> 会扫描当前目录下的原始md文件，如果没有副本，直接创建。如果有副本，但是原始文件比副本"新"，则重新创建副本。
+> Scans the current directory for the original md file, and if there is no copy, creates it directly. If there is a copy, but the original file is "newer" than the copy, the copy is recreated.
 
-## 更新日志
+## Update Log
 
 ### 0.0.6
 
