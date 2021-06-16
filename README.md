@@ -1,6 +1,6 @@
 # Markdown-img User's Guide
 
-English | [**简体中文**](https://github.com/icexmoon/markdown-img/main/README_cn.md)
+English | [**简体中文**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md)
 
 ## Project Address
 
