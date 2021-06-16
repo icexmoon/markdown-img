@@ -2,6 +2,25 @@
 
 English | [**简体中文**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md)
 
+## Contents
+
+- [**Project Address**](https://github.com/icexmoon/markdown-img#project-address)
+- [**Usage**](https://github.com/icexmoon/markdown-img#usage)
+- [**Notes for details**](https://github.com/icexmoon/markdown-img#notes-for-details)
+- [**Install**](https://github.com/icexmoon/markdown-img#install)
+- [**Update**](https://github.com/icexmoon/markdown-img#update)
+- [**Function**](https://github.com/icexmoon/markdown-img#function)
+  - [**View the help file**](https://github.com/icexmoon/markdown-img#view-the-help-file)
+  - [**View the version and configuration information**](https://github.com/icexmoon/markdown-img#view-version-and-configuration-information)
+  - [**Select working language**](https://github.com/icexmoon/markdown-img#select-working-language)
+  - [**Generate a markdown copy of the image bed**](https://github.com/icexmoon/markdown-img#generate-a-markdown-copy-of-the-image-bed)
+  - [**Restore local gallery from the image bed**](https://github.com/icexmoon/markdown-img#restore-local-gallery-from-the-image-bed)
+  - [**Switching the image bed service**](https://github.com/icexmoon/markdown-img#switching-the-image-bed-service)
+  - [**Update the image bed acess token**](https://github.com/icexmoon/markdown-img#update-the-image-bed-access-token)
+  - [**Scan images and create indexes**](https://github.com/icexmoon/markdown-img#scan-images-and-create-indexes)
+  - [**Refreshing a copy of the image bed**](https://github.com/icexmoon/markdown-img#refreshing-a-copy-of-the-image-bed)
+- [**Update Log**](https://github.com/icexmoon/markdown-img#update-log)
+
 ## Project Address
 
 - pypi：<https://pypi.org/project/markdown-img-icexmoon/>
