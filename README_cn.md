@@ -62,6 +62,12 @@ pip install --upgrade markdown-img-icexmoon
 
 执行`pymdimg -v`或`pymdimg --version`。
 
+### 选择工作语言
+
+支持English和中文作为工作语言，默认为中文。
+
+- 执行`pymdimg -l en`切换工作语言。
+
 ### 生成图床markdown副本
 
 本程序的主要功能，将扫描命令行工作目录下的markdown文件，会将其中的本地图片替换为图床图片后生成一个图床副本，生成的副本会存储在工作目录下的`markdown_img`文件夹中。
@@ -221,3 +227,7 @@ python -m markdown_img -m refresh
 ### 0.2.7
 
 修改URL ENCODE功能，增加仅对空格进行处理的模式。
+
+### 0.2.8
+
+添加国际化，增加英语作为工作语言。

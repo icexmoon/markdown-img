@@ -60,6 +60,12 @@ pip install --upgrade markdown-img-icexmoon
 
 Excute `pymdimg -v` or `pymdimg --version`.
 
+### Select working language
+
+English and Chinese are supported as working languages, the default is Chinese.
+
+- Execute `pymdimg -l en` to switch the working language.
+
 ### Generate a markdown copy of the image bed
 
 The main function of this program, will scan the markdown file in the command line working directory, will replace the local image in it with a bed image and then generate a copy of the bed, the generated copy will be stored in the `markdown_img` folder in the working directory.
@@ -218,3 +224,7 @@ python -m markdown_img -m refresh
 ### 0.2.7
 
 修改URL ENCODE功能，增加仅对空格进行处理的模式。
+
+### 0.2.8
+
+Add globalization support. add English as a new working language.

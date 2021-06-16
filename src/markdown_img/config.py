@@ -4,13 +4,15 @@ import json
 
 
 class Config():
-    # PARAM_USE_URL_ENCODE = 'use_url_encode'
     PARAM_SMMS_TOKEN = 'smms_token'
     PARAM_RRUU_TOKEN = 'rruu_token'
     PARAM_IMG_SERVICE = 'img_service'
     PARAM_YUJIAN_TOKEN = 'yujian_token'
     PARAM_QCLOUD_INFO = 'qcloud_info'
     PARAM_URL_ENCODE_MODE = 'url_encode_mode'
+    PARAM_LANGUAGE = 'language'
+    LANGUAGE_CN = 'cn'
+    LANGUAGE_EN = 'en'
     URL_ENCODE_MODE_NONE = 'none'
     URL_ENCODE_MODE_ONLY_SPACE = 'only_space'
     URL_ENCODE_MODE_STANDARD = 'standard'
@@ -40,6 +42,17 @@ class Config():
     def getCurrentWorkDirPath(self):
         return os.getcwd()
 
+    def getHelpFilePath(self):
+        language = self.getConfigParam(Config.PARAM_LANGUAGE)
+        filePath: str = ""
+        if language == Config.LANGUAGE_EN:
+            filePath = self.getCurrentDirPath()+"\\help_en.info"
+        elif language == Config.LANGUAGE_CN:
+            filePath = self.getCurrentDirPath()+"\\help.info"
+        else:
+            filePath = self.getCurrentDirPath()+"\\help.info"
+        return filePath
+
     def getMarkdownImgDirPath(self):
         '''返回当前工作目录对应的markdown_img目录'''
         markdownImgDirPath = self.getCurrentWorkDirPath()+"\\markdown_img"
@@ -57,20 +70,27 @@ class Config():
             Config.configFile = self.getCurrentDirPath()+'\\main.config'
         return Config.configFile
 
+    def __getDefaultConfigParams(self):
+        if not hasattr(self, "__defaultConfigParams"):
+            self.__defaultConfigParams = {Config.PARAM_IMG_SERVICE: Config.IMG_SERVICE_SMMS,
+                                          Config.PARAM_URL_ENCODE_MODE: Config.URL_ENCODE_MODE_NONE,
+                                          Config.PARAM_LANGUAGE: Config.LANGUAGE_CN}
+        return self.__defaultConfigParams
+
     def __resetMainConfig(self):
         '''重置主配置为默认值'''
-        Config.mainConfig[Config.PARAM_IMG_SERVICE] = 'smms'
-        Config.mainConfig[Config.PARAM_URL_ENCODE_MODE] = Config.URL_ENCODE_MODE_NONE
-
+        defaultConfigParams = self.__getDefaultConfigParams()
+        for key, value in defaultConfigParams.items():
+            Config.mainConfig[key] = value
 
     def __getMainConfig(self, real=False):
         if len(Config.mainConfig) == 0 or real == True:
             if os.path.exists(self.__getConfigFile()):
                 try:
                     with open(file=self.__getConfigFile(), mode='r', encoding='UTF-8') as fopen:
-                            Config.mainConfig = json.loads(fopen.read())
+                        Config.mainConfig = json.loads(fopen.read())
                 except json.decoder.JSONDecodeError:
-                    #json解析异常的，设置为默认并重写配置文件
+                    # json解析异常的，设置为默认并重写配置文件
                     self.__resetMainConfig()
                     self.writeMainConfig()
             else:
@@ -85,8 +105,9 @@ class Config():
             return mainConfig[param]
         else:
             value = ''
-            if param == Config.PARAM_URL_ENCODE_MODE:
-                defaultValue = Config.URL_ENCODE_MODE_NONE
+            defaultConfigParams = self.__getDefaultConfigParams()
+            if param in defaultConfigParams:
+                defaultValue = defaultConfigParams[param]
                 self.setConfigParam(param, defaultValue)
                 value = defaultValue
             return value

@@ -13,8 +13,8 @@ def getOptionVal(options, key):
 
 def main():
     try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hvi:c:su:', [
-            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan', 'des_dir=','url_encode='])
+        opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hvi:c:su:l:', [
+            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan', 'des_dir=','url_encode=','language='])
     except getopt.GetoptError as e:
         print("获取参数信息出错，错误提示：", e.msg)
         exit()
@@ -52,6 +52,9 @@ def main():
                 mainProcess.scanAndCreateIndex()
             elif argKey == '--url_encode' or argKey == '-u':
                 params = {'url_encode_mode':argVal}
+                mainProcess.changeMainPrams(params)
+            elif argKey == '--language' or argKey == '-l':
+                params = {'language':argVal}
                 mainProcess.changeMainPrams(params)
             else:
                 mainProcess.main()

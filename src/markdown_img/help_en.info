@@ -1,0 +1,29 @@
+-h  --help  Print help info
+-v  --version   View version info
+-m  --mode  Select operation mode
+    img_recove  Repairing local image libraries using a backup of the image bed
+    normal      Normal mode
+    refresh     Refresh (if a copy of the generated md file has been updated, the md copy file will be regenerated)
+-i  --img_service Selecting an image bed service provider
+    smms    sm.ms image bed, default image bed service, good stability, average access speed.
+    ali     Ali bed (meet line), fast access (non-normal provision of services, stability is not guaranteed).
+    ali2    Ali image bed (RuYu line).
+    rruu    RuYu image bed.
+    vimcn   Vim-CN image bed with slow access speed.
+    yujian  Meet image bed.
+    qcloud  Tencent Cloud Object Storage (required to provide necessary connection information)
+-c  --change_token Replace the image bed access token.
+    rruu    RuYu image bed.
+    smms    sm.ms image bed.
+    yujian  Meet image bed.
+    qcloud  Tencent Cloud Object Storage
+        Support Sub-Options
+        --des_dir Update only the storage directory on Tencent Cloudoss
+-s  --scan Scan images in the current directory and generate a webbed index
+-u  --url_encode Whether to use URL ENCODE to encode the image url
+    none No use
+    only_space Use only for spaces
+    standard Encoding of all non-ASCII characters
+-l  --language Working Language
+    en  English
+    cn  中文

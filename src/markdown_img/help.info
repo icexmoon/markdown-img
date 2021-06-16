@@ -24,3 +24,6 @@
     none 不使用
     only_space 仅对空格使用
     standard 对非ASCII字符均进行编码
+-l  --language 工作语言
+    en  English
+    cn  中文

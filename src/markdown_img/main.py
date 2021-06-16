@@ -1,3 +1,4 @@
+from .globalization import Globalization
 from .config import Config
 import os
 from .smms_img import SmmsImg
@@ -10,7 +11,7 @@ import re
 class Main():
 
     def __init__(self):
-        pass
+        self.globalization: Globalization = Globalization()
 
     def isMarkdownFile(self, fileName: str):
         filePart = fileName.rpartition('.')
@@ -130,44 +131,52 @@ class Main():
     def dealUserException(self, userExp: UserException):
         sysConfig = Config()
         if userExp.getErrorCode() == UserException.CODE_NO_SMMS_TOKEN:
-            token = input("缺少你的sm.ms访问令牌，请输入：")
+            token = input("{}{}".format(self.globalization.getText(
+                "missing_smms_token", self.globalization.getText("colon"))))
             sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
             sysConfig.writeMainConfig()
-            # sysConfig.writeSmmsToken(token)
-            print("访问令牌已保存，请重新运行程序")
+            print(self.globalization.getText("token_has_saved"))
         elif userExp.getErrorCode() == UserException.CODE_NO_RRUU_TOKEN:
-            token = input("缺少你的如优图床访问令牌，请输入：")
+            token = input("{}{}".format(self.globalization.getText("missing_ruyu_token"),
+                                        self.globalization("colon")))
             sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
             sysConfig.writeMainConfig()
-            print("访问令牌已保存，请重新运行程序")
+            print(self.globalization.getText("token_has_saved"))
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
             currentImgService = sysConfig.getConfigParam(
                 Config.PARAM_IMG_SERVICE)
-            print("上传图片到"+str(currentImgService)+"失败，请检查日志文件",
+            print(self.globalization.getText("update_image_fail").format(currentImgService),
                   sysConfig.getErrorLogFilePath())
         elif userExp.getErrorCode() == UserException.CODE_TIMEOUT:
             print(userExp.getErrorMsg())
         elif userExp.getErrorCode() == UserException.CODE_NO_YUJIAN_TOKEN:
-            token = input("缺少你的遇见图床访问令牌，请输入：")
+            token = input("{}{}".format(self.globalization.getText("missing_meet_token"),
+                                        self.globalization.getText("colon")))
             sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
             sysConfig.writeMainConfig()
-            print("访问令牌已保存，请重新运行程序")
+            print(self.globalization.getText("token_has_saved"))
         elif userExp.getErrorCode() == UserException.CODE_NO_QCLOUD_INFO:
             qcloudInfo = {}
-            print("缺少腾讯云OSS必须的连接信息，请按提示逐一输入：")
-            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("请输入secret_id：")
+            print("{}{}".format(self.globalization("missing_tencent_oss_info"),
+                                self.globalization.getText("colon")))
+            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("{}{}".format(self.globalization.getText("secret_id_input"),
+                                                                           self.globalization.getText("colon")))
             qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY] = input(
-                "请输入secret_key：")
-            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("请输入region：")
-            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("请输入bucket：")
-            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("请输入目标存储目录：")
+                "{}{}".format(self.globalization.getText("secret_key_input"),
+                              self.globalization.getText("colon")))
+            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("{}{}".format(self.globalization.getText("region_input"),
+                                                                        self.globalization.getText("colon")))
+            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("{}{}".format(
+                self.globalization.getText("bucket_input"), self.globalization.getText("colon")))
+            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("{}{}".format(self.globalization.getText("storage_dir_input"),
+                                                                         self.globalization.getText("colon")))
             sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qcloudInfo)
             sysConfig.writeMainConfig()
-            print("腾讯云OSS信息已保存，请重新运行程序")
+            print(self.globalization.getText("tencent_oss_info_saved"))
         elif userExp.getErrorCode() == UserException.CODE_ERROR_INPUT:
             print(userExp.getErrorMsg())
         else:
-            print("未定义错误，请联系开发者")
+            print(self.globalization.getText("undefined_error_info"))
         exit()
 
     def main(self, refresh=False):
@@ -186,13 +195,13 @@ class Main():
                         self.dealMdFile(dir)
                     except UserException as e:
                         self.dealUserException(e)
-                    print("已成功处理markdown文件", dir)
-        print("所有markdown文档已处理完毕")
+                    print(self.globalization.getText("deal_success"), dir)
+        print(self.globalization.getText("all_file_done"))
 
     def outputHelpInfo(self):
         sysConfig = Config()
-        dirPath = sysConfig.getCurrentDirPath()
-        with open(file=dirPath+'\\help.info', mode='r', encoding='UTF-8') as helpFileOpen:
+        helpFilePath = sysConfig.getHelpFilePath()
+        with open(file=helpFilePath, mode='r', encoding='UTF-8') as helpFileOpen:
             content = helpFileOpen.read()
             print(content)
 
@@ -206,10 +215,12 @@ class Main():
                     # 如果存在图床备份，进行还原操作
                     try:
                         if self.recoveryImgsInMarkdown(copyFilePath, dir):
-                            print("已成功还原markdown文件", dir, "的本地图库")
+                            # print("已成功还原markdown文件", dir, "的本地图库")
+                            print(self.globalization.getText(
+                                "recove_markdown_file").format(dir))
                     except UserException as e:
                         self.dealUserException(e)
-        print("所有markdown文档已处理完毕")
+        print(self.globalization.getText("all_file_done"))
 
     def copyImgFromWeb(self, webImg, localImgPath):
         if localImgPath[0:4] == 'http' or webImg[0:4] != 'http':
@@ -218,7 +229,7 @@ class Main():
             downloader = DownloadHelp()
             downloader.chunkDownload(webImg, localImgPath, timeout=2)
 
-    def recoveryImgsInMarkdown(self, copyFilePath: 'copied markdown file path', orignalFile: 'orignal markdown file'):
+    def recoveryImgsInMarkdown(self, copyFilePath: str, orignalFile: str):
         '''使用图床图片还原本地图库'''
         # 读取图床备份图片列表
         copyImages = self.findImgsInMdFile(copyFilePath)
@@ -233,14 +244,17 @@ class Main():
             return True
         else:
             # 输出错误信息
-            print('文件', orignalFile, '中的图片数目与备份中的数目不相符，请自行确认')
+            # print('文件', orignalFile, '中的图片数目与备份中的数目不相符，请自行确认')
+            print(self.globalization.getText(
+                "images_number_is_not_equal").format(orignalFile))
             return False
 
     def changeImgService(self, selectedService):
         supportedService = {'smms', 'ali', 'rruu',
                             'vimcn', 'yujian', 'ali2', 'qcloud'}
         if selectedService not in supportedService:
-            print('不支持的图床服务', selectedService)
+            print(self.globalization.getText(
+                "not_support_img_service"), selectedService)
             return False
         sysConfig = Config()
         if selectedService == 'rruu':
@@ -265,17 +279,18 @@ class Main():
             sysConfig.setConfigParam(
                 Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_SMMS)
         sysConfig.writeMainConfig()
-        print('图床已切换')
+        print(self.globalization.getText("image_bed_changed"))
         return True
 
     def changeToken(self, imgService):
-        tokenImgServices = {'rruu', 'smms', 'yujian','qcloud'}
+        tokenImgServices = {'rruu', 'smms', 'yujian', 'qcloud'}
         if imgService not in tokenImgServices:
-            print('不是合法的图床', imgService)
+            print(self.globalization.getText("invalid_image_bed"), imgService)
             return False
         sysConfig = Config()
         if imgService != 'qcloud':
-            token = input("请输入新的访问令牌：")
+            token = input("{}{}".format(self.globalization.getText("new_token_input"),
+                                        self.globalization.getText("colon")))
             if imgService == 'rruu':
                 sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
             elif imgService == 'smms':
@@ -286,15 +301,20 @@ class Main():
                 pass
         else:
             qcloudInfo = {}
-            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("请输入新的secret_id：")
+            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("{}{}".format(self.globalization.getText("new_secret_id_input"),
+                                                                           self.globalization.getText("colon")))
             qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY] = input(
-                "请输入新的secret_key：")
-            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("请输入新的region：")
-            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("请输入新的bucket：")
-            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("请输入新的目标存储目录：")
+                "{}{}".format(self.globalization.getText("new_secret_key_input"),
+                              self.globalization.getText("colon")))
+            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("{}{}".format(self.globalization.getText("new_region_input"),
+                                                                        self.globalization.getText("colon")))
+            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("{}{}".format(self.globalization.getText("new_bucket_input"),
+                                                                        self.globalization.getText("colon")))
+            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("{}{}".format(self.globalization.getText("new_storage_dir_input"),
+                                                                         self.globalization.getText("colon")))
             sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qcloudInfo)
         sysConfig.writeMainConfig()
-        print("已成功更新访问令牌")
+        print(self.globalization.getText("token_changed_successfully"))
         return True
 
     def scanAndCreateIndex(self):
@@ -309,7 +329,7 @@ class Main():
                     imageFiles.append((fileName, dir))
                     images.append(dir)
         if len(imageFiles) == 0:
-            print("没有找到可以处理的图片")
+            print(self.globalization.getText("no_find_local_image"))
             return True
         imgService = SmmsImg()
         results = {}
@@ -321,7 +341,7 @@ class Main():
             for imgName, imgFile in imageFiles:
                 webImgUrl = results[imgFile]
                 print("!["+imgName+"]("+webImgUrl+")\n", file=fopen)
-        print("已成功生成网络图床索引文件：markdown_img_index.md")
+        print(self.globalization.getText("index_file_created"))
         return True
 
     def changeImgServiceOption(self, imgServiceFlag, options):
@@ -336,20 +356,31 @@ class Main():
                 qCloudInfo[Config.QCLOUD_INFO_DES_DIR] = options[Config.QCLOUD_INFO_DES_DIR]
             sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qCloudInfo)
         sysConfig.writeMainConfig()
-        print('图床配置已更新')
+        print(self.globalization.getText("image_web_configs_changed"))
 
-    def changeMainPrams(self, params:dict):
+    def changeMainPrams(self, params: dict):
         '''用户修改主配置参数'''
         sysConfig = Config()
         for key, value in params.items():
             if key == Config.PARAM_URL_ENCODE_MODE:
-                if value in (Config.URL_ENCODE_MODE_NONE,Config.URL_ENCODE_MODE_ONLY_SPACE,Config.URL_ENCODE_MODE_STANDARD):
-                    sysConfig.setConfigParam(Config.PARAM_URL_ENCODE_MODE, value)
+                if value in (Config.URL_ENCODE_MODE_NONE, Config.URL_ENCODE_MODE_ONLY_SPACE, Config.URL_ENCODE_MODE_STANDARD):
+                    sysConfig.setConfigParam(
+                        Config.PARAM_URL_ENCODE_MODE, value)
                 else:
-                    exp = UserException(UserException.CODE_ERROR_INPUT,"输入的值{}不合法，请阅读帮助文档。".format(value))
+                    exp = UserException(
+                        UserException.CODE_ERROR_INPUT, self.globalization.getText("input_error_and_hint").format(value))
                     self.dealUserException(exp)
+            elif key == Config.PARAM_LANGUAGE:
+                if value in (Config.LANGUAGE_CN, Config.LANGUAGE_EN):
+                    sysConfig.setConfigParam(Config.PARAM_LANGUAGE, value)
+                else:
+                    exp = UserException(
+                        UserException.CODE_ERROR_INPUT, self.globalization.getText("input_error_and_hint").format(value))
+                    self.dealUserException(exp)
+            else:
+                pass
         sysConfig.writeMainConfig()
-        print('相关配置已更新')
+        print(self.globalization.getText("related_configs_changed"))
 
     def printSysInfo(self):
         '''打印当前系统相关信息'''
@@ -357,21 +388,38 @@ class Main():
         import pkg_resources
         version = pkg_resources.get_distribution(
             'markdown-img-icexmoon').version
-        print("软件版本：{}".format(version))
+        print("{}{}{}".format(self.globalization.getText(
+            "program_version"), self.globalization.getText("colon"), version))
         try:
+            language = sysConfig.getConfigParam(Config.PARAM_LANGUAGE)
+            languageText = ""
+            if language == Config.LANGUAGE_EN:
+                languageText = "English"
+            elif language == Config.LANGUAGE_CN:
+                languageText = "中文"
+            else:
+                pass
+            print("{}{}{}".format(self.globalization.getText(
+                "working_language"), self.globalization.getText("colon"), languageText))
             imgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
-            print("当前使用的图床：{}".format(imgService))
-            urlEncodeMode = sysConfig.getConfigParam(Config.PARAM_URL_ENCODE_MODE)
+            print("{}{}{}".format(self.globalization.getText(
+                "current_used_image_bed"), self.globalization.getText("colon"), imgService))
+            urlEncodeMode = sysConfig.getConfigParam(
+                Config.PARAM_URL_ENCODE_MODE)
             urlEncodeModeText = ''
             if urlEncodeMode == Config.URL_ENCODE_MODE_NONE:
-                urlEncodeModeText = '不使用'
+                urlEncodeModeText = self.globalization.getText("no_use")
             elif urlEncodeMode == Config.URL_ENCODE_MODE_ONLY_SPACE:
-                urlEncodeModeText = '仅对空格使用'
+                urlEncodeModeText = self.globalization.getText(
+                    "use_only_for_spaces")
             else:
-                urlEncodeModeText = '对非ASCII字符均进行编码'
-            print("是否使用URL ENCODE：{}".format(urlEncodeModeText))
-            print("图床的相关配置信息：")
-            if imgService!= Config.IMG_SERVICE_QCLOUD:
+                urlEncodeModeText = self.globalization.getText(
+                    "encoding_all_non_ascii_characters")
+            print("{}{}{}".format(self.globalization.getText(
+                "whether_to_use_url_encoding"), self.globalization.getText("colon"), urlEncodeModeText))
+            print("{}{}".format(self.globalization.getText(
+                "image_bed_configs"), self.globalization.getText("colon")))
+            if imgService != Config.IMG_SERVICE_QCLOUD:
                 if imgService == Config.IMG_SERVICE_ALI or imgService == Config.IMG_SERVICE_YUJIAN:
                     token = sysConfig.getYujianToken()
                 elif imgService == Config.IMG_SERVICE_ALI2 or imgService == Config.IMG_SERVICE_RRUU:
@@ -380,14 +428,21 @@ class Main():
                     token = sysConfig.getSmmsToken()
                 else:
                     token = ''
-                print("\t访问令牌：{}".format(token))
+                print("\t{}{}{}".format(self.globalization.getText(
+                    "acess_token"), self.globalization.getText("colon"), token))
             else:
-                #显示腾讯云相关配置信息
+                # 显示腾讯云相关配置信息
                 qcloudInfo = sysConfig.getQCloudInfo()
-                print("\t存储桶：{}".format(qcloudInfo[Config.QCLOUD_INFO_BUCKET]))
-                print("\tsecret_id:{}".format(qcloudInfo[Config.QCLOUD_INFO_SECRET_ID]))
-                print("\tsecret_key:{}".format(qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY]))
-                print("\t地域：{}".format(qcloudInfo[Config.QCLOUD_INFO_REGION]))
-                print("\t存储目录：{}".format(qcloudInfo[Config.QCLOUD_INFO_DES_DIR]))
+                print("\t{}{}{}".format(self.globalization.getText("storage_bucket"),
+                      self.globalization.getText("colon"), qcloudInfo[Config.QCLOUD_INFO_BUCKET]))
+                print("\tsecret_id:{}".format(
+                    qcloudInfo[Config.QCLOUD_INFO_SECRET_ID]))
+                print("\tsecret_key:{}".format(
+                    qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY]))
+                print("\t{}{}{}".format(self.globalization.getText(
+                    "region"), self.globalization.getText("colon"), qcloudInfo[Config.QCLOUD_INFO_REGION]))
+                print("\t{}{}{}".format(self.globalization.getText("storage_directory"),
+                                        self.globalization.getText("colon"),
+                                        qcloudInfo[Config.QCLOUD_INFO_DES_DIR]))
         except UserException as e:
             self.dealUserException(e)
