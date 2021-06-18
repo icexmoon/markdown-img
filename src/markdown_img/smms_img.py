@@ -5,12 +5,28 @@ import json
 from concurrent import futures
 import qcloud_cos.cos_exception
 from .qcloud_client import QcloudClient
+from .qiniu_client import QiniuClient
 
 
 class SmmsImg():
     def __init__(self):
         self.sysConfig = Config()
         self.qclient = None
+
+    def uploadToQiniu(self, path: str) -> str:
+        "上传到七牛云"
+        clientInfo = self.sysConfig.getQiniuInfo()
+        client = QiniuClient()
+        dnsDomain = clientInfo[Config.QINIU_INFO_DNS_DOMAIN]
+        accessKey = clientInfo[Config.QINIU_INFO_ACCESS_KEY]
+        secretKey = clientInfo[Config.QINIU_INFO_SECRET_KEY]
+        bucketName = clientInfo[Config.QINIU_INFO_BUCKET_NAME]
+        try:
+            url = client.upload(path, dnsDomain, accessKey, secretKey, bucketName)
+        except UserException as e:
+            self.sysConfig.writeErrorLog(e.getErrorMsg())
+            return False
+        return url
 
     def uploadToQCloud(self, path: str) -> str:
         '''上传到腾讯云'''
@@ -19,7 +35,8 @@ class SmmsImg():
             self.qclient = QcloudClient(clientInfo[Config.QCLOUD_INFO_SECRET_ID], clientInfo[Config.QCLOUD_INFO_SECRET_KEY],
                                         clientInfo[Config.QCLOUD_INFO_REGION], clientInfo[Config.QCLOUD_INFO_BUCKET])
         try:
-            urlEncodeMode = self.sysConfig.getConfigParam(Config.PARAM_URL_ENCODE_MODE)
+            urlEncodeMode = self.sysConfig.getConfigParam(
+                Config.PARAM_URL_ENCODE_MODE)
             url = self.qclient.upload(
                 path, clientInfo[Config.QCLOUD_INFO_DES_DIR], urlEncodeMode)
         except qcloud_cos.cos_exception.CosServiceError as e:
@@ -151,6 +168,8 @@ class SmmsImg():
             webImage = self.uploadToYujian(localImg)
         elif imgService == Config.IMG_SERVICE_QCLOUD:
             webImage = self.uploadToQCloud(localImg)
+        elif imgService == Config.IMG_SERVICE_QINIU:
+            webImage = self.uploadToQiniu(localImg)
         else:
             webImage = self.uploadToSmms(localImg)
         return webImage

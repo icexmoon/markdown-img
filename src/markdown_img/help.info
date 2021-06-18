@@ -12,6 +12,7 @@
     vimcn   Vim-CN图床，访问速度偏慢。
     yujian  遇见图床。
     qcloud  腾讯云对象存储（需要提供必要连接信息）
+    qiniu   七牛云（需要提供必要连接信息）
 -c  --change_token 替换图床访问令牌
     rruu    如优图床。
     smms    sm.ms图床。
@@ -19,6 +20,7 @@
     qcloud  腾讯云对象存储
         支持子选项
         --des_dir 仅更新腾讯云oss上的存储目录
+    qiniu   七牛云对象存储
 -s  --scan 扫描当前目录的图片并生成网络图床索引
 -u  --url_encode 是否使用URL ENCODE对图片url进行编码
     none 不使用

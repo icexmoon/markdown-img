@@ -119,13 +119,14 @@ pip install --upgrade markdown-img-icexmoon
 
 可以切换图床服务，以备某个图床不可用或者访问不稳定。
 
-目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储（推广链接）**](https://curl.qcloud.com/empEScHz)。
+目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储（推广链接）**](https://curl.qcloud.com/empEScHz)、[**七牛云**](https://www.qiniu.com/)。
 
 1. 执行`python -m markdown_img -i ali`
 
 > - 具体的图床标识可以查看帮助文档。
 > - 需要访问令牌的图床服务切换后使用中会提示输入相应的访问令牌。
 > - 使用腾讯云OSS需要一些必要信息，具体请阅读注意事项。
+> - 使用七牛云存储的时候需要提供必要信息，其中DNS绑定域名需要包含协议，比如`http://example.domain.com`
 
 ### 更新图床访问令牌
 
@@ -250,3 +251,7 @@ python -m markdown_img -m refresh
 ### 0.2.8
 
 添加国际化，增加英语作为工作语言。
+
+### 0.2.9
+
+添加七牛云作为新的可选图床。

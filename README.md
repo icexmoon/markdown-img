@@ -116,13 +116,14 @@ If the copy of the image bed is intact, but the local images associated with the
 
 You can switch the image bed service in case a certain image bed is not available or the access is unstable.
 
-Currently supported image beds are [**sm.ms**](https://sm.ms/), Ali, [**RuYu**](https://img.rruu.net/), [**Vim-CN**](https://img.vim-cn.com/), [**meet**](https://www.hualigs.cn/), [**Tencent cloud object storage**](https://curl.qcloud.com/empEScHz) (promotional link).
+Currently supported image beds are [**sm.ms**](https://sm.ms/), Ali, [**RuYu**](https://img.rruu.net/), [**Vim-CN**](https://img.vim-cn.com/), [**meet**](https://www.hualigs.cn/), [**Tencent cloud object storage**](https://curl.qcloud.com/empEScHz) (promotional link),[**Qiniu Cloud**](https://www.qiniu.com/).
 
 - Excute`python -m markdown_img -i ali`
 
 > - You can check the help documentation for the specific image bed logo.
 > - Access tokens are required to switch the bed service and will be prompted to enter the appropriate access token in use.
 > - Some necessary information is required to use Tencent Cloud OSS, please read the notes for details.
+> - You need to provide the necessary information when using Qiniu Cloud Storage, where the DNS binding domain name needs to include the protocol, such as `http://example.domain.com`
 
 ### Update the image bed access token
 
@@ -160,3 +161,7 @@ python -m markdown_img -m refresh
 ### 0.2.8
 
 Add globalization support. add English as a new working language.
+
+### 0.2.9
+
+Add Qiniu Cloud as a new optional image bed.

@@ -9,6 +9,7 @@ class Config():
     PARAM_IMG_SERVICE = 'img_service'
     PARAM_YUJIAN_TOKEN = 'yujian_token'
     PARAM_QCLOUD_INFO = 'qcloud_info'
+    PARAM_QINIU_INFO = "qiniu_info"    
     PARAM_URL_ENCODE_MODE = 'url_encode_mode'
     PARAM_LANGUAGE = 'language'
     LANGUAGE_CN = 'cn'
@@ -21,6 +22,10 @@ class Config():
     QCLOUD_INFO_REGION = 'region'
     QCLOUD_INFO_BUCKET = 'bucket'
     QCLOUD_INFO_DES_DIR = 'des_dir'
+    QINIU_INFO_ACCESS_KEY = "access_key"
+    QINIU_INFO_SECRET_KEY = "secret_key"
+    QINIU_INFO_DNS_DOMAIN = "dns_domain"
+    QINIU_INFO_BUCKET_NAME = "bucket_name"
     IMG_SERVICE_YUJIAN = 'yujian'
     IMG_SERVICE_SMMS = 'smms'
     IMG_SERVICE_RRUU = 'rruu'
@@ -28,6 +33,7 @@ class Config():
     IMG_SERVICE_ALI2 = 'ali2'
     IMG_SERVICE_VIMCN = 'vimcn'
     IMG_SERVICE_QCLOUD = 'qcloud'
+    IMG_SERVICE_QINIU = "qiniu"
     smmsTokenFile = ""
     configFile = ""
     mainConfig = {}
@@ -145,6 +151,13 @@ class Config():
         info = self.getConfigParam(Config.PARAM_QCLOUD_INFO)
         if info == '':
             raise UserException(UserException.CODE_NO_QCLOUD_INFO)
+        return info
+
+    def getQiniuInfo(self):
+        """获取七牛云的详细配置"""
+        info = self.getConfigParam(Config.PARAM_QINIU_INFO)
+        if info == '':
+            raise UserException(UserException.CODE_NO_QINIU_INFO)
         return info
 
     def writeSmmsToken(self, token: str):

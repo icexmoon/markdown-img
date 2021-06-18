@@ -12,6 +12,7 @@
     vimcn   Vim-CN image bed with slow access speed.
     yujian  Meet image bed.
     qcloud  Tencent Cloud Object Storage (required to provide necessary connection information)
+    qiniu   Qiniu Cloud (required to provide necessary connection information)
 -c  --change_token Replace the image bed access token.
     rruu    RuYu image bed.
     smms    sm.ms image bed.
@@ -19,6 +20,7 @@
     qcloud  Tencent Cloud Object Storage
         Support Sub-Options
         --des_dir Update only the storage directory on Tencent Cloudoss
+    qiniu   Qiniu Cloud Object Storage
 -s  --scan Scan images in the current directory and generate a webbed index
 -u  --url_encode Whether to use URL ENCODE to encode the image url
     none No use
