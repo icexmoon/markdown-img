@@ -119,7 +119,7 @@ pip install --upgrade markdown-img-icexmoon
 
 可以切换图床服务，以备某个图床不可用或者访问不稳定。
 
-目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储（推广链接）**](https://curl.qcloud.com/empEScHz)、[**七牛云**](https://www.qiniu.com/)。
+目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储**](https://curl.qcloud.com/empEScHz)（推广链接）、[**七牛云**](https://www.qiniu.com/)、[**又拍云**](https://www.upyun.com/)（计划支持）。
 
 1. 执行`python -m markdown_img -i ali`
 
@@ -158,6 +158,10 @@ python -m markdown_img -m refresh
 ```
 
 > 会扫描当前目录下的原始md文件，如果没有副本，直接创建。如果有副本，但是原始文件比副本"新"，则重新创建副本。
+
+## 致谢
+
+本应用开发者获得了[**又拍云联盟**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral)的帮助和支持，获得了其提供的免费CDN加速和云存储服务，如果您也想获取同样的帮助和支持，可以点击[**这里**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral)加入。
 
 ## 更新日志
 

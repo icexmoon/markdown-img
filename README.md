@@ -156,6 +156,10 @@ python -m markdown_img -m refresh
 
 > Scans the current directory for the original md file, and if there is no copy, creates it directly. If there is a copy, but the original file is "newer" than the copy, the copy is recreated.
 
+## Acknowledgements
+
+The developer of this application has received help and support from [**upyun**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral) for its free CDN acceleration and cloud storage services, if you want to get the same help and support, you can Click [**here**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral) to join.
+
 ## Update Log
 
 ### 0.2.8
