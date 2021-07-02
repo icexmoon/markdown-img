@@ -7,6 +7,7 @@ English | [**简体中文**](https://github.com/icexmoon/markdown-img/blob/maste
 - [**Project Address**](https://github.com/icexmoon/markdown-img#project-address)
 - [**Usage**](https://github.com/icexmoon/markdown-img#usage)
 - [**Notes for details**](https://github.com/icexmoon/markdown-img#notes-for-details)
+- [**Supported image bed services**](https://github.com/icexmoon/markdown-img#supported-image-bed-services)
 - [**Install**](https://github.com/icexmoon/markdown-img#install)
 - [**Update**](https://github.com/icexmoon/markdown-img#update)
 - [**Function**](https://github.com/icexmoon/markdown-img#function)
@@ -19,6 +20,7 @@ English | [**简体中文**](https://github.com/icexmoon/markdown-img/blob/maste
   - [**Update the image bed acess token**](https://github.com/icexmoon/markdown-img#update-the-image-bed-access-token)
   - [**Scan images and create indexes**](https://github.com/icexmoon/markdown-img#scan-images-and-create-indexes)
   - [**Refreshing a copy of the image bed**](https://github.com/icexmoon/markdown-img#refreshing-a-copy-of-the-image-bed)
+- [**Acknowledgements**](https://github.com/icexmoon/markdown-img#acknowledgements)
 - [**Update Log**](https://github.com/icexmoon/markdown-img#update-log)
 
 ## Project Address

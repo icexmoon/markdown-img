@@ -7,6 +7,7 @@
 - [**项目地址**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80)
 - [**用途**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E7%94%A8%E9%80%94)
 - [**注意事项**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+- [**支持的图床服务**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E6%94%AF%E6%8C%81%E7%9A%84%E5%9B%BE%E5%BA%8A%E6%9C%8D%E5%8A%A1)
 - [**安装**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E5%AE%89%E8%A3%85)
 - [**更新**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E6%9B%B4%E6%96%B0)
 - [**功能**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E5%8A%9F%E8%83%BD)
@@ -19,6 +20,7 @@
   - [**更新图床访问令牌**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E6%9B%B4%E6%96%B0%E5%9B%BE%E5%BA%8A%E8%AE%BF%E9%97%AE%E4%BB%A4%E7%89%8C)
   - [**扫描图片并创建索引**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E6%89%AB%E6%8F%8F%E5%9B%BE%E7%89%87%E5%B9%B6%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95)
   - [**刷新图床副本**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E5%88%B7%E6%96%B0%E5%9B%BE%E5%BA%8A%E5%89%AF%E6%9C%AC)
+- [**致谢**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E8%87%B4%E8%B0%A2)
 - [**更新日志**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
 
 ## 项目地址
