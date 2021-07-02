@@ -144,7 +144,7 @@ pip install --upgrade markdown-img-icexmoon
 
 <del>目前支持的图床有[**sm.ms**](https://sm.ms/)、<del>阿里、[**如优**](https://img.rruu.net/)、</del>[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储**](https://curl.qcloud.com/empEScHz)（推广链接）、[**七牛云**](https://www.qiniu.com/)、[**又拍云**](https://www.upyun.com/)（计划支持）。</del>
 
-支持的图床列表见[**支持的图床服务**]()。
+支持的图床列表见[**支持的图床服务**](https://github.com/icexmoon/markdown-img/blob/master/README_cn.md#%E6%94%AF%E6%8C%81%E7%9A%84%E5%9B%BE%E5%BA%8A%E6%9C%8D%E5%8A%A1)。
 
 1. 执行`python -m markdown_img -i ali`
 

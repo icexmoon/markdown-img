@@ -141,7 +141,7 @@ You can switch the image bed service in case a certain image bed is not availabl
 
 <del>Currently supported image beds are [**sm.ms**](https://sm.ms/), Ali, [**RuYu**](https://img.rruu.net/), [**Vim-CN**](https://img.vim-cn.com/), [**meet**](https://www.hualigs.cn/), [**Tencent cloud object storage**](https://curl.qcloud.com/empEScHz) (promotional link),[**Qiniu Cloud**](https://www.qiniu.com/).</del>
 
-For a list of supported image beds, see [**Supported Image Bed Services**]().
+For a list of supported image beds, see [**Supported Image Bed Services**](https://github.com/icexmoon/markdown-img#supported-image-bed-services).
 
 - Excute`python -m markdown_img -i ali`
 
