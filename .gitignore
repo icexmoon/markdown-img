@@ -4,4 +4,4 @@
 /dist/*
 /build/*
 /src/markdown_img_icexmoon.egg-info/*
-/src/markdown_img/__pycache__/*
+__pycache__/

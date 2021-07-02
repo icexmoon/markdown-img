@@ -53,6 +53,29 @@ By the above way, we can realize the automatic batch markdown image processing w
 
 - This program is written in Python, you need to install the Python runtime environment, if you don't know how to install, you can read the [**python environment installation under windows**](https://blog.icexmoon.xyz/?p=101).
 
+##  Supported image bed services
+
+| Image bed name                                            | Flag       | Bed nature | Access token required | Notes                                                        |
+| --------------------------------------------------------- | ---------- | ---------- | --------------------- | ------------------------------------------------------------ |
+| [**sm.ms**](https://sm.ms/)                               | smms       | Public     | Yes                   | Default image bed, foreign old public image bed service provider, trustworthy, the disadvantage of domestic access is unstable. |
+| [**yujian**](https://www.hualigs.cn/)                     | yujian     | Public     | Yes                   | A domestic image bed service, in addition to providing its own image bed service, also supports calling other image bed services through its API. |
+| [**ruyou**](https://img.rruu.net/)                        | rruu       | Public     | Yes                   | As you can see and met with the same set of website code, the site is currently closed, the service is not available. |
+| ali                                                       | ali        | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| [**Vim-CN**](https://img.vim-cn.com/)                     | vimcn      | Public     | No                    | A foreign bed service provider, said to be the same old service provider, the same disadvantage of domestic access is unstable. |
+| [**Tencent Cloud COS**](https://curl.qcloud.com/empEScHz) | qcloud     | Private    | Yes                   | There is nothing to say, several private cloud storage in the most recommended, the disadvantage is that currently only provides a year of free credit, the expiration of the need to renew. |
+| [**Qiniu Cloud**](https://www.qiniu.com/)                 | qiniu      | Private    | Yes                   | Provide permanent free storage quota, the disadvantage is not to provide a domain name for the stored external links, you need to own a domain name and binding operation before you can use it. |
+| bilibili                                                  | bilibili   | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| Sougou                                                    | sougou     | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| Huluxia                                                   | huluxia    | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| Catbox                                                    | catbox     | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| 360                                                       | 360        | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| Tietu                                                     | postimages | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| 58                                                        | ai58       | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| Jitu                                                      | gtimg      | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| Baitu                                                     | bkimg      | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| Muke                                                      | muke       | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
+| [**Upay Cloud**](https://www.upyun.com/)                  | upay       | Private    | Yes                   | Plan access, the advantage is that you can get a free credit by joining another shot cloud affiliate (need to re-audit every year) |
+
 ## Install
 
 ```shell
@@ -116,7 +139,9 @@ If the copy of the image bed is intact, but the local images associated with the
 
 You can switch the image bed service in case a certain image bed is not available or the access is unstable.
 
-Currently supported image beds are [**sm.ms**](https://sm.ms/), Ali, [**RuYu**](https://img.rruu.net/), [**Vim-CN**](https://img.vim-cn.com/), [**meet**](https://www.hualigs.cn/), [**Tencent cloud object storage**](https://curl.qcloud.com/empEScHz) (promotional link),[**Qiniu Cloud**](https://www.qiniu.com/).
+<del>Currently supported image beds are [**sm.ms**](https://sm.ms/), Ali, [**RuYu**](https://img.rruu.net/), [**Vim-CN**](https://img.vim-cn.com/), [**meet**](https://www.hualigs.cn/), [**Tencent cloud object storage**](https://curl.qcloud.com/empEScHz) (promotional link),[**Qiniu Cloud**](https://www.qiniu.com/).</del>
+
+For a list of supported image beds, see [**Supported Image Bed Services**]().
 
 - Excute`python -m markdown_img -i ali`
 
@@ -169,3 +194,9 @@ Add globalization support. add English as a new working language.
 ### 0.2.9
 
 Add Qiniu Cloud as a new optional image bed.
+
+### 0.3.0
+
+- Code refactoring
+- Add bilibili as new image bed
+- Fix some bugs

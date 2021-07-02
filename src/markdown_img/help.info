@@ -4,16 +4,26 @@
     img_recove  使用图床的备份修复本地图片库
     normal      正常模式
     refresh     刷新（如果有生成过副本的md文件更新过，会重新生成md副本文件）
--i  --img_service 选择图床服务商
+-i  --img_service 选择图床服务商，更多的图床服务说明见 https://github.com/icexmoon/markdown-img/blob/master/README_cn.md
     smms    sm.ms图床，默认图床服务，稳定性好，访问速度一般。
     ali     阿里图床（遇见线路），访问速度快（非正常提供服务，稳定性不保证）。
-    ali2    阿里图床（如优线路）。
     rruu    如优图床。
     vimcn   Vim-CN图床，访问速度偏慢。
     yujian  遇见图床。
     qcloud  腾讯云对象存储（需要提供必要连接信息）
     qiniu   七牛云（需要提供必要连接信息）
+    bilibili
+    sougou
+    huluxia
+    catbox
+    360
+    postimages
+    ai58
+    gtimg
+    bkimg
+    muke
 -c  --change_token 替换图床访问令牌
+    this    当前图床
     rruu    如优图床。
     smms    sm.ms图床。
     yujian  遇见图床。

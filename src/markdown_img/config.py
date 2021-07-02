@@ -1,4 +1,5 @@
 import os
+from typing import Any
 from .user_exception import UserException
 import json
 
@@ -9,7 +10,7 @@ class Config():
     PARAM_IMG_SERVICE = 'img_service'
     PARAM_YUJIAN_TOKEN = 'yujian_token'
     PARAM_QCLOUD_INFO = 'qcloud_info'
-    PARAM_QINIU_INFO = "qiniu_info"    
+    PARAM_QINIU_INFO = "qiniu_info"
     PARAM_URL_ENCODE_MODE = 'url_encode_mode'
     PARAM_LANGUAGE = 'language'
     LANGUAGE_CN = 'cn'
@@ -34,12 +35,35 @@ class Config():
     IMG_SERVICE_VIMCN = 'vimcn'
     IMG_SERVICE_QCLOUD = 'qcloud'
     IMG_SERVICE_QINIU = "qiniu"
+    IMG_SERVICE_BILIBILI = 'bilibili'
+    IMG_SERVICE_SOUGOU = "sougou"
+    IMG_SERVICE_HULUXIA = "huluxia"
+    IMG_SERVICE_CATBOX = "catbox"
+    IMG_SERVICE_360 = "360"
+    IMG_SERVICE_POSTIMAGES = "postimages"
+    IMG_SERVICE_AI58 = "ai58"
+    IMG_SERVICE_GTIMG = "gtimg"
+    IMG_SERVICE_BKIMG = "bkimg"
+    IMG_SERVICE_MUKE = "muke"
     smmsTokenFile = ""
     configFile = ""
     mainConfig = {}
 
+    def __new__(cls) -> Any:
+        if not hasattr(cls, "__instance"):
+            setattr(cls, "__instance", super().__new__(cls))
+        return getattr(cls, "__instance")
+
     def __init__(self):
         pass
+
+    @classmethod
+    def getInstance(cls) -> "Config":
+        "获取Config的实例"
+        # if not cls.__instance:
+        if not hasattr(cls, "__instance"):
+            setattr(cls, "__instance", cls())
+        return getattr(cls, "__instance")
 
     def getCurrentDirPath(self):
         part = __file__.rpartition('\\')

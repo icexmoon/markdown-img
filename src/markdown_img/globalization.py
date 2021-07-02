@@ -1,3 +1,4 @@
+from typing import Any
 from .config import Config
 
 
@@ -124,15 +125,21 @@ class Globalization:
               "qiniu_bucket_name": "Qiniu Cloud Storage name",
               }
 
+    def __new__(cls) -> Any:
+        if not hasattr(cls, "__instance"):
+            setattr(cls, "__instance", super().__new__(cls))
+        return getattr(cls, "__instance")
+
     def __init__(self) -> None:
-        sysConfig = Config()
-        self.language = sysConfig.getConfigParam(Config.PARAM_LANGUAGE)
+        pass
 
     def getText(self, textKey: str) -> str:
         languageDict: dict
-        if self.language == Config.LANGUAGE_CN:
+        sysConfig = Config()
+        language = sysConfig.getConfigParam(Config.PARAM_LANGUAGE)
+        if language == Config.LANGUAGE_CN:
             languageDict = self.__class__.textCN
-        elif self.language == Config.LANGUAGE_EN:
+        elif language == Config.LANGUAGE_EN:
             languageDict = self.__class__.textEN
         else:
             languageDict = self.__class__.textCN

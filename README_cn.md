@@ -55,6 +55,29 @@
 
 - 本程序使用Python编写，需要安装Python运行环境，如果不知道如何安装，可以阅读[**windows下的python环境安装**](https://blog.icexmoon.xyz/?p=101)。
 
+## 支持的图床服务
+
+| 图床名称                                          | 标识       | 图床性质 | 需要访问令牌 | 备注                                                         |
+| ------------------------------------------------- | ---------- | -------- | ------------ | ------------------------------------------------------------ |
+| [**sm.ms**](https://sm.ms/)                       | smms       | 公共     | 是           | 默认图床，国外的老牌公共图床服务商，值得信赖，缺点为国内访问不稳定。 |
+| [**遇见**](https://www.hualigs.cn/)               | yujian     | 公共     | 是           | 国内的一家图床服务，除了自身提供图床服务，还支持通过其API调用其他图床服务。 |
+| [**如优**](https://img.rruu.net/)                 | rruu       | 公共     | 是           | 可以看出和遇见用的是同一套网站代码，目前网站已关闭，服务不可用。 |
+| 阿里图床                                          | ali        | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| [**Vim-CN**](https://img.vim-cn.com/)             | vimcn      | 公共     | 否           | 国外的一家图床服务商，据说同样是老牌服务商，缺点同样是国内访问不稳定。 |
+| [**腾讯云COS**](https://curl.qcloud.com/empEScHz) | qcloud     | 私有     | 是           | 没啥好说的，几家私有云存储里最推荐的，缺点是目前只提供一年的免费额度，到期需要续费。 |
+| [**七牛云**](https://www.qiniu.com/)              | qiniu      | 私有     | 是           | 提供永久的免费存储额度，缺点是不给存储的外链提供域名，需要自己拥有一个域名并进行绑定操作后才可以使用。 |
+| bilibili                                          | bilibili   | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 搜狗                                              | sougou     | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 葫芦侠                                            | huluxia    | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 猫盒                                              | catbox     | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 360                                               | 360        | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 贴图                                              | postimages | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 58                                                | ai58       | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 极图                                              | gtimg      | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 佰图                                              | bkimg      | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| 慕课                                              | muke       | 公共     | 是           | 非正常服务，用遇见图床的API实现支持，谨慎使用。              |
+| [**又拍云**](https://www.upyun.com/)              | upay       | 私有     | 是           | 计划接入，优点是可以通过加入又拍云联盟获取免费额度（每年需要重新审核） |
+
 ## 安装
 
 ```shell
@@ -119,7 +142,9 @@ pip install --upgrade markdown-img-icexmoon
 
 可以切换图床服务，以备某个图床不可用或者访问不稳定。
 
-目前支持的图床有[**sm.ms**](https://sm.ms/)、阿里、[**如优**](https://img.rruu.net/)、[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储**](https://curl.qcloud.com/empEScHz)（推广链接）、[**七牛云**](https://www.qiniu.com/)、[**又拍云**](https://www.upyun.com/)（计划支持）。
+<del>目前支持的图床有[**sm.ms**](https://sm.ms/)、<del>阿里、[**如优**](https://img.rruu.net/)、</del>[**Vim-CN**](https://img.vim-cn.com/)、[**遇见**](https://www.hualigs.cn/)，[**腾讯云对象存储**](https://curl.qcloud.com/empEScHz)（推广链接）、[**七牛云**](https://www.qiniu.com/)、[**又拍云**](https://www.upyun.com/)（计划支持）。</del>
+
+支持的图床列表见[**支持的图床服务**]()。
 
 1. 执行`python -m markdown_img -i ali`
 
@@ -259,3 +284,9 @@ python -m markdown_img -m refresh
 ### 0.2.9
 
 添加七牛云作为新的可选图床。
+
+### 0.3.0
+
+- 代码重构
+- 添加bilibili作为新图床
+- 修复部分bug

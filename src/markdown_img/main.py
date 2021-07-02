@@ -1,4 +1,4 @@
-from qiniu import config
+from .img_service.img_service import ImgService
 from .globalization import Globalization
 from .config import Config
 import os
@@ -6,11 +6,11 @@ from .smms_img import SmmsImg
 from .user_exception import UserException
 from .download_help import DownloadHelp
 from .time_helper import TimeHelper
+from .img_service_manager import ImgServiceManager
 import re
 
 
 class Main():
-
     def __init__(self):
         self.globalization: Globalization = Globalization()
 
@@ -132,17 +132,9 @@ class Main():
     def dealUserException(self, userExp: UserException):
         sysConfig = Config()
         if userExp.getErrorCode() == UserException.CODE_NO_SMMS_TOKEN:
-            token = input("{}{}".format(self.globalization.getText(
-                "missing_smms_token", self.globalization.getText("colon"))))
-            sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
-            sysConfig.writeMainConfig()
-            print(self.globalization.getText("token_has_saved"))
+            ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_NO_RRUU_TOKEN:
-            token = input("{}{}".format(self.globalization.getText("missing_ruyu_token"),
-                                        self.globalization("colon")))
-            sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
-            sysConfig.writeMainConfig()
-            print(self.globalization.getText("token_has_saved"))
+            ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
             currentImgService = sysConfig.getConfigParam(
                 Config.PARAM_IMG_SERVICE)
@@ -151,46 +143,15 @@ class Main():
         elif userExp.getErrorCode() == UserException.CODE_TIMEOUT:
             print(userExp.getErrorMsg())
         elif userExp.getErrorCode() == UserException.CODE_NO_YUJIAN_TOKEN:
-            token = input("{}{}".format(self.globalization.getText("missing_meet_token"),
-                                        self.globalization.getText("colon")))
-            sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
-            sysConfig.writeMainConfig()
-            print(self.globalization.getText("token_has_saved"))
+            ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_NO_QCLOUD_INFO:
-            qcloudInfo = {}
-            print("{}{}".format(self.globalization("missing_tencent_oss_info"),
-                                self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("{}{}".format(self.globalization.getText("secret_id_input"),
-                                                                           self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY] = input(
-                "{}{}".format(self.globalization.getText("secret_key_input"),
-                              self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("{}{}".format(self.globalization.getText("region_input"),
-                                                                        self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("{}{}".format(
-                self.globalization.getText("bucket_input"), self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("{}{}".format(self.globalization.getText("storage_dir_input"),
-                                                                         self.globalization.getText("colon")))
-            sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qcloudInfo)
-            sysConfig.writeMainConfig()
-            print(self.globalization.getText("tencent_oss_info_saved"))
+            ImgServiceManager.getImgService().inputConfig()
+        elif userExp.getErrorCode() == UserException.CODE_NO_IMG_SERVICE_CONFIG:
+            ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_ERROR_INPUT:
             print(userExp.getErrorMsg())
         elif userExp.getErrorCode() == UserException.CODE_NO_QINIU_INFO:
-            qiniuInfo = {}
-            print("{}{}".format(self.globalization.getText("qiniu_info_required"),
-                                self.globalization.getText("colon")))
-            qiniuInfo[Config.QINIU_INFO_ACCESS_KEY] = input("{}{}".format(self.globalization.getText("qiniu_access_key_input"),
-                                                                          self.globalization.getText("colon")))
-            qiniuInfo[Config.QINIU_INFO_SECRET_KEY] = input("{}{}".format(self.globalization.getText("qiniu_secret_key_input"),
-                                                                          self.globalization.getText("colon")))
-            qiniuInfo[Config.QINIU_INFO_DNS_DOMAIN] = input("{}{}".format(self.globalization.getText("qiniu_dns_domain_input"),
-                                                                          self.globalization.getText("colon")))
-            qiniuInfo[Config.QINIU_INFO_BUCKET_NAME] = input("{}{}".format(self.globalization.getText("qiniu_bucket_name_input"),
-                                                                           self.globalization.getText("colon")))
-            sysConfig.setConfigParam(Config.PARAM_QINIU_INFO, qiniuInfo)
-            sysConfig.writeMainConfig()
-            print(self.globalization.getText("qiniu_info_saved"))
+            ImgServiceManager.getImgService().inputConfig()
         else:
             print(self.globalization.getText("undefined_error_info"))
         exit()
@@ -266,85 +227,27 @@ class Main():
             return False
 
     def changeImgService(self, selectedService):
-        supportedService = {'smms', 'ali', 'rruu',
-                            'vimcn', 'yujian', 'ali2', 'qcloud', 'qiniu'}
-        if selectedService not in supportedService:
+        if not ImgServiceManager.isValidImgServiceFlag(selectedService):
             print(self.globalization.getText(
                 "not_support_img_service"), selectedService)
             return False
         sysConfig = Config()
-        if selectedService == 'rruu':
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_RRUU)
-        elif selectedService == 'ali':
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_ALI)
-        elif selectedService == 'ali2':
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_ALI2)
-        elif selectedService == 'vimcn':
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_VIMCN)
-        elif selectedService == 'yujian':
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_YUJIAN)
-        elif selectedService == 'qcloud':
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_QCLOUD)
-        elif selectedService == 'qiniu':
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_QINIU)
-        else:
-            sysConfig.setConfigParam(
-                Config.PARAM_IMG_SERVICE, Config.IMG_SERVICE_SMMS)
+        sysConfig.setConfigParam(Config.PARAM_IMG_SERVICE, selectedService)
         sysConfig.writeMainConfig()
+        ImgServiceManager.updateImgService()
         print(self.globalization.getText("image_bed_changed"))
         return True
 
     def changeToken(self, imgService):
-        tokenImgServices = {'rruu', 'smms', 'yujian', 'qcloud', 'qiniu'}
-        if imgService not in tokenImgServices:
+        if imgService != "this" and (not ImgServiceManager.isValidImgServiceFlag(imgService)):
             print(self.globalization.getText("invalid_image_bed"), imgService)
             return False
-        sysConfig = Config()
-        if imgService == 'qcloud':
-            qcloudInfo = {}
-            qcloudInfo[Config.QCLOUD_INFO_SECRET_ID] = input("{}{}".format(self.globalization.getText("new_secret_id_input"),
-                                                                           self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY] = input(
-                "{}{}".format(self.globalization.getText("new_secret_key_input"),
-                              self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_REGION] = input("{}{}".format(self.globalization.getText("new_region_input"),
-                                                                        self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_BUCKET] = input("{}{}".format(self.globalization.getText("new_bucket_input"),
-                                                                        self.globalization.getText("colon")))
-            qcloudInfo[Config.QCLOUD_INFO_DES_DIR] = input("{}{}".format(self.globalization.getText("new_storage_dir_input"),
-                                                                         self.globalization.getText("colon")))
-            sysConfig.setConfigParam(Config.PARAM_QCLOUD_INFO, qcloudInfo)
-        elif imgService == 'qiniu':
-            qiniuInfo = {}
-            qiniuInfo[Config.QINIU_INFO_ACCESS_KEY] = input("{}{}".format(self.globalization.getText(
-                "qiniu_new_access_key_input"), self.globalization.getText("colon")))
-            qiniuInfo[Config.QINIU_INFO_SECRET_KEY] = input("{}{}".format(self.globalization.getText(
-                "qiniu_new_secret_key_input"), self.globalization.getText("colon")))
-            qiniuInfo[Config.QINIU_INFO_DNS_DOMAIN] = input("{}{}".format(self.globalization.getText(
-                "qiniu_new_dns_domain_input"), self.globalization.getText("colon")))
-            qiniuInfo[Config.QINIU_INFO_BUCKET_NAME] = input("{}{}".format(self.globalization.getText(
-                "qiniu_new_bucket_name_input"), self.globalization.getText("colon")))
-            sysConfig.setConfigParam(Config.PARAM_QINIU_INFO, qiniuInfo)
+        service: ImgService
+        if imgService == 'this':
+            service = ImgServiceManager.getImgService()
         else:
-            token = input("{}{}".format(self.globalization.getText("new_token_input"),
-                                        self.globalization.getText("colon")))
-            if imgService == 'rruu':
-                sysConfig.setConfigParam(Config.PARAM_RRUU_TOKEN, token)
-            elif imgService == 'smms':
-                sysConfig.setConfigParam(Config.PARAM_SMMS_TOKEN, token)
-            elif imgService == 'yujian':
-                sysConfig.setConfigParam(Config.PARAM_YUJIAN_TOKEN, token)
-            else:
-                pass
-        sysConfig.writeMainConfig()
-        print(self.globalization.getText("token_changed_successfully"))
+            service = ImgServiceManager.getImgServiceByFlag(imgService)
+        service.inputNewConfig()
         return True
 
     def scanAndCreateIndex(self):
@@ -449,41 +352,6 @@ class Main():
                 "whether_to_use_url_encoding"), self.globalization.getText("colon"), urlEncodeModeText))
             print("{}{}".format(self.globalization.getText(
                 "image_bed_configs"), self.globalization.getText("colon")))
-            if imgService == Config.IMG_SERVICE_QCLOUD:
-                # 显示腾讯云相关配置信息
-                qcloudInfo = sysConfig.getQCloudInfo()
-                print("\t{}{}{}".format(self.globalization.getText("storage_bucket"),
-                      self.globalization.getText("colon"), qcloudInfo[Config.QCLOUD_INFO_BUCKET]))
-                print("\tsecret_id:{}".format(
-                    qcloudInfo[Config.QCLOUD_INFO_SECRET_ID]))
-                print("\tsecret_key:{}".format(
-                    qcloudInfo[Config.QCLOUD_INFO_SECRET_KEY]))
-                print("\t{}{}{}".format(self.globalization.getText(
-                    "region"), self.globalization.getText("colon"), qcloudInfo[Config.QCLOUD_INFO_REGION]))
-                print("\t{}{}{}".format(self.globalization.getText("storage_directory"),
-                                        self.globalization.getText("colon"),
-                                        qcloudInfo[Config.QCLOUD_INFO_DES_DIR]))
-            elif imgService == Config.IMG_SERVICE_QINIU:
-                # 显示七牛云相关配置信息
-                qiniuInfo = sysConfig.getQiniuInfo()
-                print("\t{}{}{}".format(self.globalization.getText("qiniu_access_key"),
-                      self.globalization.getText("colon"), qiniuInfo[Config.QINIU_INFO_ACCESS_KEY]))
-                print("\t{}{}{}".format(self.globalization.getText("qiniu_secret_key"),
-                      self.globalization.getText("colon"), qiniuInfo[Config.QINIU_INFO_SECRET_KEY]))
-                print("\t{}{}{}".format(self.globalization.getText("qiniu_dns_domain"),
-                      self.globalization.getText("colon"), qiniuInfo[Config.QINIU_INFO_DNS_DOMAIN]))
-                print("\t{}{}{}".format(self.globalization.getText("qiniu_bucket_name"),
-                      self.globalization.getText("colon"), qiniuInfo[Config.QINIU_INFO_BUCKET_NAME]))
-            else:
-                if imgService == Config.IMG_SERVICE_ALI or imgService == Config.IMG_SERVICE_YUJIAN:
-                    token = sysConfig.getYujianToken()
-                elif imgService == Config.IMG_SERVICE_ALI2 or imgService == Config.IMG_SERVICE_RRUU:
-                    token = sysConfig.getRruuToken()
-                elif imgService == Config.IMG_SERVICE_SMMS:
-                    token = sysConfig.getSmmsToken()
-                else:
-                    token = ''
-                print("\t{}{}{}".format(self.globalization.getText(
-                    "acess_token"), self.globalization.getText("colon"), token))
+            ImgServiceManager.getImgService().printConfigInfo()
         except UserException as e:
             self.dealUserException(e)
