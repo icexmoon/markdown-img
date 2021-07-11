@@ -76,7 +76,7 @@ By the above way, we can realize the automatic batch markdown image processing w
 | Jitu                                                      | gtimg      | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
 | Baitu                                                     | bkimg      | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
 | Muke                                                      | muke       | Public     | Yes                   | Unusual service, supported by the API implementation of yujian image bed, used with caution. |
-| [**Upay Cloud**](https://www.upyun.com/)                  | upay       | Private    | Yes                   | Plan access, the advantage is that you can get a free credit by joining another shot cloud affiliate (need to re-audit every year) |
+| [**Upay Cloud**](https://www.upyun.com/)                  | upyun      | Private    | Yes                   | Provide vouchers, the disadvantage is not to provide a domain name for the stored external links, you need to own a domain name and binding operation before you can use it. In addition, white whoring vouchers need to join the [**Alliance**](https://www.upyun.com/league), and once a year audit. |
 
 ## Install
 
@@ -202,3 +202,7 @@ Add Qiniu Cloud as a new optional image bed.
 - Code refactoring
 - Add bilibili as new image bed
 - Fix some bugs
+
+### 0.3.1
+
+Add UPYun Cloud as a new optional image bed.

@@ -63,6 +63,23 @@ class Globalization:
               "qiniu_secret_key": "七牛云存储secret_key",
               "qiniu_dns_domain": "七牛云DNS绑定的域名",
               "qiniu_bucket_name": "七牛云存储的名称",
+              "config_info_saved": "配置信息已保存",
+              "upyun_info_required": "缺少又拍云的相关配置，请按提示输入",
+              "upyun_service_input": "请输入又拍云服务名称",
+              "upyun_username_input": "请输入又拍云用户名",
+              "upyun_password_input": "请输入又拍云密码",
+              "upyun_domain_input": "请输入又拍云绑定域名",
+              "upyun_dir_input": "请输入又拍云保存目录",
+              "upyun_new_service_input": "请输入新的又拍云服务名称",
+              "upyun_new_username_input": "请输入新的又拍云用户名",
+              "upyun_new_password_input": "请输入新的又拍云密码",
+              "upyun_new_domain_input": "请输入新的又拍云绑定域名",
+              "upyun_new_dir_input": "请输入新的又拍云保存目录",
+              "upyun_service": "又拍云服务名称",
+              "upyun_username": "又拍云用户名",
+              "upyun_password": "又拍云密码",
+              "upyun_domain": "又拍云绑定域名",
+              "upyun_dir": "又拍云存储目录",
               }
     textEN = {"program_version": "program version",
               "colon": ":",
@@ -123,6 +140,23 @@ class Globalization:
               "qiniu_secret_key": "Qiniu Cloud Storage secret_key",
               "qiniu_dns_domain": "The domain of Qiniu Cloud DNS bunding",
               "qiniu_bucket_name": "Qiniu Cloud Storage name",
+              "config_info_saved": "Configuration information is saved",
+              "upyun_info_required": "Missing UPYun Cloud configuration, please follow the instructions to enter",
+              "upyun_service_input": "Please enter the UPYun Cloud service name",
+              "upyun_username_input": "Please enter your UPYun Cloud username",
+              "upyun_password_input": "Please enter your UPYun Cloud password",
+              "upyun_domain_input": "Please enter your UPYun Cloud bind domain",
+              "upyun_dir_input": "Please enter your UPYun Cloud saved dir",
+              "upyun_new_service_input": "Please enter your new UPYun Cloud service name",
+              "upyun_new_username_input": "Please enter your new UPYun Cloud username",
+              "upyun_new_password_input": "Please enter your new UPYun Cloud password",
+              "upyun_new_domain_input": "Please enter your new UPYun Cloud bind domain",
+              "upyun_new_dir_input": "Please enter your new UPYun Cloud saved dir",
+              "upyun_service": "UPYun Cloud service name",
+              "upyun_username": "UPYun Cloud username",
+              "upyun_password": "UPYun Cloud password",
+              "upyun_domain": "UPYun Cloud bind domain",
+              "upyun_dir": "UPYun Cloud saved dir",
               }
 
     def __new__(cls) -> Any:
@@ -153,3 +187,9 @@ class Globalization:
             else:
                 text = textKey
         return text
+
+    def getTextWithColon(self, textKey: str) -> str:
+        return "{}{}".format(self.getText(textKey), self.getText("colon"))
+
+    def getTextWithParam(self, textKey: str, param: str) -> str:
+        return "{}{}{}".format(self.getText(textKey), self.getText("colon"), param)

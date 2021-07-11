@@ -12,6 +12,7 @@
     yujian  Meet image bed.
     qcloud  Tencent Cloud Object Storage (required to provide necessary connection information)
     qiniu   Qiniu Cloud (required to provide necessary connection information)
+    upyun   UPYun Cloud (required to provide necessary connection information)
     bilibili
     sougou
     huluxia

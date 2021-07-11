@@ -12,6 +12,7 @@
     yujian  遇见图床。
     qcloud  腾讯云对象存储（需要提供必要连接信息）
     qiniu   七牛云（需要提供必要连接信息）
+    upyun   又拍云（需要提供必要连接信息）
     bilibili
     sougou
     huluxia

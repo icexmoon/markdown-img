@@ -8,12 +8,6 @@ class SmmsImg():
     def __init__(self):
         self.sysConfig = Config.getInstance()
 
-
-
-
-
-
-
     def multiUploadImage(self, images: list, results: dict):
         '''批量上传图片'''
         MAX_SAME_TIME_DEAL = 10

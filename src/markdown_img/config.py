@@ -11,6 +11,7 @@ class Config():
     PARAM_YUJIAN_TOKEN = 'yujian_token'
     PARAM_QCLOUD_INFO = 'qcloud_info'
     PARAM_QINIU_INFO = "qiniu_info"
+    PARAM_UPYUN_INFO = "upyun_info"
     PARAM_URL_ENCODE_MODE = 'url_encode_mode'
     PARAM_LANGUAGE = 'language'
     LANGUAGE_CN = 'cn'
@@ -27,6 +28,11 @@ class Config():
     QINIU_INFO_SECRET_KEY = "secret_key"
     QINIU_INFO_DNS_DOMAIN = "dns_domain"
     QINIU_INFO_BUCKET_NAME = "bucket_name"
+    UPYUN_INFO_SERVICE = "service"
+    UPYUN_INFO_USERNAME = "username"
+    UPYUN_INFO_PASSWORD = "password"
+    UPYUN_INFO_DIR = "dir"
+    UPYUN_INFO_DOMAIN = "domain"
     IMG_SERVICE_YUJIAN = 'yujian'
     IMG_SERVICE_SMMS = 'smms'
     IMG_SERVICE_RRUU = 'rruu'
@@ -45,6 +51,7 @@ class Config():
     IMG_SERVICE_GTIMG = "gtimg"
     IMG_SERVICE_BKIMG = "bkimg"
     IMG_SERVICE_MUKE = "muke"
+    IMG_SERVICE_UPYUN = "upyun"
     smmsTokenFile = ""
     configFile = ""
     mainConfig = {}
