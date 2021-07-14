@@ -10,6 +10,7 @@ class UserException (Exception):
     CODE_ERROR_INPUT = 8
     CODE_NO_QINIU_INFO = 9
     CODE_NO_IMG_SERVICE_CONFIG = 10
+    CODE_NO_COMPRESS_SERVICE_CONFIG = 11
     def __init__(self, errorCode: int, errorMsg: str = ""):
         self.errorCode = errorCode
         self.errorMsg = errorMsg

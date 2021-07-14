@@ -116,6 +116,12 @@ Enabling this feature will compress images over a certain size and then upload t
 
 - Execute `pymdimg --compress` to set the relevant configuration and then turn it on.
 
+### Switching image compression engines
+
+GIL and tinyPNG are currently supported, the former for local compression using a third-party Gillow package, and the latter for online compression using the online service tinyPNG.com, the latter is recommended because the latter is lossless compression, but the latter requires registration to generate an access token first, and free users have the number of calls: 500 per month.
+
+Execute `pymdimg -e tinyPNG` to switch.
+
 ### Generate a markdown copy of the image bed
 
 The main function of this program, will scan the markdown file in the command line working directory, will replace the local image in it with a bed image and then generate a copy of the bed, the generated copy will be stored in the `markdown_img` folder in the working directory.
@@ -212,3 +218,11 @@ Add Qiniu Cloud as a new optional image bed.
 ### 0.3.1
 
 Add UPYun Cloud as a new optional image bed.
+
+### 0.3.2
+
+Add image compression feature.
+
+### 0.3.3
+
+Add TinyPNG as a new image compression engine.

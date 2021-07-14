@@ -8,6 +8,7 @@ from .download_help import DownloadHelp
 from .time_helper import TimeHelper
 from .img_service_manager import ImgServiceManager
 import re
+from .compress.compress_manager import CompressManager
 
 
 class Main():
@@ -152,6 +153,8 @@ class Main():
             print(userExp.getErrorMsg())
         elif userExp.getErrorCode() == UserException.CODE_NO_QINIU_INFO:
             ImgServiceManager.getImgService().inputConfig()
+        elif userExp.getErrorCode() == UserException.CODE_NO_COMPRESS_SERVICE_CONFIG:
+            CompressManager.getCompressService().inputConfig()
         else:
             print(self.globalization.getText("undefined_error_info"))
         exit()
@@ -317,6 +320,13 @@ class Main():
                     exp = UserException(
                         UserException.CODE_ERROR_INPUT, self.globalization.getText("input_error_and_hint").format(value))
                     self.dealUserException(exp)
+            elif key == Config.PARAM_COMPRESS_ENGINE:
+                if value in (Config.COMPRESS_ENGINE_GIL, Config.COMPRESS_ENGINE_TIYPNG):
+                    sysConfig.setConfigParam(
+                        Config.PARAM_COMPRESS_ENGINE, value)
+                else:
+                    exp = UserException(UserException.CODE_ERROR_INPUT, self.globalization.getText(
+                        "input_error_and_hint"))
             else:
                 pass
         sysConfig.writeMainConfig()
@@ -360,11 +370,9 @@ class Main():
             print("{}{}{}".format(self.globalization.getText(
                 "whether_to_use_url_encoding"), self.globalization.getText("colon"), urlEncodeModeText))
             # 输出图片压缩相关设置
-            compressInfo = sysConfig.getCompressInfo()
-            print(self.globalization.getTextWithParam(
-                "compress_status", compressInfo[Config.COMPRESS_INFO_STATUS]))
-            print(self.globalization.getTextWithParam(
-                "compress_limit", compressInfo[Config.COMPRESS_INFO_LIMIT]))
+            lines = CompressManager.getCompressService().getCompressInfoLInes()
+            for line in lines:
+                print(line)
             print("{}{}".format(self.globalization.getText(
                 "image_bed_configs"), self.globalization.getText("colon")))
             ImgServiceManager.getImgService().printConfigInfo()
@@ -372,14 +380,5 @@ class Main():
             self.dealUserException(e)
 
     def inputCompressInfo(self):
-        print(self.globalization.getTextWithColon("compress_info_input_tips"))
-        info = {}
-        info[Config.COMPRESS_INFO_STATUS] = input(
-            self.globalization.getTextWithColon("compress_status_input"))
-        info[Config.COMPRESS_INFO_LIMIT] = input(
-            self.globalization.getTextWithColon("compress_limit_input"))
-        sysConfig = Config.getInstance()
-        sysConfig.setConfigParam(Config.PARAM_COMPRESS, info)
-        sysConfig.writeMainConfig()
-        print(self.globalization.getText("config_info_saved"))
+        CompressManager.getCompressService().inputConfig()
         return

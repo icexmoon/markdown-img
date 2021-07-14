@@ -85,6 +85,10 @@ class Globalization:
               "compress_limit_input": "请输入压缩功能启用门槛(1-10000)，单位kb",
               "compress_status": "图片压缩状态",
               "compress_limit": "开启压缩的最小图片尺寸（kb）",
+              "tinypng_key_input": "请输入tinyPNG的key",
+              "compress_engine": "请输入图片压缩引擎",
+              "compress_engine_text":"图像压缩引擎",
+              "tinypng_key":"tinyPNG key",
               }
     textEN = {"program_version": "program version",
               "colon": ":",
@@ -167,6 +171,10 @@ class Globalization:
               "compress_limit_input": "Please enter compress used limit(1-10000): unit kb",
               "compress_status": "Image compress status",
               "compress_limit": "Minimum image size with compression turned on(kb)",
+              "tinypng_key_input": "Please enter the tinyPNG's key",
+              "compress_engine": "Please enter the image compression engine",
+              "compress_engine_text":"Image compress engine",
+              "tinypng_key":"tinyPNG key",
               }
 
     def __new__(cls) -> Any:

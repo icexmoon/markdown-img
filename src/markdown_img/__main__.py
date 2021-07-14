@@ -13,8 +13,8 @@ def getOptionVal(options, key):
 
 def main():
     try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hvi:c:su:l:', [
-            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan', 'des_dir=', 'url_encode=', 'language=', 'compress', 'debug='])
+        opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hvi:c:su:l:e:', [
+            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan', 'des_dir=', 'url_encode=', 'language=', 'compress', 'debug=', 'engine='])
     except getopt.GetoptError as e:
         print("获取参数信息出错，错误提示：", e.msg)
         exit()
@@ -60,6 +60,9 @@ def main():
                 mainProcess.inputCompressInfo()
             elif argKey == '--debug':
                 params = {'debug': argVal}
+                mainProcess.changeMainPrams(params)
+            elif argKey == '--engine' or argKey == '-e':
+                params = {"compress_engine": argVal}
                 mainProcess.changeMainPrams(params)
             else:
                 mainProcess.main()

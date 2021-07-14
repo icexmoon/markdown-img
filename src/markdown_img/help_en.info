@@ -36,3 +36,6 @@
 --debug whether start debug mode
     on  start
     off`close
+--e --engine toggles the image compression engine
+    GIL         uses the gillow package for local compression, lossy compression, default compression engine
+    tinyPNG     uses tinyPNG.com service for online compression, lossless compression, requires registration for access token, free users can make up to 500 calls per month

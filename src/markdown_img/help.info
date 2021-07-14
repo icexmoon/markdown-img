@@ -35,3 +35,6 @@
 --debug 是否开启debug模式
     on  开启
     off 关闭
+-e  --engine    切换图片压缩引擎
+    GIL     使用gillow包在本地压缩，有损压缩，默认压缩引擎
+    tinyPNG 使用tinyPNG.com服务进行在线压缩，无损压缩，需要先注册以获取访问令牌，免费用户每月最多500次调用

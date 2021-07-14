@@ -118,6 +118,12 @@ pip install --upgrade markdown-img-icexmoon
 
 - 执行`pymdimg --compress`设置相关配置后进行开启。
 
+### 切换图片压缩引擎
+
+目前支持GIL和tinyPNG，前者为使用第三方Gillow包实现本地压缩，后者为使用在线服务tinyPNG.com进行在线压缩，推荐后者，因为后者为无损压缩，但后者需要先注册以生成访问令牌，并且免费用户有调用次数：500次/每月。
+
+执行`pymdimg -e tinyPNG`进行切换。
+
 ### 生成图床markdown副本
 
 本程序的主要功能，将扫描命令行工作目录下的markdown文件，会将其中的本地图片替换为图床图片后生成一个图床副本，生成的副本会存储在工作目录下的`markdown_img`文件夹中。
@@ -307,3 +313,7 @@ python -m markdown_img -m refresh
 
 - 添加图片压缩功能
 - 添加debug模式
+
+### 0.3.3
+
+添加TinyPNG作为新的压缩引擎

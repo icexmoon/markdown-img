@@ -17,6 +17,7 @@ class Config():
     PARAM_LANGUAGE = 'language'
     PARAM_COMPRESS = "compress"
     PARAM_DEBUG = "debug"
+    PARAM_COMPRESS_ENGINE = "compress_engine"
     DEBUG_ON = "on"
     DEBUG_OFF = "off"
     LANGUAGE_CN = 'cn'
@@ -60,6 +61,8 @@ class Config():
     # 图片压缩相关配置
     COMPRESS_INFO_STATUS = "status"
     COMPRESS_INFO_LIMIT = "limit"
+    COMPRESS_ENGINE_GIL = "GIL"
+    COMPRESS_ENGINE_TIYPNG = "tinyPNG"
     smmsTokenFile = ""
     configFile = ""
     mainConfig = {}
@@ -120,7 +123,12 @@ class Config():
             self.__defaultConfigParams = {Config.PARAM_IMG_SERVICE: Config.IMG_SERVICE_SMMS,
                                           Config.PARAM_URL_ENCODE_MODE: Config.URL_ENCODE_MODE_NONE,
                                           Config.PARAM_LANGUAGE: Config.LANGUAGE_CN,
-                                          Config.PARAM_DEBUG: Config.DEBUG_OFF}
+                                          Config.PARAM_DEBUG: Config.DEBUG_OFF,
+                                          Config.PARAM_COMPRESS_ENGINE: Config.COMPRESS_ENGINE_GIL,
+                                          Config.PARAM_COMPRESS: {
+                                              Config.COMPRESS_INFO_LIMIT: 500,
+                                              Config.COMPRESS_INFO_STATUS: "off"
+                                          }}
         return self.__defaultConfigParams
 
     def __resetMainConfig(self):
@@ -227,7 +235,4 @@ class Config():
     def getCompressInfo(self):
         """获取图片压缩配置信息"""
         info = self.getConfigParam(Config.PARAM_COMPRESS)
-        if info == '':
-            info = {Config.COMPRESS_INFO_LIMIT: 500,
-                    Config.COMPRESS_INFO_STATUS: "off"}
         return info
