@@ -2,6 +2,7 @@ from .config import Config
 from .user_exception import UserException
 from concurrent import futures
 from .img_service_manager import ImgServiceManager
+from .compress.compress import Compress
 
 
 class SmmsImg():
@@ -38,5 +39,13 @@ class SmmsImg():
                 images[MAX_SAME_TIME_DEAL:len(images)], results)
 
     def uploadOne(self, localImg):
-        imgService = ImgServiceManager.getImgService()
-        return imgService.upload(localImg)
+        # 如果设置了压缩选项，进行压缩
+        info = self.sysConfig.getCompressInfo()
+        if(info[Config.COMPRESS_INFO_STATUS] == "on"):
+            compressLimit = int(info[Config.COMPRESS_INFO_LIMIT])
+            with Compress(localImg, compressLimit) as compressedImg:
+                imgService = ImgServiceManager.getImgService()
+                return imgService.upload(compressedImg)
+        else:
+            imgService = ImgServiceManager.getImgService()
+            return imgService.upload(localImg)

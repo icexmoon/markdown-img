@@ -13,16 +13,7 @@
     qcloud  Tencent Cloud Object Storage (required to provide necessary connection information)
     qiniu   Qiniu Cloud (required to provide necessary connection information)
     upyun   UPYun Cloud (required to provide necessary connection information)
-    bilibili
-    sougou
-    huluxia
-    catbox
-    360
-    postimages
-    ai58
-    gtimg
-    bkimg
-    muke
+    bilibili,sougou,huluxia,catbox,360,postimages,ai58,gtimg,bkimg,muke
 -c  --change_token Replace the image bed access token.
     this    current image bed.
     rruu    RuYu image bed.
@@ -40,3 +31,8 @@
 -l  --language Working Language
     en  English
     cn  中文
+--compress
+    input some iamge compress config
+--debug whether start debug mode
+    on  start
+    off`close

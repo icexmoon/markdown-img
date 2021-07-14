@@ -5,3 +5,4 @@
 /build/*
 /src/markdown_img_icexmoon.egg-info/*
 __pycache__/
+tmp/

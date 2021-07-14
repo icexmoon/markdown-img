@@ -80,6 +80,11 @@ class Globalization:
               "upyun_password": "又拍云密码",
               "upyun_domain": "又拍云绑定域名",
               "upyun_dir": "又拍云存储目录",
+              "compress_info_input_tips": "请输入图片压缩相关设置",
+              "compress_status_input": "请输入压缩功能状态(on/off)",
+              "compress_limit_input": "请输入压缩功能启用门槛(1-10000)，单位kb",
+              "compress_status": "图片压缩状态",
+              "compress_limit": "开启压缩的最小图片尺寸（kb）",
               }
     textEN = {"program_version": "program version",
               "colon": ":",
@@ -157,6 +162,11 @@ class Globalization:
               "upyun_password": "UPYun Cloud password",
               "upyun_domain": "UPYun Cloud bind domain",
               "upyun_dir": "UPYun Cloud saved dir",
+              "compress_info_input_tips": "Please enter image compress config",
+              "compress_status_input": "Please enter compress function status(on/off)",
+              "compress_limit_input": "Please enter compress used limit(1-10000): unit kb",
+              "compress_status": "Image compress status",
+              "compress_limit": "Minimum image size with compression turned on(kb)",
               }
 
     def __new__(cls) -> Any:

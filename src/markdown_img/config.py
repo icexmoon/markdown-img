@@ -1,3 +1,4 @@
+from abc import abstractproperty
 import os
 from typing import Any
 from .user_exception import UserException
@@ -14,6 +15,10 @@ class Config():
     PARAM_UPYUN_INFO = "upyun_info"
     PARAM_URL_ENCODE_MODE = 'url_encode_mode'
     PARAM_LANGUAGE = 'language'
+    PARAM_COMPRESS = "compress"
+    PARAM_DEBUG = "debug"
+    DEBUG_ON = "on"
+    DEBUG_OFF = "off"
     LANGUAGE_CN = 'cn'
     LANGUAGE_EN = 'en'
     URL_ENCODE_MODE_NONE = 'none'
@@ -52,6 +57,9 @@ class Config():
     IMG_SERVICE_BKIMG = "bkimg"
     IMG_SERVICE_MUKE = "muke"
     IMG_SERVICE_UPYUN = "upyun"
+    # 图片压缩相关配置
+    COMPRESS_INFO_STATUS = "status"
+    COMPRESS_INFO_LIMIT = "limit"
     smmsTokenFile = ""
     configFile = ""
     mainConfig = {}
@@ -111,7 +119,8 @@ class Config():
         if not hasattr(self, "__defaultConfigParams"):
             self.__defaultConfigParams = {Config.PARAM_IMG_SERVICE: Config.IMG_SERVICE_SMMS,
                                           Config.PARAM_URL_ENCODE_MODE: Config.URL_ENCODE_MODE_NONE,
-                                          Config.PARAM_LANGUAGE: Config.LANGUAGE_CN}
+                                          Config.PARAM_LANGUAGE: Config.LANGUAGE_CN,
+                                          Config.PARAM_DEBUG: Config.DEBUG_OFF}
         return self.__defaultConfigParams
 
     def __resetMainConfig(self):
@@ -202,3 +211,23 @@ class Config():
         errorLogFilePath = self.getErrorLogFilePath()
         with open(file=errorLogFilePath, mode='a', encoding='UTF-8') as logOpen:
             print(msg, file=logOpen)
+
+    def getPathSplit(self):
+        """获取路径分割符"""
+        return os.path.sep
+
+    def getTmpDir(self):
+        """获取临时目录"""
+        sysDir = self.getCurrentDirPath()
+        tmpDir = sysDir+self.getPathSplit()+"tmp"
+        if not os.path.exists(tmpDir):
+            os.mkdir(tmpDir)
+        return tmpDir
+
+    def getCompressInfo(self):
+        """获取图片压缩配置信息"""
+        info = self.getConfigParam(Config.PARAM_COMPRESS)
+        if info == '':
+            info = {Config.COMPRESS_INFO_LIMIT: 500,
+                    Config.COMPRESS_INFO_STATUS: "off"}
+        return info

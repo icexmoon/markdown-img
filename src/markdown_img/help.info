@@ -13,16 +13,7 @@
     qcloud  腾讯云对象存储（需要提供必要连接信息）
     qiniu   七牛云（需要提供必要连接信息）
     upyun   又拍云（需要提供必要连接信息）
-    bilibili
-    sougou
-    huluxia
-    catbox
-    360
-    postimages
-    ai58
-    gtimg
-    bkimg
-    muke
+    bilibili,sougou,huluxia,catbox,360,postimages,ai58,gtimg,bkimg,muke
 -c  --change_token 替换图床访问令牌
     this    当前图床
     rruu    如优图床。
@@ -40,3 +31,7 @@
 -l  --language 工作语言
     en  English
     cn  中文
+--compress  设置图片压缩相关选项
+--debug 是否开启debug模式
+    on  开启
+    off 关闭

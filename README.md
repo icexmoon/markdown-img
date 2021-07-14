@@ -110,6 +110,12 @@ English and Chinese are supported as working languages, the default is Chinese.
 
 - Execute `pymdimg -l en` to switch the working language.
 
+### Image Compression
+
+Enabling this feature will compress images over a certain size and then upload them to the image bed to save private storage space. The compressed intermediate images will be automatically deleted from the local area and will not affect the original local images.
+
+- Execute `pymdimg --compress` to set the relevant configuration and then turn it on.
+
 ### Generate a markdown copy of the image bed
 
 The main function of this program, will scan the markdown file in the command line working directory, will replace the local image in it with a bed image and then generate a copy of the bed, the generated copy will be stored in the `markdown_img` folder in the working directory.

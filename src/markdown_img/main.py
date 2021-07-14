@@ -310,6 +310,13 @@ class Main():
                     exp = UserException(
                         UserException.CODE_ERROR_INPUT, self.globalization.getText("input_error_and_hint").format(value))
                     self.dealUserException(exp)
+            elif key == Config.PARAM_DEBUG:
+                if value in (Config.DEBUG_ON, Config.DEBUG_OFF):
+                    sysConfig.setConfigParam(Config.PARAM_DEBUG, value)
+                else:
+                    exp = UserException(
+                        UserException.CODE_ERROR_INPUT, self.globalization.getText("input_error_and_hint").format(value))
+                    self.dealUserException(exp)
             else:
                 pass
         sysConfig.writeMainConfig()
@@ -334,6 +341,8 @@ class Main():
                 pass
             print("{}{}{}".format(self.globalization.getText(
                 "working_language"), self.globalization.getText("colon"), languageText))
+            print("DEBUG{}{}".format(self.globalization.getText(
+                "colon"), sysConfig.getConfigParam(Config.PARAM_DEBUG)))
             imgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
             print("{}{}{}".format(self.globalization.getText(
                 "current_used_image_bed"), self.globalization.getText("colon"), imgService))
@@ -350,8 +359,27 @@ class Main():
                     "encoding_all_non_ascii_characters")
             print("{}{}{}".format(self.globalization.getText(
                 "whether_to_use_url_encoding"), self.globalization.getText("colon"), urlEncodeModeText))
+            # 输出图片压缩相关设置
+            compressInfo = sysConfig.getCompressInfo()
+            print(self.globalization.getTextWithParam(
+                "compress_status", compressInfo[Config.COMPRESS_INFO_STATUS]))
+            print(self.globalization.getTextWithParam(
+                "compress_limit", compressInfo[Config.COMPRESS_INFO_LIMIT]))
             print("{}{}".format(self.globalization.getText(
                 "image_bed_configs"), self.globalization.getText("colon")))
             ImgServiceManager.getImgService().printConfigInfo()
         except UserException as e:
             self.dealUserException(e)
+
+    def inputCompressInfo(self):
+        print(self.globalization.getTextWithColon("compress_info_input_tips"))
+        info = {}
+        info[Config.COMPRESS_INFO_STATUS] = input(
+            self.globalization.getTextWithColon("compress_status_input"))
+        info[Config.COMPRESS_INFO_LIMIT] = input(
+            self.globalization.getTextWithColon("compress_limit_input"))
+        sysConfig = Config.getInstance()
+        sysConfig.setConfigParam(Config.PARAM_COMPRESS, info)
+        sysConfig.writeMainConfig()
+        print(self.globalization.getText("config_info_saved"))
+        return
