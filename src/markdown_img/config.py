@@ -63,6 +63,7 @@ class Config():
     COMPRESS_INFO_LIMIT = "limit"
     COMPRESS_ENGINE_GIL = "GIL"
     COMPRESS_ENGINE_TIYPNG = "tinyPNG"
+    COMPRESS_ENGINE_NONE = "none"
     smmsTokenFile = ""
     configFile = ""
     mainConfig = {}

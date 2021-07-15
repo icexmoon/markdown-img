@@ -321,7 +321,7 @@ class Main():
                         UserException.CODE_ERROR_INPUT, self.globalization.getText("input_error_and_hint").format(value))
                     self.dealUserException(exp)
             elif key == Config.PARAM_COMPRESS_ENGINE:
-                if value in (Config.COMPRESS_ENGINE_GIL, Config.COMPRESS_ENGINE_TIYPNG):
+                if value in (Config.COMPRESS_ENGINE_GIL, Config.COMPRESS_ENGINE_TIYPNG, Config.COMPRESS_ENGINE_NONE):
                     sysConfig.setConfigParam(
                         Config.PARAM_COMPRESS_ENGINE, value)
                 else:

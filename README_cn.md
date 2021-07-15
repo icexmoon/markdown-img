@@ -317,3 +317,7 @@ python -m markdown_img -m refresh
 ### 0.3.3
 
 添加TinyPNG作为新的压缩引擎
+
+### 0.3.4
+
+压缩引擎切换选项增加 none，可以更方便的关闭压缩功能。

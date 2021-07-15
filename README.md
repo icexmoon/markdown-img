@@ -226,3 +226,7 @@ Add image compression feature.
 ### 0.3.3
 
 Add TinyPNG as a new image compression engine.
+
+### 0.3.4
+
+Compression engine switch option add none, can be more convenient to turn off the compression function.
