@@ -1,8 +1,10 @@
-from abc import abstractproperty
 import os
 from typing import Any
 from .user_exception import UserException
 import json
+from shutil import copyfile
+from .tools.my_time import MyTime
+from random import randint
 
 
 class Config():
@@ -85,7 +87,7 @@ class Config():
         return getattr(cls, "__instance")
 
     def getCurrentDirPath(self):
-        part = __file__.rpartition('\\')
+        part = __file__.rpartition(self.getPathSplit())
         return part[0]
 
     def getCurrentWorkDirPath(self):
@@ -95,29 +97,32 @@ class Config():
         language = self.getConfigParam(Config.PARAM_LANGUAGE)
         filePath: str = ""
         if language == Config.LANGUAGE_EN:
-            filePath = self.getCurrentDirPath()+"\\help_en.info"
+            filePath = self.getCurrentDirPath()+self.getPathSplit()+"help_en.info"
         elif language == Config.LANGUAGE_CN:
-            filePath = self.getCurrentDirPath()+"\\help.info"
+            filePath = self.getCurrentDirPath()+self.getPathSplit()+"help.info"
         else:
-            filePath = self.getCurrentDirPath()+"\\help.info"
+            filePath = self.getCurrentDirPath()+self.getPathSplit()+"help.info"
         return filePath
 
     def getMarkdownImgDirPath(self):
         '''返回当前工作目录对应的markdown_img目录'''
-        markdownImgDirPath = self.getCurrentWorkDirPath()+"\\markdown_img"
+        markdownImgDirPath = self.getCurrentWorkDirPath()+self.getPathSplit()+"markdown_img"
         if not os.path.exists(markdownImgDirPath):
             os.mkdir(markdownImgDirPath)
         return markdownImgDirPath
 
     def getSmmsTokenFile(self):
         if Config.smmsTokenFile == "":
-            Config.smmsTokenFile = self.getCurrentDirPath()+'\\smms_token.config'
+            Config.smmsTokenFile = self.getCurrentDirPath()+self.getPathSplit()+'smms_token.config'
         return Config.smmsTokenFile
 
     def __getConfigFile(self):
         if Config.configFile == "":
-            Config.configFile = self.getCurrentDirPath()+'\\main.config'
+            Config.configFile = self.getCurrentDirPath()+self.getPathSplit()+'main.config'
         return Config.configFile
+
+    def getConfigFile(self):
+        return self.__getConfigFile()
 
     def __getDefaultConfigParams(self):
         if not hasattr(self, "__defaultConfigParams"):
@@ -214,7 +219,7 @@ class Config():
             print(token, file=configFileOpen)
 
     def getErrorLogFilePath(self):
-        return self.getCurrentDirPath()+'\\error.log'
+        return self.getCurrentDirPath()+self.getPathSplit()+'error.log'
 
     def writeErrorLog(self, msg: str):
         errorLogFilePath = self.getErrorLogFilePath()

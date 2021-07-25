@@ -198,6 +198,16 @@ python -m markdown_img -m refresh
 
 > 会扫描当前目录下的原始md文件，如果没有副本，直接创建。如果有副本，但是原始文件比副本"新"，则重新创建副本。
 
+### 备份系统配置
+
+如果有需要，可以对系统配置进行备份：
+
+```shell
+pymdimg -m backup_config --name xxx
+```
+
+`--name`参数并非必须，如果不指定则会依据当前时间生成一个配置备份的文件名。
+
 ## 致谢
 
 本应用开发者获得了[**又拍云联盟**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral)的帮助和支持，获得了其提供的免费CDN加速和云存储服务，如果您也想获取同样的帮助和支持，可以点击[**这里**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral)加入。
@@ -321,3 +331,7 @@ python -m markdown_img -m refresh
 ### 0.3.4
 
 压缩引擎切换选项增加 none，可以更方便的关闭压缩功能。
+
+### 0.3.5
+
+增加系统配置备份功能。

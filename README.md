@@ -195,6 +195,16 @@ python -m markdown_img -m refresh
 
 > Scans the current directory for the original md file, and if there is no copy, creates it directly. If there is a copy, but the original file is "newer" than the copy, the copy is recreated.
 
+### Backing up the system configuration
+
+If necessary, the system configuration can be backed up by
+
+```shell
+pymdimg -m backup_config --name xxx
+```
+
+The `` --name`` parameter is not required, if not specified a configuration backup file name will be generated based on the current time.
+
 ## Acknowledgements
 
 The developer of this application has received help and support from [**upyun**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral) for its free CDN acceleration and cloud storage services, if you want to get the same help and support, you can Click [**here**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral) to join.
@@ -230,3 +240,7 @@ Add TinyPNG as a new image compression engine.
 ### 0.3.4
 
 Compression engine switch option add none, can be more convenient to turn off the compression function.
+
+### 0.3.5
+
+Add system configuration backup function.

@@ -9,6 +9,7 @@ from .time_helper import TimeHelper
 from .img_service_manager import ImgServiceManager
 import re
 from .compress.compress_manager import CompressManager
+from .config_backup import ConfigBackup
 
 
 class Main():
@@ -382,3 +383,25 @@ class Main():
     def inputCompressInfo(self):
         CompressManager.getCompressService().inputConfig()
         return
+
+    def backupConfig(self, fileName=None)->None:
+        """对配置文件进行备份"""
+        sysConfig = Config.getInstance()
+        result = False
+        if fileName is None:
+            #未指定文件名，直接复制
+            result = ConfigBackup.backupConfig(sysConfig)
+        else:
+            fileName = str(fileName)
+            desPath = ConfigBackup.getConfigBackupFile(sysConfig, fileName)
+            if os.path.exists(desPath):
+                choice = input(self.globalization.getText("same_config_backup_exist"))
+                if choice == "n":
+                    print(self.globalization.getText("backup_operate_canceled"))
+                    return
+            result = ConfigBackup.backupConfig(sysConfig, fileName, override=True)
+        if result is False:
+            print(self.globalization.getText("config_backup_error"))
+        else:
+            print(self.globalization.getText("config_backup_success").format(result))
+        

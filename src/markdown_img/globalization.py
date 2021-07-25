@@ -87,8 +87,12 @@ class Globalization:
               "compress_limit": "开启压缩的最小图片尺寸（kb）",
               "tinypng_key_input": "请输入tinyPNG的key",
               "compress_engine": "请输入图片压缩引擎",
-              "compress_engine_text":"图像压缩引擎",
-              "tinypng_key":"tinyPNG key",
+              "compress_engine_text": "图像压缩引擎",
+              "tinypng_key": "tinyPNG key",
+              "same_config_backup_exist": "已经存在同名配置备份，如果继续将覆盖该备份，是否要继续？(y/n)",
+              "backup_operate_canceled": "配置备份操作已取消",
+              "config_backup_error": "备份出错，请通过debug模式查看错误信息并向开发者反馈",
+              "config_backup_success": "成功备份，备份的配置文件保存在{}",
               }
     textEN = {"program_version": "program version",
               "colon": ":",
@@ -173,8 +177,12 @@ class Globalization:
               "compress_limit": "Minimum image size with compression turned on(kb)",
               "tinypng_key_input": "Please enter the tinyPNG's key",
               "compress_engine": "Please enter the image compression engine",
-              "compress_engine_text":"Image compress engine",
-              "tinypng_key":"tinyPNG key",
+              "compress_engine_text": "Image compress engine",
+              "tinypng_key": "tinyPNG key",
+              "same_config_backup_exist": "A backup of the same name configuration already exists and will be overwritten if continue, should continue?(y/n)",
+              "backup_operate_canceled": "Backup configuration operation is canceled",
+              "config_backup_error": "Error in backup, please check the error message through debug mode and give feedback to the developer",
+              "config_backup_success": "Successfully backed up, the backup configuration file is saved in {}",
               }
 
     def __new__(cls) -> Any:

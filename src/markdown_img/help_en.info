@@ -4,6 +4,8 @@
     img_recove  Repairing local image libraries using a backup of the image bed
     normal      Normal mode
     refresh     Refresh (if a copy of the generated md file has been updated, the md copy file will be regenerated)
+    backup_config   backup system config
+        --name  Specify the name of the new backup file, not required, if not specified, it will be generated automatically
 -i  --img_service Selecting an image bed service provider, For more descriptions of the image bed service see https://github.com/icexmoon/markdown-img
     smms    sm.ms image bed, default image bed service, good stability, average access speed.
     ali     Ali bed (meet line), fast access (non-normal provision of services, stability is not guaranteed).
@@ -36,7 +38,7 @@
 --debug whether start debug mode
     on  start
     off`close
---e --engine toggles the image compression engine
+-e --engine toggles the image compression engine
     GIL         uses the gillow package for local compression, lossy compression, default compression engine
     tinyPNG     uses tinyPNG.com service for online compression, lossless compression, requires registration for access token, free users can make up to 500 calls per month
     none        Without compression, the effect is the same as the switch in the compression settings, but more convenient

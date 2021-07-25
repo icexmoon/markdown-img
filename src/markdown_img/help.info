@@ -4,6 +4,8 @@
     img_recove  使用图床的备份修复本地图片库
     normal      正常模式
     refresh     刷新（如果有生成过副本的md文件更新过，会重新生成md副本文件）
+    backup_config   备份系统配置
+        -- name 指定新建备份的文件名，非必须，如果不指定则自动生成
 -i  --img_service 选择图床服务商，更多的图床服务说明见 https://github.com/icexmoon/markdown-img/blob/master/README_cn.md
     smms    sm.ms图床，默认图床服务，稳定性好，访问速度一般。
     ali     阿里图床（遇见线路），访问速度快（非正常提供服务，稳定性不保证）。
