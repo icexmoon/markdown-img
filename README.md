@@ -136,6 +136,7 @@ The main function of this program, will scan the markdown file in the command li
 > - The token is stored in the `main.config` file in the directory where the program is located. You can modify it yourself if you need to, or you can delete the configuration file and run the program again to enter it.
 > - The command parameters of the program will be enriched and refined later.
 > - If the URL returned by the target image bed contains special characters such as Chinese or spaces, and your markdown text editor cannot preview the corresponding image properly, you may need to use URL ENCODE to process it, turn on this function by `pymdimg -u standard`, and regenerate the copy after turning on. This feature currently only works with Tencent OSS, because other image beds will not return Chinese URLs.
+> - A copy can be generated using a specified configuration, such as `pymdimg --config normal`, which allows you to use a customized related configuration to complete this task without modifying the current configuration in specific scenarios, such as when you want compression not to apply in this task, or when you use large scale compression. See [Function: Backup system configuration] for the specific function of making related configurations.
 
 ### Restore local gallery from the image bed
 
@@ -184,6 +185,7 @@ python -m markdown_img -s
 
 > - The index file will be regenerated each time it is run.
 > - The name of the generated index file is `markdown_img_index.md`, please make sure not to customize the file with the same name in the target directory.
+> - You can use the specified configuration, such as `pymdimg -s --config normal`, as described in the relevant entry in [Generating a copy of the mapbed markdown].
 
 ### Refreshing a copy of the image bed
 
@@ -204,6 +206,25 @@ pymdimg -m backup_config --name xxx
 ```
 
 The `` --name`` parameter is not required, if not specified a configuration backup file name will be generated based on the current time.
+
+### List saved configurations
+
+```shell
+pymdimg --list_config
+```
+
+will list the configuration name and creation time
+
+### Replacing configurations
+
+You can replace the current configuration with a saved configuration: 
+
+```shell
+pymdimg --change_config xxx
+```
+
+where `xxx` is the file name of the saved configuration you want to replace. To see what saved configurations are available, please use [Function: List saved configurations]. In addition, it is better to save the current configuration before using this function.
+
 
 ## Acknowledgements
 
@@ -244,3 +265,7 @@ Compression engine switch option add none, can be more convenient to turn off th
 ### 0.3.5
 
 Add system configuration backup function.
+
+### 0.3.6
+
+Add the function of using specified configuration.
