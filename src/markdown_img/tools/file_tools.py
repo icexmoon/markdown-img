@@ -1,4 +1,5 @@
 import os
+import time
 
 
 class FileTools:
@@ -20,3 +21,12 @@ class FileTools:
         elif unit == cls.SIZE_GB:
             size = size/1024/1024/1024
         return size
+
+    @classmethod
+    def getCreateTime(cls, file: str, format: str = "%Y-%m-%d %H:%M:%S") -> str:
+        """返回文件创建时间(字符串形式)
+        file: 文件路径
+        format: 时间格式
+        """
+        ctime = os.path.getctime(file)
+        return time.strftime(format, time.localtime(ctime))

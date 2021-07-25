@@ -160,7 +160,12 @@ class Main():
             print(self.globalization.getText("undefined_error_info"))
         exit()
 
-    def main(self, refresh=False):
+    def main(self, refresh=False, configFileName: str = None):
+        """生成markdown副本
+        refresh: 如果原文件已更新，是否刷新副本
+        configFileName: 从指定的配置文件进行加载系统配置
+        """
+        self.__loadConfigFromFile(configFileName)
         # 检索当前目录中的markdown文件
         for dir in os.listdir():
             if os.path.isfile(dir):
@@ -254,8 +259,26 @@ class Main():
         service.inputNewConfig()
         return True
 
-    def scanAndCreateIndex(self):
-        '''扫描图片并构建图床索引'''
+    def __loadConfigFromFile(self, configFileName: str) -> None:
+        """从指定的配置文件名称加载系统配置
+        configFileName: 配置文件名称
+        """
+        sysConfig = Config.getInstance()
+        if configFileName is not None:
+            # 根据文件名获取对应的配置文件
+            configFile: str = ConfigBackup.getConfigBackupFile(
+                sysConfig, configFileName)
+            if not os.path.exists(configFile):
+                print(self.globalization.getText("no_config_file"))
+                return
+            else:
+                sysConfig.loadConfigFile(configFile)
+
+    def scanAndCreateIndex(self, configFileName: str = None):
+        '''扫描图片并构建图床索引
+        configFileName: 配置文件名称
+        '''
+        self.__loadConfigFromFile(configFileName)
         imgExt = {'jpg', 'png', 'gif', 'jpeg', 'svg', 'bmp'}
         imageFiles = []
         images = []
@@ -384,24 +407,49 @@ class Main():
         CompressManager.getCompressService().inputConfig()
         return
 
-    def backupConfig(self, fileName=None)->None:
+    def backupConfig(self, fileName=None) -> None:
         """对配置文件进行备份"""
         sysConfig = Config.getInstance()
         result = False
         if fileName is None:
-            #未指定文件名，直接复制
+            # 未指定文件名，直接复制
             result = ConfigBackup.backupConfig(sysConfig)
         else:
             fileName = str(fileName)
             desPath = ConfigBackup.getConfigBackupFile(sysConfig, fileName)
             if os.path.exists(desPath):
-                choice = input(self.globalization.getText("same_config_backup_exist"))
+                choice = input(self.globalization.getText(
+                    "same_config_backup_exist"))
                 if choice == "n":
-                    print(self.globalization.getText("backup_operate_canceled"))
+                    print(self.globalization.getText(
+                        "backup_operate_canceled"))
                     return
-            result = ConfigBackup.backupConfig(sysConfig, fileName, override=True)
+            result = ConfigBackup.backupConfig(
+                sysConfig, fileName, override=True)
         if result is False:
             print(self.globalization.getText("config_backup_error"))
         else:
-            print(self.globalization.getText("config_backup_success").format(result))
-        
+            print(self.globalization.getText(
+                "config_backup_success").format(result))
+
+    def listConfigBackup(self) -> None:
+        """列出已保存的自定义配置"""
+        sysConfig = Config.getInstance()
+        configBackups: list = ConfigBackup.getConfigBackup(sysConfig)
+        print("{:<25s} {:<10s}".format(self.globalization.getText("config_name"),self.globalization.getText("create_time")))
+        for configName, ctime, absPath in configBackups:
+            print("{:<25s} {:<10s}".format(configName, ctime))
+
+    def changeConfig(self, configFileName: str) -> None:
+        """使用指定配置覆盖当前配置"""
+        sysConfig = Config.getInstance()
+        configFile: str = ConfigBackup.getConfigBackupFile(
+            sysConfig,  configFileName)
+        if not os.path.exists(configFile):
+            print(self.globalization.getText("no_config_file"))
+            return
+        if input(self.globalization.getText("config_change_confirm")) != 'y':
+            print(self.globalization.getText("current_operation_canceld"))
+            return
+        sysConfig.replaceConfigFile(configFile)
+        print(self.globalization.getText("current_operation_success"))

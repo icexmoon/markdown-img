@@ -93,6 +93,12 @@ class Globalization:
               "backup_operate_canceled": "配置备份操作已取消",
               "config_backup_error": "备份出错，请通过debug模式查看错误信息并向开发者反馈",
               "config_backup_success": "成功备份，备份的配置文件保存在{}",
+              "no_config_file": "不存在指定的配置文件，请检查输入的配置名称是否有误",
+              "config_change_confirm": "确定要使用指定配置替换当前系统配置？此操作会导致当前配置丢失，建议在执行此操作前保存当前配置。(y/n)",
+              "current_operation_canceld": "用户取消当前操作",
+              "current_operation_success": "当前操作执行成功",
+              "config_name": "配置名称",
+              "create_time": "创建时间",
               }
     textEN = {"program_version": "program version",
               "colon": ":",
@@ -183,6 +189,12 @@ class Globalization:
               "backup_operate_canceled": "Backup configuration operation is canceled",
               "config_backup_error": "Error in backup, please check the error message through debug mode and give feedback to the developer",
               "config_backup_success": "Successfully backed up, the backup configuration file is saved in {}",
+              "no_config_file": "The specified configuration file does not exist, please check if the entered configuration name is wrong",
+              "config_change_confirm": "Sure you want to replace the current system configuration with the specified configuration? This operation will result in the loss of the current configuration. It is recommended that you save the current configuration before performing this operation.(y/n)",
+              "current_operation_canceld": "User cancels current operation",
+              "current_operation_success": "Current operation executed successfully",
+              "config_name": "Config name",
+              "create_time": "Create time",
               }
 
     def __new__(cls) -> Any:

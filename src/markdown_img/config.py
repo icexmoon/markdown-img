@@ -1,4 +1,5 @@
 import os
+import shutil
 from typing import Any
 from .user_exception import UserException
 import json
@@ -81,10 +82,38 @@ class Config():
     @classmethod
     def getInstance(cls) -> "Config":
         "获取Config的实例"
-        # if not cls.__instance:
         if not hasattr(cls, "__instance"):
             setattr(cls, "__instance", cls())
         return getattr(cls, "__instance")
+
+    def loadConfigFile(self, configFile:str):
+        """从指定的配置文件加载配置
+        configFile: 指定的配置文件路径
+        """
+        if not os.path.exists(configFile):
+            raise UserException(UserException.CODE_OTHER,"配置文件{}不存在".format(configFile))
+        self.unloadConfigFile()
+        Config.configFile = configFile
+
+
+    def unloadConfigFile(self):
+        """将当前加载的配置卸载"""
+        Config.mainConfig = {}
+        Config.configFile = ""
+
+    def replaceConfigFile(self, configFile:str)->None:
+        """用指定配置文件替换主配置文件
+        configFile: 指定配置文件路径
+        """
+        # 检查指定配置文件是否存在
+        if not os.path.exists(configFile):
+            raise UserException(UserException.CODE_OTHER,"配置文件{}不存在".format(configFile))
+        # 卸载当前配置文件
+        self.unloadConfigFile()
+        # 获取主配置文件路径
+        mainConfigFile = self.__getConfigFile()
+        # 替换
+        shutil.copyfile(configFile, mainConfigFile)
 
     def getCurrentDirPath(self):
         part = __file__.rpartition(self.getPathSplit())

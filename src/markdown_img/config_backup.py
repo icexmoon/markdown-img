@@ -3,6 +3,7 @@ import shutil
 from .tools.debug import Debug
 from .tools.my_time import MyTime
 from random import randint
+from .tools.file_tools import FileTools
 
 
 class ConfigBackup:
@@ -52,3 +53,21 @@ class ConfigBackup:
         if not os.path.exists(dirPath):
             os.mkdir(dirPath)
         return dirPath
+
+    @classmethod
+    def getConfigBackup(cls, sysConfig: "Config") -> list[tuple]:
+        """获取配置备份的信息
+        sysConfig: 系统配置
+        return: 配置备份列表
+        """
+        files = []
+        backupDir: str = cls.getConifgBackupDir(sysConfig)
+        for path in os.listdir(backupDir):
+            absPath = "{}{}{}".format(
+                backupDir, sysConfig.getPathSplit(), path)
+            if os.path.isfile(absPath) and path.endswith(".config"):
+                fileName, _, _ = path.rpartition('.')
+                ctime = FileTools.getCreateTime(absPath)
+                info = (fileName, ctime, absPath)
+                files.append(info)
+        return files
