@@ -269,3 +269,7 @@ Add system configuration backup function.
 ### 0.3.6
 
 Add the function of using specified configuration.
+
+### 0.3.7
+
+Fix the bug that can't install successful caused by use futures module.
