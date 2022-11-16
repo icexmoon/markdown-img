@@ -363,3 +363,7 @@ pymdimg --change_config xxx
 ### 0.3.7
 
 修复了因为使用Futures模块导致的安装失败的问题。
+
+### 0.3.8
+
+修复了在Linux下不能正常生成处理后的目录的bug。

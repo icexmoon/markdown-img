@@ -45,7 +45,7 @@ class Main():
     def getCopyFilePath(self, fileName: str):
         copyFileName = self.getCopyFileName(fileName)
         SysConfig = Config()
-        return SysConfig.getMarkdownImgDirPath()+'\\'+copyFileName
+        return SysConfig.getMarkdownImgDirPath()+SysConfig.getPathSplit()+copyFileName
 
     def isImgFileName(self, file):
         imgExts = ('.png', '.gif', '.jpg', '.jpeg', '.svg', '.bmp')
