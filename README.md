@@ -20,6 +20,10 @@ English | [**简体中文**](https://github.com/icexmoon/markdown-img/blob/maste
   - [**Update the image bed acess token**](https://github.com/icexmoon/markdown-img#update-the-image-bed-access-token)
   - [**Scan images and create indexes**](https://github.com/icexmoon/markdown-img#scan-images-and-create-indexes)
   - [**Refreshing a copy of the image bed**](https://github.com/icexmoon/markdown-img#refreshing-a-copy-of-the-image-bed)
+  - [**Backing up the system configuration**](https://github.com/icexmoon/markdown-img#backing-up-the-system-configuration)
+  - [**List saved configurations**](https://github.com/icexmoon/markdown-img#list-saved-configurations)
+  - [**Replacing configurations**](https://github.com/icexmoon/markdown-img#replacing-configurations)
+  - [**Relative path image**](https://github.com/icexmoon/markdown-img#relative-path-image)
 - [**Acknowledgements**](https://github.com/icexmoon/markdown-img#acknowledgements)
 - [**Update Log**](https://github.com/icexmoon/markdown-img#update-log)
 
