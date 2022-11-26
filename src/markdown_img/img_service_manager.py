@@ -7,6 +7,7 @@ from .img_service.qcloud_img_service import QcloudImgService
 from .img_service.qiniu_img_service import QiniuImgService
 from .img_service.smms_img_service import SmmsImgService
 from .img_service.Upyun_img_service import UpyunImgService
+from .img_service.fz_img_service import FzImgService
 
 
 class ImgServiceManager:
@@ -72,6 +73,8 @@ class ImgServiceManager:
             webImage = YujianImgService(YujianImgService.API_TYPE_MUKE)
         elif imgService == Config.IMG_SERVICE_UPYUN:
             webImage = UpyunImgService()
+        elif imgService == Config.IMG_SERVICE_FZ:
+            webImage = FzImgService()
         else:
             webImage = SmmsImgService()
         return webImage
@@ -86,7 +89,8 @@ class ImgServiceManager:
                             Config.IMG_SERVICE_QCLOUD, Config.IMG_SERVICE_QINIU, Config.IMG_SERVICE_BILIBILI,
                             Config.IMG_SERVICE_SOUGOU, Config.IMG_SERVICE_HULUXIA, Config.IMG_SERVICE_CATBOX,
                             Config.IMG_SERVICE_360, Config.IMG_SERVICE_POSTIMAGES, Config.IMG_SERVICE_AI58,
-                            Config.IMG_SERVICE_GTIMG, Config.IMG_SERVICE_BKIMG, Config.IMG_SERVICE_MUKE, Config.IMG_SERVICE_UPYUN}
+                            Config.IMG_SERVICE_GTIMG, Config.IMG_SERVICE_BKIMG, Config.IMG_SERVICE_MUKE, Config.IMG_SERVICE_UPYUN,
+                            Config.IMG_SERVICE_FZ}
         if flag in supportedService:
             return True
         return False

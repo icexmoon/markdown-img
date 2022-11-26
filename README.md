@@ -298,3 +298,7 @@ Fix the bug that can't create img dir normally in Linux.
 ### 0.3.9
 
 Added the function to modify the absolute path image in the MD file to relative path.
+
+### 0.4.0
+
+Added the support to fengzhen image bed.

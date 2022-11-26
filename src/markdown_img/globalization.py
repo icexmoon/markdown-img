@@ -49,6 +49,9 @@ class Globalization:
               "image_web_configs_changed": "图床配置已更新",
               "input_error_and_hint": "输入的值{}不合法，请阅读帮助文档。",
               "related_configs_changed": "相关配置已更新",
+              "fz_info_required": "缺少风筝图床相关配置，请输入",
+              "fz_info_phone":"手机号",
+              "fz_info_pwd":"密码",
               "qiniu_info_saved": "七牛云的相关信息已保存，请重新运行程序",
               "qiniu_info_required": "缺少七牛云的相关配置，请按提示输入",
               "qiniu_access_key_input": "请输入七牛云存储的access_key",
@@ -195,6 +198,9 @@ class Globalization:
               "current_operation_success": "Current operation executed successfully",
               "config_name": "Config name",
               "create_time": "Create time",
+              "fz_info_required": "Requre FZ image bed config, please enter",
+              "fz_info_phone":"phone",
+              "fz_info_pwd":"password",
               }
 
     def __new__(cls) -> Any:

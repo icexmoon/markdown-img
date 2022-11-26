@@ -18,6 +18,7 @@
     qcloud  Tencent Cloud Object Storage (required to provide necessary connection information)
     qiniu   Qiniu Cloud (required to provide necessary connection information)
     upyun   UPYun Cloud (required to provide necessary connection information)
+    fz      fengzhen image bed (required to provide necessary connection information)
     bilibili,sougou,huluxia,catbox,360,postimages,ai58,gtimg,bkimg,muke
 -c  --change_token Replace the image bed access token.
     this    current image bed.

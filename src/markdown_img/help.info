@@ -18,6 +18,7 @@
     qcloud  腾讯云对象存储（需要提供必要连接信息）
     qiniu   七牛云（需要提供必要连接信息）
     upyun   又拍云（需要提供必要连接信息）
+    fz      风筝图床（需要提供必要的连接信息）
     bilibili,sougou,huluxia,catbox,360,postimages,ai58,gtimg,bkimg,muke
 -c  --change_token 替换图床访问令牌
     this    当前图床

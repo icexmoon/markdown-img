@@ -16,6 +16,7 @@ class Config():
     PARAM_QCLOUD_INFO = 'qcloud_info'
     PARAM_QINIU_INFO = "qiniu_info"
     PARAM_UPYUN_INFO = "upyun_info"
+    PARAM_FZ_INFO = "fz_info"
     PARAM_URL_ENCODE_MODE = 'url_encode_mode'
     PARAM_LANGUAGE = 'language'
     PARAM_COMPRESS = "compress"
@@ -42,6 +43,8 @@ class Config():
     UPYUN_INFO_PASSWORD = "password"
     UPYUN_INFO_DIR = "dir"
     UPYUN_INFO_DOMAIN = "domain"
+    FZ_INFO_PHONE = 'phone'
+    FZ_INFO_PWD = 'pwd'
     IMG_SERVICE_YUJIAN = 'yujian'
     IMG_SERVICE_SMMS = 'smms'
     IMG_SERVICE_RRUU = 'rruu'
@@ -61,6 +64,7 @@ class Config():
     IMG_SERVICE_BKIMG = "bkimg"
     IMG_SERVICE_MUKE = "muke"
     IMG_SERVICE_UPYUN = "upyun"
+    IMG_SERVICE_FZ = "fz"
     # 图片压缩相关配置
     COMPRESS_INFO_STATUS = "status"
     COMPRESS_INFO_LIMIT = "limit"
@@ -255,7 +259,7 @@ class Config():
         if info == '':
             raise UserException(UserException.CODE_NO_QINIU_INFO)
         return info
-
+    
     def writeSmmsToken(self, token: str):
         with open(file=self.getSmmsTokenFile(), mode='w') as configFileOpen:
             print(token, file=configFileOpen)
