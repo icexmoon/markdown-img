@@ -8,6 +8,7 @@
         --config    使用指定配置
     backup_config   备份系统配置
         --name  指定新建备份的文件名，非必须，如果不指定则自动生成
+    relative_img    将md文件中使用绝对路径的图片修改为相对路径
 -i  --img_service 选择图床服务商，更多的图床服务说明见 https://github.com/icexmoon/markdown-img/blob/master/README_cn.md
     smms    sm.ms图床，默认图床服务，稳定性好，访问速度一般。
     ali     阿里图床（遇见线路），访问速度快（非正常提供服务，稳定性不保证）。

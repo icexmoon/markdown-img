@@ -10,6 +10,8 @@ from .img_service_manager import ImgServiceManager
 import re
 from .compress.compress_manager import CompressManager
 from .config_backup import ConfigBackup
+from .tools.file_tools import FileTools
+import shutil
 
 
 class Main():
@@ -97,8 +99,11 @@ class Main():
                     localImages.append(content)
                     self.findImagesInStr(content, localImages)
 
-    def dealMdFile(self, mdFile: str):
-        imgDict = dict()
+    def dealMdFile(self, mdFile: str, dealFunc):
+        '''遍历并处理markdown文件
+        mdFile: 待处理的原始markdown文件路径
+        dealFunc: 用于处理原始markdown文件的函数对象
+        '''
         localImages = set()
         # 逐行扫描，查找本地图片
         with open(file=mdFile, mode='r', encoding='UTF-8') as fopen:
@@ -106,19 +111,57 @@ class Main():
                 # 去除行尾的换行
                 subLine = line[0:len(line)-1]
                 self.findLocalImageFile(subLine, localImages)
+        dealFunc(localImages, mdFile)
+
+    def __createWebImgCopy(self, localImages: set, originalFile: str):
+        '''创建包含网络图片的副本文件
+        localImages: 待处理的本地图片文件集合
+        originalFile: 原始的markdown文件路径
+        '''
         # 上传本地图片，建立图片映射表
+        imgDict = dict()
         imgServer = SmmsImg()
         imgServer.multiUploadImage(list(localImages), imgDict)
         # 替换本地图片
-        # copyFileName = self.getCopyFileName(mdFile)
-        copyFilePath = self.getCopyFilePath(mdFile)
+        copyFilePath = self.getCopyFilePath(originalFile)
         copyFileOpen = open(file=copyFilePath, mode='w', encoding='UTF-8')
-        with open(file=mdFile, mode='r', encoding='UTF-8') as fwrite:
+        with open(file=originalFile, mode='r', encoding='UTF-8') as fwrite:
             for line in fwrite:
                 for localImg, webImg in imgDict.items():
                     line = line.replace(localImg, webImg)
                 copyFileOpen.write(line)
         copyFileOpen.close()
+
+    def __replaceWithRelativeMDFile(self, localImages: set, originalFile: str):
+        '''使用相对路径图片取代绝对路径图片
+        localImages: 待处理的本地图片文件集合
+        originalFile: 原始的markdown文件路径
+        '''
+        # 创建使用相对路径图片的副本
+        sysConfig = Config()
+        copyFilePath = originalFile+'.relative'
+        copyFileOpen = open(file=copyFilePath, mode='w', encoding='UTF-8')
+        with open(file=originalFile, mode='r', encoding='UTF-8') as fread:
+            for line in fread:
+                for localImg in localImages:
+                    imgName = FileTools.getFileName(localImg)
+                    relativeLocalImage = sysConfig.getImagesDirPath()+sysConfig.getPathSplit()+imgName
+                    if os.path.exists(localImg):
+                        # 拷贝本地图片到相对目录images
+                        if not os.path.exists(relativeLocalImage):
+                            shutil.copyfile(localImg, relativeLocalImage)
+                        # 替换图片路径为相对路径
+                        line = line.replace(
+                            localImg, "."+sysConfig.getPathSplit()+"images"+sysConfig.getPathSplit()+imgName)
+                copyFileOpen.write(line)
+        copyFileOpen.close()
+        # 保存原始文件备份
+        backupFilePath = sysConfig.getBackUpDirPath()+sysConfig.getPathSplit()+FileTools.getFileName(originalFile)
+        shutil.copyfile(originalFile, backupFilePath)
+        # 用相对路径图片副本取代原始文件
+        os.remove(originalFile)
+        shutil.copyfile(copyFilePath, originalFile)
+        os.remove(copyFilePath)
 
     def findImgsInMdFile(self, mdFile):
         '''查找markdown文件中的图片列表'''
@@ -178,7 +221,7 @@ class Main():
                         else:
                             continue
                     try:
-                        self.dealMdFile(dir)
+                        self.dealMdFile(dir, self.__createWebImgCopy)
                     except UserException as e:
                         self.dealUserException(e)
                     print(self.globalization.getText("deal_success"), dir)
@@ -436,7 +479,8 @@ class Main():
         """列出已保存的自定义配置"""
         sysConfig = Config.getInstance()
         configBackups: list = ConfigBackup.getConfigBackup(sysConfig)
-        print("{:<25s} {:<10s}".format(self.globalization.getText("config_name"),self.globalization.getText("create_time")))
+        print("{:<25s} {:<10s}".format(self.globalization.getText(
+            "config_name"), self.globalization.getText("create_time")))
         for configName, ctime, absPath in configBackups:
             print("{:<25s} {:<10s}".format(configName, ctime))
 
@@ -453,3 +497,17 @@ class Main():
             return
         sysConfig.replaceConfigFile(configFile)
         print(self.globalization.getText("current_operation_success"))
+
+    def relativeImage(self) -> None:
+        """将markdown文件中的图片转储为相对目录"""
+        # 检索当前目录中的markdown文件
+        for dir in os.listdir():
+            if os.path.isfile(dir):
+                if self.isOrigMdFile(dir):
+                    # 处理markdown文件
+                    try:
+                        self.dealMdFile(dir, self.__replaceWithRelativeMDFile)
+                    except UserException as e:
+                        self.dealUserException(e)
+                    print(self.globalization.getText("deal_success"), dir)
+        print(self.globalization.getText("all_file_done"))

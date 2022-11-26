@@ -86,28 +86,29 @@ class Config():
             setattr(cls, "__instance", cls())
         return getattr(cls, "__instance")
 
-    def loadConfigFile(self, configFile:str):
+    def loadConfigFile(self, configFile: str):
         """从指定的配置文件加载配置
         configFile: 指定的配置文件路径
         """
         if not os.path.exists(configFile):
-            raise UserException(UserException.CODE_OTHER,"配置文件{}不存在".format(configFile))
+            raise UserException(UserException.CODE_OTHER,
+                                "配置文件{}不存在".format(configFile))
         self.unloadConfigFile()
         Config.configFile = configFile
-
 
     def unloadConfigFile(self):
         """将当前加载的配置卸载"""
         Config.mainConfig = {}
         Config.configFile = ""
 
-    def replaceConfigFile(self, configFile:str)->None:
+    def replaceConfigFile(self, configFile: str) -> None:
         """用指定配置文件替换主配置文件
         configFile: 指定配置文件路径
         """
         # 检查指定配置文件是否存在
         if not os.path.exists(configFile):
-            raise UserException(UserException.CODE_OTHER,"配置文件{}不存在".format(configFile))
+            raise UserException(UserException.CODE_OTHER,
+                                "配置文件{}不存在".format(configFile))
         # 卸载当前配置文件
         self.unloadConfigFile()
         # 获取主配置文件路径
@@ -135,14 +136,26 @@ class Config():
 
     def getMarkdownImgDirPath(self):
         '''返回当前工作目录对应的markdown_img目录'''
-        markdownImgDirPath = self.getCurrentWorkDirPath()+self.getPathSplit()+"markdown_img"
-        if not os.path.exists(markdownImgDirPath):
-            os.mkdir(markdownImgDirPath)
-        return markdownImgDirPath
+        return self.__getSubDirPath("markdown_img")
+
+    def getImagesDirPath(self):
+        '''返回当前工作目录对应的images目录'''
+        return self.__getSubDirPath("images")
+    
+    def getBackUpDirPath(self):
+        return self.__getSubDirPath("backup")
+
+    def __getSubDirPath(self, dirName: str) -> str:
+        '''返回一个指定名称的当前目录的子目录'''
+        subDirName: str = self.getCurrentWorkDirPath()+self.getPathSplit()+dirName
+        if not os.path.exists(subDirName):
+            os.mkdir(subDirName)
+        return subDirName
 
     def getSmmsTokenFile(self):
         if Config.smmsTokenFile == "":
-            Config.smmsTokenFile = self.getCurrentDirPath()+self.getPathSplit()+'smms_token.config'
+            Config.smmsTokenFile = self.getCurrentDirPath()+self.getPathSplit() + \
+                'smms_token.config'
         return Config.smmsTokenFile
 
     def __getConfigFile(self):

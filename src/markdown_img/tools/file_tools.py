@@ -1,5 +1,6 @@
 import os
 import time
+from ..config import Config
 
 
 class FileTools:
@@ -30,3 +31,14 @@ class FileTools:
         """
         ctime = os.path.getctime(file)
         return time.strftime(format, time.localtime(ctime))
+
+    @classmethod
+    def getFileName(cls, path: str) -> str:
+        '''返回路径中的文件名
+        path: 绝对路径或相对路径
+        '''
+        if path is None:
+            return None
+        config = Config()
+        parts = path.split(config.getPathSplit())
+        return parts[-1]

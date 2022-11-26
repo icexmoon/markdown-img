@@ -8,6 +8,7 @@
         --config    use specified configuration
     backup_config   backup system config
         --name  Specify the name of the new backup file, not required, if not specified, it will be generated automatically
+    relative_img    Modify the image in the MD file that uses an absolute path to a relative path
 -i  --img_service Selecting an image bed service provider, For more descriptions of the image bed service see https://github.com/icexmoon/markdown-img
     smms    sm.ms image bed, default image bed service, good stability, average access speed.
     ali     Ali bed (meet line), fast access (non-normal provision of services, stability is not guaranteed).

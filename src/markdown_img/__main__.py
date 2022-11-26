@@ -45,6 +45,9 @@ def main():
                     name = getOptionVal(opts, '--name')
                     mainProcess.backupConfig(name)
                     break
+                elif mode == 'relative_img':
+                    mainProcess.relativeImage()
+                    break
                 else:
                     print("错误的mode参数")
             elif argKey == '--img_service' or argKey == '-i':

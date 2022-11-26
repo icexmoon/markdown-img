@@ -277,3 +277,7 @@ Fix the bug that can't install successful caused by use futures module.
 ### 0.3.8
 
 Fix the bug that can't create img dir normally in Linux.
+
+### 0.3.9
+
+Added the function to modify the absolute path image in the MD file to relative path.
