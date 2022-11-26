@@ -225,6 +225,19 @@ pymdimg --change_config xxx
 
 where `xxx` is the file name of the saved configuration you want to replace. To see what saved configurations are available, please use [Function: List saved configurations]. In addition, it is better to save the current configuration before using this function.
 
+### Relative path image
+
+You can process the MD file using absolute path pictures to use relative path pictures, and the program will copy the original pictures to the images subdirectory of the current directory as relative path pictures.
+
+The purpose of this function is to provide convenience for some cross-platform, multi-device users, using relative paths, raw images and MD files can be easily moved, or using a synchronization service similar to Nut Cloud for multi-device synchronization.
+
+```shell
+pymdimg -m relative_img
+```
+
+> - In order to avoid the corruption of the original MD file caused by program errors, one original file will be kept and backed up in the backup subdirectory.
+> - Because of the difference between Windows and Linux platform separators, there is no guarantee that the relative directories of both will behave properly.
+
 
 ## Acknowledgements
 
