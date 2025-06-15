@@ -152,7 +152,8 @@ class Main():
                             shutil.copyfile(localImg, relativeLocalImage)
                         # 替换图片路径为相对路径
                         line = line.replace(
-                            localImg, "."+sysConfig.getPathSplit()+"images"+sysConfig.getPathSplit()+imgName)
+                            # 改为使用/而非\
+                            localImg, "."+"/"+"images"+"/"+imgName)
                 copyFileOpen.write(line)
         copyFileOpen.close()
         # 保存原始文件备份

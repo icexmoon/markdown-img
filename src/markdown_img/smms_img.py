@@ -39,6 +39,10 @@ class SmmsImg():
                 images[MAX_SAME_TIME_DEAL:len(images)], results)
 
     def uploadOne(self, localImg):
+        # 如果是 gif 而非静态图片，不压缩
+        if (localImg.endswith(".gif")):
+            imgService = ImgServiceManager.getImgService()
+            return imgService.upload(localImg)
         # 如果设置了压缩选项，进行压缩
         info = self.sysConfig.getCompressInfo()
         if(info[Config.COMPRESS_INFO_STATUS] == "on"):
