@@ -35,7 +35,6 @@ requires = ["setuptools>=80", "setuptools-scm>=8"] # 打包依赖
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-# 强制使用 pyproject.toml 中的版本号（而非 git 标签）
 version_file = "src/markdown_img/_version.py"
 
 [tool.setuptools.packages.find]
