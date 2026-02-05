@@ -1,0 +1,2 @@
+[console_scripts]
+pymdimg = markdown_img.__main__:main

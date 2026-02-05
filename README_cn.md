@@ -246,6 +246,20 @@ pymdimg -m relative_img
 > - 为避免程序出错导致的原始md文件损坏，会保留一个原始文件备份到`backup`子目录中。
 > - 因为Windows和Linux平台分隔符的区别，并不能保证两者的相对目录都表现正常。
 
+## 二次开发
+
+开发工具链已经迁移到 uv，关于 uv 的安装和使用，可以参考[Python 包管理工具 UV](https://blog.icexmoon.cn/archives/805.html)。
+
+可以在项目根目录下通过以下命令执行测试代码：
+
+```
+uv run test.py
+```
+
+测试目录位于`tests`，需要自行准备测试文件和数据。作为参考，可以参考`tests_example`。
+
+
+
 ## 致谢
 
 本应用开发者获得了[**又拍云联盟**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral)的帮助和支持，获得了其提供的免费CDN加速和云存储服务，如果您也想获取同样的帮助和支持，可以点击[**这里**](https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral)加入。
@@ -400,3 +414,9 @@ pymdimg -m relative_img
 将 md 文件中图片绝对路径修改为相对路径时，使用`/`而非`\`作为分隔符，后者无法用于 Github Readme 文件。
 
 修复 md 文件中包含 gif 图片且启动了图片压缩时，处理 md 文件会出现 bug 的问题。
+
+### 2.0.0
+
+将开发工作链迁移到 uv。
+
+优化 WIndows 下终端显示结果，显示处理前和处理后的文件名，并且可以点击文件名跳转到对应文件。

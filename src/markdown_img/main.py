@@ -12,6 +12,7 @@ from .compress.compress_manager import CompressManager
 from .config_backup import ConfigBackup
 from .tools.file_tools import FileTools
 import shutil
+import sys
 
 
 class Main():
@@ -225,7 +226,15 @@ class Main():
                         self.dealMdFile(dir, self.__createWebImgCopy)
                     except UserException as e:
                         self.dealUserException(e)
-                    print(self.globalization.getText("deal_success"), dir)
+                    # 如果是 windows 平台，优化终端显示，让显示包含文件链接
+                    if sys.platform == 'win32':
+                        absSourcePath = FileTools.getAbsolutePath(dir)
+                        sourceLink = FileTools.getWindowsTerminalPathLink(dir, absSourcePath)
+                        targetFileName = FileTools.getFileName(copyFilePath)
+                        targetLink = FileTools.getWindowsTerminalPathLink(targetFileName, copyFilePath)
+                        print(self.globalization.getText("deal_success_with_detail").format(sourceLink, targetLink))
+                    else:
+                        print(self.globalization.getText("deal_success"), dir)
         print(self.globalization.getText("all_file_done"))
 
     def outputHelpInfo(self):

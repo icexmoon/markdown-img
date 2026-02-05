@@ -1,0 +1,6 @@
+cos-python-sdk-v5>=1.9.41
+pillow>=12.1.0
+qiniu>=7.17.0
+requests>=2.32.5
+tinify>=1.7.1
+upyun>=2.5.5

@@ -8,3 +8,4 @@ __pycache__/
 tmp/
 config_backup/
 .pypirc
+/src/markdown_img/_version.py

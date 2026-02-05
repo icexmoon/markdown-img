@@ -1,6 +1,58 @@
-[build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+[project]
+name = "markdown-img-icexmoon"
+# version = "2.0.1"
+dynamic = ["version"]
+description = "A program for find and upload images in markdown file and will replace them."
+readme = "README.md"
+requires-python = ">=3.13"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+keywords = ["markdown", "image"]
+authors = [{ email = "icexmoon@qq.com" }, { name = "icexmoon" }]
+classifiers = [
+    "Programming Language :: Python",
+    "Operating System :: OS Independent",
 ]
+dependencies = [
+    "cos-python-sdk-v5>=1.9.41",
+    "pillow>=12.1.0",
+    "qiniu>=7.17.0",
+    "requests>=2.32.5",
+    "tinify>=1.7.1",
+    "upyun>=2.5.5",
+]
+
+[project.scripts]
+pymdimg = "markdown_img.__main__:main"
+
+[project.urls]
+homepage = "https://github.com/icexmoon/markdown-img"
+documentation = "https://github.com/icexmoon/markdown-img"
+repository = "https://github.com/icexmoon/markdown-img"
+changelog = "https://github.com/icexmoon/markdown-img"
+
+[build-system]
+requires = ["setuptools>=80", "setuptools-scm>=8"] # 打包依赖
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+# 强制使用 pyproject.toml 中的版本号（而非 git 标签）
+version_file = "src/markdown_img/_version.py"
+version_scheme = "no-guess-dev"
+local_scheme = "no-local-version"
+
+# 关键配置：让 setuptools 识别生成的文件
+[tool.setuptools.package-data]
+# 告诉 setuptools 包含 markdown_img 包下的 _version.py
+markdown_img = ["_version.py"]
+
+[tool.setuptools]
+# 强制 sdist 包含生成的文件
+include-package-data = true
+# 替代原来的 package-dir：指定包的根目录
+# package-dir = {"": "src"}
+# 替代原来的 packages：自动查找 src 下的包（推荐）
+
+[tool.setuptools.packages.find]
+where = ["src"] 
+include = ["markdown_img"]

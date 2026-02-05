@@ -242,6 +242,17 @@ pymdimg -m relative_img
 > - In order to avoid the corruption of the original MD file caused by program errors, one original file will be kept and backed up in the backup subdirectory.
 > - Because of the difference between Windows and Linux platform separators, there is no guarantee that the relative directories of both will behave properly.
 
+## Secondary Development
+
+The development toolchain has been migrated to uv. For the installation and usage of uv, you can refer to [Python Package Management Tool UV](https://blog.icexmoon.cn/archives/805.html).
+
+You can run the test code in the project's root directory using the following command:
+
+```
+uv run test.py
+```
+
+The test directory is located at `tests`, and you need to prepare the test files and data yourself. For reference, you can look at the `tests example`.
 
 ## Acknowledgements
 
@@ -302,3 +313,9 @@ Added the function to modify the absolute path image in the MD file to relative 
 ### 0.4.0
 
 Added the support to fengzhen image bed.
+
+### 2.0.0
+
+Migrate the development workflow to uv.
+
+Optimize the display performance of the terminal on Windows, show the filenames before and after processing, and allow clicking on the filenames to jump to the corresponding files.

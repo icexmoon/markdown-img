@@ -1,0 +1,5 @@
+# MANIFEST.in
+# 包含 src/markdown_img 下的 _version.py
+include src/markdown_img/_version.py
+# 可选：确保 pyproject.toml 也被包含（方便源码包安装）
+include pyproject.toml

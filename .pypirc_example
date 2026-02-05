@@ -1,0 +1,3 @@
+[pypi]
+  username = __token__
+  password = <这里填写 pypi token>

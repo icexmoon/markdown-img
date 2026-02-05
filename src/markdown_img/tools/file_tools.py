@@ -18,9 +18,9 @@ class FileTools:
         if unit == cls.SIZE_KB:
             size = size / 1024
         elif unit == cls.SIZE_MB:
-            size = size/1024/1024
+            size = size / 1024 / 1024
         elif unit == cls.SIZE_GB:
-            size = size/1024/1024/1024
+            size = size / 1024 / 1024 / 1024
         return size
 
     @classmethod
@@ -34,11 +34,26 @@ class FileTools:
 
     @classmethod
     def getFileName(cls, path: str) -> str:
-        '''返回路径中的文件名
+        """返回路径中的文件名
         path: 绝对路径或相对路径
-        '''
+        """
         if path is None:
             return None
         config = Config()
         parts = path.split(config.getPathSplit())
         return parts[-1]
+
+    @classmethod
+    def getWindowsTerminalPathLink(cls, name: str, path: str) -> str:
+        """返回Windows终端的快捷方式路径
+        name: 路径名称
+        path: 路径
+        """
+        return "\033]8;;{}\033\\{}\033]8;;\033\\".format(path, name)
+    
+    @classmethod
+    def getAbsolutePath(cls, path: str) -> str:
+        """返回绝对路径
+        path: 相对路径
+        """
+        return os.path.abspath(path)
