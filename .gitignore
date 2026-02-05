@@ -9,3 +9,4 @@ tmp/
 config_backup/
 .pypirc
 /src/markdown_img/_version.py
+/markdown_img_icexmoon.egg-info
