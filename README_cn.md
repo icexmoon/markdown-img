@@ -258,6 +258,12 @@ uv run test.py
 
 测试目录位于`tests`，需要自行准备测试文件和数据。作为参考，可以参考`tests_example`。
 
+项目打包：
+
+```
+python -m build
+```
+
 
 
 ## 致谢
