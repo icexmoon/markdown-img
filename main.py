@@ -17,9 +17,10 @@ def main():
     if os.path.exists(testFile):
         os.remove(testFile)
     main = Main()
-    main.changeImgService("upyun")
-    main.changeMainPrams({"compress_engine": "tinyPNG"})
-    main.main(True)
+    main.printSysInfo()
+    # main.changeImgService("upyun")
+    # main.changeMainPrams({"compress_engine": "tinyPNG"})
+    # main.main(True)
 
 
 if __name__ == "__main__":

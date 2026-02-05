@@ -85,8 +85,7 @@ wheels = [
 
 [[package]]
 name = "markdown-img-icexmoon"
-version = "2.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "cos-python-sdk-v5" },
     { name = "pillow" },
