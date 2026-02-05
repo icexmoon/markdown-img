@@ -13,6 +13,7 @@ from .config_backup import ConfigBackup
 from .tools.file_tools import FileTools
 import shutil
 import sys
+from ._version import __version__
 
 
 class Main():
@@ -412,9 +413,8 @@ class Main():
     def printSysInfo(self):
         '''打印当前系统相关信息'''
         sysConfig = Config()
-        import pkg_resources
-        version = pkg_resources.get_distribution(
-            'markdown-img-icexmoon').version
+        # 通过自动生成的 _version 文件获取版本号
+        version = __version__
         print("{}{}{}".format(self.globalization.getText(
             "program_version"), self.globalization.getText("colon"), version))
         try:
