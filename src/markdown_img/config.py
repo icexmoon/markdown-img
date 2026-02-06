@@ -288,3 +288,7 @@ class Config():
         """获取图片压缩配置信息"""
         info = self.getConfigParam(Config.PARAM_COMPRESS)
         return info
+    
+    def getConfigFilePath(self):
+        """获取配置文件路径"""
+        return self.getCurrentDirPath()+self.getPathSplit()+'main.config'

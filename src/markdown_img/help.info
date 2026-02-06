@@ -48,3 +48,4 @@
 --config    使用指定配置
 --list_config   列出已保存的配置
 --change_config 使用指定的配置替换当前配置
+--config_file   打印配置文件位置（可以直接修改或备份配置文件）

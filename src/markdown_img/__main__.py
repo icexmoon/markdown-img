@@ -14,7 +14,9 @@ def getOptionVal(options, key):
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], 'm:hvi:c:su:l:e:', [
-            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan', 'des_dir=', 'url_encode=', 'language=', 'compress', 'debug=', 'engine=', 'name=', 'config=', 'list_config', 'change_config='])
+            'mode=', 'help', 'version', 'img_service=', 'change_token=', 'scan', 'des_dir=', 
+            'url_encode=', 'language=', 'compress', 'debug=', 'engine=', 'name=', 'config=', 
+            'list_config', 'change_config=', 'config_file'])
     except getopt.GetoptError as e:
         print("获取参数信息出错，错误提示：", e.msg)
         exit()
@@ -80,6 +82,8 @@ def main():
                 mainProcess.listConfigBackup()
             elif argKey == '--change_config':
                 mainProcess.changeConfig(argVal)
+            elif argKey == '--config_file':
+                mainProcess.showConfigFile()
             else:
                 configFileName = getOptionVal(opts, '--config')
                 mainProcess.main(configFileName=configFileName)
