@@ -3,7 +3,7 @@ name = "markdown-img-icexmoon"
 dynamic = ["version"]
 description = "A program for find and upload images in markdown file and will replace them."
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 keywords = ["markdown", "image"]
@@ -39,4 +39,5 @@ version_file = "src/markdown_img/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"] 
-include = ["markdown_img"]
+namespaces = false
+

@@ -1,0 +1,2 @@
+exclude .vscode/* tests/* tests_example/* markdown_img/*
+exclude .gitignore .pypirc_example .python-version main.py uv.lock
