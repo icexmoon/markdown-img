@@ -143,8 +143,24 @@ pip install --upgrade markdown-img-icexmoon
 > - 图床token存储在程序所在目录的`main.config`文件中，如果需要修改的可以自行修改，也可以删除该配置文件后重新运行程序输入。
 > - <del>目前仍不支持根据文件新旧程度重新生成markdown副本的功能，如果原文件改变，需要手动删除副本后重新生成。</del>此功能已添加，详情见功能：刷新图床副本。
 > - 稍后会丰富并完善程序的相关命令参数。
-> - 如果目标图床返回的URL中包含中文或者空格等特殊字符，并且你的markdown文本编辑器无法正常预览相应的图片，则可能需要使用URL ENCODE进行处理，开启此功能的方法为`pymdimg -u standard`，开启后重新生成副本即可。此功能目前仅作用域腾讯云OSS，因为其他图床不会返回中文url。
 > - 可以使用指定的配置来生成副本，比如`pymdimg --config normal`，通过此功能可以在特定情景，比如说希望本次任务中不适用压缩，或者使用大比例压缩时，在不修改当前配置的前提下可以使用定制的相关配置完成本次任务。具体制作相关配置的功能见【功能：备份系统配置】。
+
+#### 含空格的图片路径
+
+程序会自动识别并上传路径中包含空格的本地图片，无需额外命令或编码设置。例如，以下写法都可以引用 `images` 目录下的 `my photo.png`：
+
+```markdown
+![图片](images/my photo.png)
+![图片](images/my%20photo.png)
+![图片](<images/my photo.png>)
+<img src="images/my photo.png" />
+```
+
+相对路径以运行命令时的工作目录为基准。如果原样路径和解码后的路径都存在，程序优先使用原样路径。
+
+生成副本时，上传结果中的空格会自动转换为 `%20`，即使 URL 编码选项设为 `none` 也无需额外设置。例如腾讯云返回的 `https://example.cos.ap-guangzhou.myqcloud.com/images/my photo.png` 会写成 `https://example.cos.ap-guangzhou.myqcloud.com/images/my%20photo.png`。对于腾讯云和又拍云链接中的中文等其他特殊字符，如编辑器无法预览，可使用 `pymdimg -u standard` 并重新生成副本。
+
+普通运行不会覆盖已有副本；要让旧副本应用此功能，请先备份需要保留的修改，再删除对应副本并重新运行。也可以在原始文件更新后使用下文的刷新功能。
 
 ### 从图床恢复本地图库
 
