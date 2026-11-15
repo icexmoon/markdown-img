@@ -32,7 +32,7 @@ class SmmsImg():
                             raise UserException(
                                 UserException.CODE_UPLOAD_ERROR, "文件上传出错")
                         else:
-                            results[futureMap[future]] = webImage
+                            results[futureMap[future]] = webImage.replace(" ", "%20")
         else:
             self.multiUploadImage(images[0:MAX_SAME_TIME_DEAL], results)
             self.multiUploadImage(

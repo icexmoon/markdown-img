@@ -139,8 +139,24 @@ The main function of this program, will scan the markdown file in the command li
 
 > - The token is stored in the `main.config` file in the directory where the program is located. You can modify it yourself if you need to, or you can delete the configuration file and run the program again to enter it.
 > - The command parameters of the program will be enriched and refined later.
-> - If the URL returned by the target image bed contains special characters such as Chinese or spaces, and your markdown text editor cannot preview the corresponding image properly, you may need to use URL ENCODE to process it, turn on this function by `pymdimg -u standard`, and regenerate the copy after turning on. This feature currently only works with Tencent OSS, because other image beds will not return Chinese URLs.
 > - A copy can be generated using a specified configuration, such as `pymdimg --config normal`, which allows you to use a customized related configuration to complete this task without modifying the current configuration in specific scenarios, such as when you want compression not to apply in this task, or when you use large scale compression. See [Function: Backup system configuration] for the specific function of making related configurations.
+
+#### Image paths containing spaces
+
+Local images with spaces in their paths are detected and uploaded automatically, without an extra command or encoding setting. For example, each of these forms can refer to `my photo.png` in the `images` directory:
+
+```markdown
+![image](images/my photo.png)
+![image](images/my%20photo.png)
+![image](<images/my photo.png>)
+<img src="images/my photo.png" />
+```
+
+Relative paths are resolved from the command-line working directory. If both the literal path and the decoded path exist, the literal path takes precedence.
+
+Spaces in uploaded image URLs are automatically converted to `%20` in the generated copy, even when the URL encoding option is set to `none`. For example, a Tencent Cloud URL such as `https://example.cos.ap-guangzhou.myqcloud.com/images/my photo.png` becomes `https://example.cos.ap-guangzhou.myqcloud.com/images/my%20photo.png`. For other special characters in Tencent Cloud or Upyun URLs, use `pymdimg -u standard` and regenerate the copy if your editor cannot preview them.
+
+Normal runs do not overwrite existing copies. To apply this change to an old copy, back up any changes you want to keep, delete the corresponding copy, and run the program again. Alternatively, use the refresh function below after updating the original file.
 
 ### Restore local gallery from the image bed
 

@@ -12,6 +12,7 @@ from .compress.compress_manager import CompressManager
 from .config_backup import ConfigBackup
 from .tools.file_tools import FileTools
 import shutil
+import urllib.parse
 import sys
 from ._version import __version__
 
@@ -60,6 +61,24 @@ class Main:
                 return True
         return False
 
+    @staticmethod
+    def stripAngleBrackets(path: str) -> str:
+        """去除markdown中为支持空格而使用的<>包裹"""
+        path = path.strip()
+        if path.startswith("<") and path.endswith(">"):
+            return path[1:-1]
+        return path
+
+    @staticmethod
+    def resolveImgPath(path: str) -> str | None:
+        """返回真实存在的图片路径，兼容%20等URL编码的路径；不存在则返回None"""
+        if os.path.exists(path):
+            return path
+        decoded = urllib.parse.unquote(path)
+        if os.path.exists(decoded):
+            return decoded
+        return None
+
     def findHtmlImg(self, line, onlyLocal) -> list:
         """从字符串中查找html标签中的本地图片"""
         findImgs = []
@@ -69,39 +88,39 @@ class Main:
             if self.isImgFileName(imgFile):
                 if not onlyLocal:
                     findImgs.append(imgFile)
-                elif os.path.exists(imgFile):
+                elif self.resolveImgPath(imgFile):
                     findImgs.append(imgFile)
                 else:
                     pass
         return findImgs
 
     def findLocalImageFile(self, line: str, localImages: set):
-        """递归查找某段字符串中中括号包裹的内容是否为本地图片"""
+        """查找字符串中括号包裹的本地图片路径"""
         htmlImgs = self.findHtmlImg(line, True)
         if htmlImgs:
             localImages.update(htmlImgs)
-        linePart = line.partition("(")
-        if len(linePart[2]) > 0:
-            secondPart = linePart[2].partition(")")
-            content = secondPart[0]
-            if len(content) > 0:
-                if self.isImgFileName(content) and os.path.exists(content):
-                    localImages.add(content)
-                    self.findLocalImageFile(content, localImages)
+        while "(" in line:
+            _, _, remainder = line.partition("(")
+            content, separator, line = remainder.partition(")")
+            if not separator:
+                break
+            content = self.stripAngleBrackets(content)
+            if self.isImgFileName(content) and self.resolveImgPath(content):
+                localImages.add(content)
 
     def findImagesInStr(self, line: str, localImages: list):
-        """递归查找某段字符串中中括号包裹的内容是否为本地图片"""
+        """查找字符串中括号包裹的图片路径"""
         htmlImgs = self.findHtmlImg(line, False)
         if htmlImgs:
-            localImages.update(htmlImgs)
-        linePart = line.partition("(")
-        if len(linePart[2]) > 0:
-            secondPart = linePart[2].partition(")")
-            content = secondPart[0]
-            if len(content) > 0:
-                if self.isImgFileName(content):
-                    localImages.append(content)
-                    self.findImagesInStr(content, localImages)
+            localImages.extend(htmlImgs)
+        while "(" in line:
+            _, _, remainder = line.partition("(")
+            content, separator, line = remainder.partition(")")
+            if not separator:
+                break
+            content = self.stripAngleBrackets(content)
+            if self.isImgFileName(content):
+                localImages.append(content)
 
     def dealMdFile(self, mdFile: str, dealFunc):
         """遍历并处理markdown文件
@@ -112,9 +131,7 @@ class Main:
         # 逐行扫描，查找本地图片
         with open(file=mdFile, mode="r", encoding="UTF-8") as fopen:
             for line in fopen:
-                # 去除行尾的换行
-                subLine = line[0 : len(line) - 1]
-                self.findLocalImageFile(subLine, localImages)
+                self.findLocalImageFile(line, localImages)
         dealFunc(localImages, mdFile)
 
     def __createWebImgCopy(self, localImages: set, originalFile: str):
@@ -125,7 +142,16 @@ class Main:
         # 上传本地图片，建立图片映射表
         imgDict = dict()
         imgServer = SmmsImg()
-        imgServer.multiUploadImage(list(localImages), imgDict)
+        rawToReal = {}
+        for raw in localImages:
+            real = self.resolveImgPath(raw)
+            if real is None:
+                raise FileNotFoundError(raw)
+            rawToReal[raw] = real
+        realDict = dict()
+        imgServer.multiUploadImage(list(set(rawToReal.values())), realDict)
+        for raw, real in rawToReal.items():
+            imgDict[raw] = realDict[real]
         # 替换本地图片
         copyFilePath = self.getCopyFilePath(originalFile)
         copyFileOpen = open(file=copyFilePath, mode="w", encoding="UTF-8")
@@ -148,16 +174,17 @@ class Main:
         with open(file=originalFile, mode="r", encoding="UTF-8") as fread:
             for line in fread:
                 for localImg in localImages:
-                    imgName = FileTools.getFileName(localImg)
+                    realImg = self.resolveImgPath(localImg)
+                    imgName = FileTools.getFileName(realImg or localImg)
                     relativeLocalImage = (
                         sysConfig.getImagesDirPath()
                         + sysConfig.getPathSplit()
                         + imgName
                     )
-                    if os.path.exists(localImg):
+                    if realImg:
                         # 拷贝本地图片到相对目录images
                         if not os.path.exists(relativeLocalImage):
-                            shutil.copyfile(localImg, relativeLocalImage)
+                            shutil.copyfile(realImg, relativeLocalImage)
                         # 替换图片路径为相对路径
                         line = line.replace(
                             # 改为使用/而非\
@@ -184,9 +211,7 @@ class Main:
         # 逐行扫描，查找本地图片
         with open(file=mdFile, mode="r", encoding="UTF-8") as fopen:
             for line in fopen:
-                # 去除行尾的换行
-                subLine = line[0 : len(line) - 1]
-                self.findImagesInStr(subLine, localImages)
+                self.findImagesInStr(line, localImages)
         return localImages
 
     def dealUserException(self, userExp: UserException):
@@ -307,6 +332,8 @@ class Main:
     def copyImgFromWeb(self, webImg, localImgPath):
         if localImgPath[0:4] == "http" or webImg[0:4] != "http":
             return
+        if not os.path.exists(localImgPath):
+            localImgPath = urllib.parse.unquote(localImgPath)
         if not os.path.exists(localImgPath):
             downloader = DownloadHelp()
             downloader.chunkDownload(webImg, localImgPath, timeout=2)
