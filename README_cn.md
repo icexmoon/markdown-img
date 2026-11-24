@@ -158,7 +158,9 @@ pip install --upgrade markdown-img-icexmoon
 
 相对路径以运行命令时的工作目录为基准。如果原样路径和解码后的路径都存在，程序优先使用原样路径。
 
-生成副本时，上传结果中的空格会自动转换为 `%20`，即使 URL 编码选项设为 `none` 也无需额外设置。例如腾讯云返回的 `https://example.cos.ap-guangzhou.myqcloud.com/images/my photo.png` 会写成 `https://example.cos.ap-guangzhou.myqcloud.com/images/my%20photo.png`。对于腾讯云和又拍云链接中的中文等其他特殊字符，如编辑器无法预览，可使用 `pymdimg -u standard` 并重新生成副本。
+生成副本时，上传结果中的空格会自动转换为 `%20`，即使 URL 编码选项设为 `none` 也无需额外设置。例如腾讯云返回的 `https://example.cos.ap-guangzhou.myqcloud.com/images/my photo.png` 会写成 `https://example.cos.ap-guangzhou.myqcloud.com/images/my%20photo.png`。腾讯云链接还会自动编码 `%`、引号等不安全的 ASCII 字符，对象键本身不会改变。对于中文等非 ASCII 字符，如编辑器无法预览，可使用 `pymdimg -u standard` 并重新生成副本。
+
+每批图片处理结束后，终端会列出成功和失败的图片，并在出错时显示错误详情及可能原因；没有找到本地图片时也会提示。腾讯云的结果首先显示目标存储桶和文件夹。腾讯云上传后会查询对象元数据并核对 ETag 和大小，需要 `cos:PutObject` 和 `cos:HeadObject` 权限。只要有图片失败，就不会生成新副本，刷新失败时原有副本也会保留。已成功上传的对象不会回滚；核验失败时对象也可能已经上传。核验成功不代表私有存储桶的图片可公开访问，请另行配置读取权限。
 
 普通运行不会覆盖已有副本；要让旧副本应用此功能，请先备份需要保留的修改，再删除对应副本并重新运行。也可以在原始文件更新后使用下文的刷新功能。
 

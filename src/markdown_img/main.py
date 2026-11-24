@@ -222,12 +222,15 @@ class Main:
             ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
             currentImgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
+            if userExp.getErrorMsg():
+                print(userExp.getErrorMsg())
             print(
                 self.globalization.getText("update_image_fail").format(
                     currentImgService
                 ),
                 sysConfig.getErrorLogFilePath(),
             )
+            raise SystemExit(1)
         elif userExp.getErrorCode() == UserException.CODE_TIMEOUT:
             print(userExp.getErrorMsg())
         elif userExp.getErrorCode() == UserException.CODE_NO_YUJIAN_TOKEN:
@@ -266,19 +269,13 @@ class Main:
         for dir in os.listdir():
             if os.path.isfile(dir):
                 if self.isOrigMdFile(dir):
-                    # 如果副本存在，刷新模式下且原md文件更新过的，删除副本，重新生成，否则不处理
+                    # 如果副本存在，仅在刷新模式且原文件更新后重新生成
                     copyFilePath = self.getCopyFilePath(dir)
-                    if os.path.exists(copyFilePath):
-                        if (
-                            refresh
-                            and TimeHelper.compareTwoFilsLastModifyTime(
-                                dir, copyFilePath
-                            )
-                            > 0
-                        ):
-                            os.remove(copyFilePath)
-                        else:
-                            continue
+                    if os.path.exists(copyFilePath) and not (
+                        refresh
+                        and TimeHelper.compareTwoFilsLastModifyTime(dir, copyFilePath) > 0
+                    ):
+                        continue
                     try:
                         self.dealMdFile(dir, self.__createWebImgCopy)
                     except UserException as e:

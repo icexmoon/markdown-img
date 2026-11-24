@@ -30,7 +30,7 @@
         --des_dir 仅更新腾讯云oss上的存储目录
     qiniu   七牛云对象存储
 -s  --scan 扫描当前目录的图片并生成网络图床索引
--u  --url_encode 图片URL编码选项（上传结果中的空格始终自动编码）
+-u  --url_encode 图片URL编码选项（空格及腾讯云链接中不安全的ASCII字符始终编码）
     none 不额外编码
     only_space 仅对空格使用
     standard 对非ASCII字符均进行编码
