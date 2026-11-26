@@ -12,20 +12,47 @@ class QcloudImgService(ImgService):
     def upload(self, localImg: str) -> str:
         '''上传到腾讯云'''
         clientInfo = self.getConfigInfo()
-        if not hasattr(self, "qclient"):
-            self.qclient = QcloudClient(clientInfo[Config.QCLOUD_INFO_SECRET_ID],
-                                        clientInfo[Config.QCLOUD_INFO_SECRET_KEY],
-                                        clientInfo[Config.QCLOUD_INFO_REGION],
-                                        clientInfo[Config.QCLOUD_INFO_BUCKET])
+        required = (
+            Config.QCLOUD_INFO_SECRET_ID, Config.QCLOUD_INFO_SECRET_KEY,
+            Config.QCLOUD_INFO_REGION, Config.QCLOUD_INFO_BUCKET,
+            Config.QCLOUD_INFO_DES_DIR,
+        )
+        if not isinstance(clientInfo, dict):
+            raise UserException(
+                UserException.CODE_UPLOAD_ERROR,
+                self.globalization.getText("qcloud_invalid_config"),
+            )
+        invalid = [
+            key for key in required
+            if not isinstance(clientInfo.get(key), str)
+            or (key != Config.QCLOUD_INFO_DES_DIR and not clientInfo[key])
+        ]
+        if invalid:
+            raise UserException(
+                UserException.CODE_UPLOAD_ERROR,
+                self.globalization.getText("qcloud_invalid_fields").format(", ".join(invalid)),
+            )
         sysConfig = Config.getInstance()
         try:
+            if not hasattr(self, "qclient"):
+                self.qclient = QcloudClient(clientInfo[Config.QCLOUD_INFO_SECRET_ID],
+                                            clientInfo[Config.QCLOUD_INFO_SECRET_KEY],
+                                            clientInfo[Config.QCLOUD_INFO_REGION],
+                                            clientInfo[Config.QCLOUD_INFO_BUCKET])
             urlEncodeMode = sysConfig.getConfigParam(
                 Config.PARAM_URL_ENCODE_MODE)
             url = self.qclient.upload(
                 localImg, clientInfo[Config.QCLOUD_INFO_DES_DIR], urlEncodeMode)
-        except qcloud_cos.cos_exception.CosServiceError as e:
-            sysConfig.writeErrorLog(str(e))
-            return False
+        except OSError as e:
+            raise UserException(UserException.CODE_UPLOAD_ERROR,
+                                self.globalization.getText("upload_file_error").format(str(e))) from e
+        except qcloud_cos.cos_exception.CosException as e:
+            raise UserException(
+                UserException.CODE_UPLOAD_ERROR,
+                QcloudClient._errorText("qcloud_client_failed", e)
+            ) from e
+        except RuntimeError as e:
+            raise UserException(UserException.CODE_UPLOAD_ERROR, str(e)) from e
         return url
 
     def getConfigInfo(self) -> dict:

@@ -30,8 +30,8 @@
         --des_dir Update only the storage directory on Tencent Cloudoss
     qiniu   Qiniu Cloud Object Storage
 -s  --scan Scan images in the current directory and generate a webbed index
--u  --url_encode Whether to use URL ENCODE to encode the image url
-    none No use
+-u  --url_encode Image URL encoding (spaces and unsafe ASCII characters in Tencent Cloud URLs are always encoded)
+    none No additional encoding
     only_space Use only for spaces
     standard Encoding of all non-ASCII characters
 -l  --language Working Language

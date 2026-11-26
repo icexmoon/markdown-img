@@ -1,6 +1,8 @@
 *.config
 *.log
 /tests/*
+!/tests/test_paths_with_spaces.py
+!/tests/test_qcloud_upload.py
 /dist/*
 /build/*
 /src/markdown_img_icexmoon.egg-info/*
