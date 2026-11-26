@@ -34,10 +34,12 @@ class ImagePathsWithSpacesTests(unittest.TestCase):
         client.bucket = "bucket-123"
         client.region = "region"
         client.client = Mock()
+        client.client.head_object.return_value = {"ETag": '"etag"', "Content-Length": "14"}
         bodies = []
-        client.client.put_object.side_effect = lambda **kwargs: bodies.append(
-            (kwargs["Key"], kwargs["Body"].read())
-        )
+        def put_object(**kwargs):
+            bodies.append((kwargs["Key"], kwargs["Body"].read()))
+            return {"ETag": '"etag"'}
+        client.client.put_object.side_effect = put_object
 
         server = SmmsImg.__new__(SmmsImg)
         server.uploadOne = Mock(
@@ -78,6 +80,8 @@ class ImagePathsWithSpacesTests(unittest.TestCase):
         client.bucket = "bucket-123"
         client.region = "region"
         client.client = Mock()
+        client.client.put_object.return_value = {"ETag": '"etag"'}
+        client.client.head_object.return_value = {"ETag": '"etag"', "Content-Length": "14"}
         server = SmmsImg.__new__(SmmsImg)
         server.uploadOne = Mock(
             side_effect=lambda path: client.upload(
