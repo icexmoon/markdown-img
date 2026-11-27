@@ -1,4 +1,5 @@
 from .img_service.img_service import ImgService
+from .img_service.qcloud_img_service import QcloudImgService
 from .globalization import Globalization
 from .config import Config
 import os
@@ -12,6 +13,7 @@ from .compress.compress_manager import CompressManager
 from .config_backup import ConfigBackup
 from .tools.file_tools import FileTools
 import shutil
+import urllib.parse
 import sys
 from ._version import __version__
 
@@ -60,6 +62,24 @@ class Main:
                 return True
         return False
 
+    @staticmethod
+    def stripAngleBrackets(path: str) -> str:
+        """去除markdown中为支持空格而使用的<>包裹"""
+        path = path.strip()
+        if path.startswith("<") and path.endswith(">"):
+            return path[1:-1]
+        return path
+
+    @staticmethod
+    def resolveImgPath(path: str) -> str | None:
+        """返回真实存在的图片路径，兼容%20等URL编码的路径；不存在则返回None"""
+        if os.path.exists(path):
+            return path
+        decoded = urllib.parse.unquote(path)
+        if os.path.exists(decoded):
+            return decoded
+        return None
+
     def findHtmlImg(self, line, onlyLocal) -> list:
         """从字符串中查找html标签中的本地图片"""
         findImgs = []
@@ -69,39 +89,39 @@ class Main:
             if self.isImgFileName(imgFile):
                 if not onlyLocal:
                     findImgs.append(imgFile)
-                elif os.path.exists(imgFile):
+                elif self.resolveImgPath(imgFile):
                     findImgs.append(imgFile)
                 else:
                     pass
         return findImgs
 
     def findLocalImageFile(self, line: str, localImages: set):
-        """递归查找某段字符串中中括号包裹的内容是否为本地图片"""
+        """查找字符串中括号包裹的本地图片路径"""
         htmlImgs = self.findHtmlImg(line, True)
         if htmlImgs:
             localImages.update(htmlImgs)
-        linePart = line.partition("(")
-        if len(linePart[2]) > 0:
-            secondPart = linePart[2].partition(")")
-            content = secondPart[0]
-            if len(content) > 0:
-                if self.isImgFileName(content) and os.path.exists(content):
-                    localImages.add(content)
-                    self.findLocalImageFile(content, localImages)
+        while "(" in line:
+            _, _, remainder = line.partition("(")
+            content, separator, line = remainder.partition(")")
+            if not separator:
+                break
+            content = self.stripAngleBrackets(content)
+            if self.isImgFileName(content) and self.resolveImgPath(content):
+                localImages.add(content)
 
     def findImagesInStr(self, line: str, localImages: list):
-        """递归查找某段字符串中中括号包裹的内容是否为本地图片"""
+        """查找字符串中括号包裹的图片路径"""
         htmlImgs = self.findHtmlImg(line, False)
         if htmlImgs:
-            localImages.update(htmlImgs)
-        linePart = line.partition("(")
-        if len(linePart[2]) > 0:
-            secondPart = linePart[2].partition(")")
-            content = secondPart[0]
-            if len(content) > 0:
-                if self.isImgFileName(content):
-                    localImages.append(content)
-                    self.findImagesInStr(content, localImages)
+            localImages.extend(htmlImgs)
+        while "(" in line:
+            _, _, remainder = line.partition("(")
+            content, separator, line = remainder.partition(")")
+            if not separator:
+                break
+            content = self.stripAngleBrackets(content)
+            if self.isImgFileName(content):
+                localImages.append(content)
 
     def dealMdFile(self, mdFile: str, dealFunc):
         """遍历并处理markdown文件
@@ -112,10 +132,71 @@ class Main:
         # 逐行扫描，查找本地图片
         with open(file=mdFile, mode="r", encoding="UTF-8") as fopen:
             for line in fopen:
-                # 去除行尾的换行
-                subLine = line[0 : len(line) - 1]
-                self.findLocalImageFile(subLine, localImages)
+                self.findLocalImageFile(line, localImages)
         dealFunc(localImages, mdFile)
+
+    def _deleteOldQcloudImages(self, originalFile: str, copyFilePath: str) -> bool:
+        service = QcloudImgService()
+        client = service.getClient()
+        expectedHost = "{}.cos.{}.myqcloud.com".format(client.bucket, client.region).lower()
+        keys = set()
+        imageUrls = []
+        fence = None
+        with open(copyFilePath, encoding="UTF-8") as copy:
+            for line in copy:
+                marker = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+                if marker:
+                    token = marker.group(1)
+                    if fence is None:
+                        fence = token
+                    elif token[0] == fence[0] and len(token) >= len(fence):
+                        fence = None
+                    continue
+                if fence is not None or line.startswith(("    ", "\t")):
+                    continue
+                line = re.sub(r"(`+)(.+?)\1", "", line)
+                for match in re.finditer(r"(?<!\\)!\[[^\]]*\]\(\s*(?:<([^>\r\n]+)>|([^\s)]+))", line):
+                    imageUrls.append(match.group(1) or match.group(2))
+                for tag in re.finditer(r"<img\b[^>]*>", line, re.IGNORECASE):
+                    match = re.search(r"\bsrc\s*=\s*([\"'])(.*?)\1", tag.group(), re.IGNORECASE)
+                    if match:
+                        imageUrls.append(match.group(2))
+        for url in imageUrls:
+            parsed = urllib.parse.urlsplit(url)
+            if parsed.scheme == "https" and parsed.netloc.lower() == expectedHost:
+                key = urllib.parse.unquote(parsed.path[1:], errors="strict")
+                if key:
+                    keys.add(key)
+        if not keys:
+            return True
+
+        folders = {}
+        for key in sorted(keys):
+            folder = key.rpartition("/")[0]
+            folders.setdefault(folder, []).append(key)
+        print(self.globalization.getText("qcloud_refresh_warning").format(originalFile))
+        for folder, images in folders.items():
+            folderName = folder or self.globalization.getText("upload_root_directory")
+            try:
+                answer = input(self.globalization.getText("qcloud_refresh_confirm").format(
+                    client.bucket, folderName, len(images)
+                ))
+            except EOFError:
+                answer = ""
+            if answer.strip().lower() != "y":
+                print(self.globalization.getText("qcloud_refresh_cancelled").format(originalFile))
+                return False
+        for key in sorted(keys):
+            try:
+                service.delete(key)
+            except UserException as e:
+                raise UserException(
+                    UserException.CODE_QCLOUD_DELETE_ERROR,
+                    self.globalization.getText("qcloud_refresh_delete_error").format(
+                        key, e.getErrorMsg()
+                    ),
+                ) from e
+        return True
 
     def __createWebImgCopy(self, localImages: set, originalFile: str):
         """创建包含网络图片的副本文件
@@ -125,7 +206,16 @@ class Main:
         # 上传本地图片，建立图片映射表
         imgDict = dict()
         imgServer = SmmsImg()
-        imgServer.multiUploadImage(list(localImages), imgDict)
+        rawToReal = {}
+        for raw in localImages:
+            real = self.resolveImgPath(raw)
+            if real is None:
+                raise FileNotFoundError(raw)
+            rawToReal[raw] = real
+        realDict = dict()
+        imgServer.multiUploadImage(list(set(rawToReal.values())), realDict)
+        for raw, real in rawToReal.items():
+            imgDict[raw] = realDict[real]
         # 替换本地图片
         copyFilePath = self.getCopyFilePath(originalFile)
         copyFileOpen = open(file=copyFilePath, mode="w", encoding="UTF-8")
@@ -148,16 +238,17 @@ class Main:
         with open(file=originalFile, mode="r", encoding="UTF-8") as fread:
             for line in fread:
                 for localImg in localImages:
-                    imgName = FileTools.getFileName(localImg)
+                    realImg = self.resolveImgPath(localImg)
+                    imgName = FileTools.getFileName(realImg or localImg)
                     relativeLocalImage = (
                         sysConfig.getImagesDirPath()
                         + sysConfig.getPathSplit()
                         + imgName
                     )
-                    if os.path.exists(localImg):
+                    if realImg:
                         # 拷贝本地图片到相对目录images
                         if not os.path.exists(relativeLocalImage):
-                            shutil.copyfile(localImg, relativeLocalImage)
+                            shutil.copyfile(realImg, relativeLocalImage)
                         # 替换图片路径为相对路径
                         line = line.replace(
                             # 改为使用/而非\
@@ -184,25 +275,29 @@ class Main:
         # 逐行扫描，查找本地图片
         with open(file=mdFile, mode="r", encoding="UTF-8") as fopen:
             for line in fopen:
-                # 去除行尾的换行
-                subLine = line[0 : len(line) - 1]
-                self.findImagesInStr(subLine, localImages)
+                self.findImagesInStr(line, localImages)
         return localImages
 
     def dealUserException(self, userExp: UserException):
         sysConfig = Config()
+        if userExp.getErrorCode() == UserException.CODE_QCLOUD_DELETE_ERROR:
+            print(userExp.getErrorMsg())
+            raise SystemExit(1)
         if userExp.getErrorCode() == UserException.CODE_NO_SMMS_TOKEN:
             ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_NO_RRUU_TOKEN:
             ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_UPLOAD_ERROR:
             currentImgService = sysConfig.getConfigParam(Config.PARAM_IMG_SERVICE)
+            if userExp.getErrorMsg():
+                print(userExp.getErrorMsg())
             print(
                 self.globalization.getText("update_image_fail").format(
                     currentImgService
                 ),
                 sysConfig.getErrorLogFilePath(),
             )
+            raise SystemExit(1)
         elif userExp.getErrorCode() == UserException.CODE_TIMEOUT:
             print(userExp.getErrorMsg())
         elif userExp.getErrorCode() == UserException.CODE_NO_YUJIAN_TOKEN:
@@ -237,24 +332,25 @@ class Main:
         configFileName: 从指定的配置文件进行加载系统配置
         """
         self.__loadConfigFromFile(configFileName)
+        cancelled = False
         # 检索当前目录中的markdown文件
         for dir in os.listdir():
             if os.path.isfile(dir):
                 if self.isOrigMdFile(dir):
-                    # 如果副本存在，刷新模式下且原md文件更新过的，删除副本，重新生成，否则不处理
+                    # 如果副本存在，仅在刷新模式且原文件更新后重新生成
                     copyFilePath = self.getCopyFilePath(dir)
-                    if os.path.exists(copyFilePath):
-                        if (
-                            refresh
-                            and TimeHelper.compareTwoFilsLastModifyTime(
-                                dir, copyFilePath
-                            )
-                            > 0
-                        ):
-                            os.remove(copyFilePath)
-                        else:
-                            continue
+                    if os.path.exists(copyFilePath) and not (
+                        refresh
+                        and TimeHelper.compareTwoFilsLastModifyTime(dir, copyFilePath) > 0
+                    ):
+                        continue
                     try:
+                        if (refresh and os.path.exists(copyFilePath)
+                                and Config.getInstance().getConfigParam(Config.PARAM_IMG_SERVICE)
+                                == Config.IMG_SERVICE_QCLOUD
+                                and not self._deleteOldQcloudImages(dir, copyFilePath)):
+                            cancelled = True
+                            continue
                         self.dealMdFile(dir, self.__createWebImgCopy)
                     except UserException as e:
                         self.dealUserException(e)
@@ -275,7 +371,8 @@ class Main:
                         )
                     else:
                         print(self.globalization.getText("deal_success"), dir)
-        print(self.globalization.getText("all_file_done"))
+        message = "refresh_some_cancelled" if cancelled else "all_file_done"
+        print(self.globalization.getText(message))
 
     def outputHelpInfo(self):
         sysConfig = Config()
@@ -307,6 +404,8 @@ class Main:
     def copyImgFromWeb(self, webImg, localImgPath):
         if localImgPath[0:4] == "http" or webImg[0:4] != "http":
             return
+        if not os.path.exists(localImgPath):
+            localImgPath = urllib.parse.unquote(localImgPath)
         if not os.path.exists(localImgPath):
             downloader = DownloadHelp()
             downloader.chunkDownload(webImg, localImgPath, timeout=2)

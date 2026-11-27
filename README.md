@@ -139,8 +139,26 @@ The main function of this program, will scan the markdown file in the command li
 
 > - The token is stored in the `main.config` file in the directory where the program is located. You can modify it yourself if you need to, or you can delete the configuration file and run the program again to enter it.
 > - The command parameters of the program will be enriched and refined later.
-> - If the URL returned by the target image bed contains special characters such as Chinese or spaces, and your markdown text editor cannot preview the corresponding image properly, you may need to use URL ENCODE to process it, turn on this function by `pymdimg -u standard`, and regenerate the copy after turning on. This feature currently only works with Tencent OSS, because other image beds will not return Chinese URLs.
 > - A copy can be generated using a specified configuration, such as `pymdimg --config normal`, which allows you to use a customized related configuration to complete this task without modifying the current configuration in specific scenarios, such as when you want compression not to apply in this task, or when you use large scale compression. See [Function: Backup system configuration] for the specific function of making related configurations.
+
+#### Image paths containing spaces
+
+Local images with spaces in their paths are detected and uploaded automatically, without an extra command or encoding setting. For example, each of these forms can refer to `my photo.png` in the `images` directory:
+
+```markdown
+![image](images/my photo.png)
+![image](images/my%20photo.png)
+![image](<images/my photo.png>)
+<img src="images/my photo.png" />
+```
+
+Relative paths are resolved from the command-line working directory. If both the literal path and the decoded path exist, the literal path takes precedence.
+
+Spaces in uploaded image URLs are automatically converted to `%20` in the generated copy, even when the URL encoding option is set to `none`. For example, a Tencent Cloud URL such as `https://example.cos.ap-guangzhou.myqcloud.com/images/my photo.png` becomes `https://example.cos.ap-guangzhou.myqcloud.com/images/my%20photo.png`. Tencent Cloud URLs also automatically encode unsafe ASCII characters such as `%` and quotes without changing the object key. For non-ASCII characters in Tencent Cloud URLs or other special characters in Upyun URLs, use `pymdimg -u standard` and regenerate the copy if your editor cannot preview them.
+
+After each image batch, the terminal lists successful and failed images, error details and possible causes; it also reports when no local images are found. Tencent Cloud results start with the destination bucket and folder. After uploading to Tencent Cloud, the program checks the object's ETag and size using its metadata. This requires `cos:PutObject` and `cos:HeadObject` permissions. If any image fails, no new copy is generated and an existing copy is preserved on refresh. Successfully uploaded objects are not rolled back, and an object may already exist even if verification fails. Verification does not make private objects publicly readable; configure read permissions separately.
+
+Normal runs do not overwrite existing copies. To apply this change to an old copy, back up any changes you want to keep, delete the corresponding copy, and run the program again. Alternatively, use the refresh function below after updating the original file.
 
 ### Restore local gallery from the image bed
 
@@ -200,6 +218,10 @@ python -m markdown_img -m refresh
 ```
 
 > Scans the current directory for the original md file, and if there is no copy, creates it directly. If there is a copy, but the original file is "newer" than the copy, the copy is recreated.
+
+For Tencent Cloud, refreshing an existing copy asks for confirmation by folder before deleting **images referenced by the old copy in the currently configured bucket and region**. Other objects in the folders are not deleted. Deletion starts only after all folders are confirmed; the local images still referenced by the original are then uploaded and the copy regenerated. Declining any folder, or running without interactive input, cancels that document's refresh without deleting objects or changing the copy. Other image services and first-time copies are unaffected.
+
+Other documents or applications may share these images; check and back them up before confirming. Deletion requires `cos:DeleteObject` permission. If deletion or uploading fails, already deleted objects are not restored automatically and links in the old copy may stop working. Only image URLs using the current bucket's default COS domain are recognized; custom domains and other buckets are not deleted.
 
 ### Backing up the system configuration
 

@@ -1,11 +1,13 @@
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
+from qcloud_cos.cos_exception import CosException, CosServiceError
 import sys
 import logging
 import os
-import qcloud_cos
 import urllib.parse
+from requests.structures import CaseInsensitiveDict
 from .config import Config
+from .globalization import Globalization
 
 
 class QcloudClient():
@@ -30,25 +32,66 @@ class QcloudClient():
         # 文件流简单上传（不支持超过5G的文件，推荐使用下方高级上传接口）
         # 强烈建议您以二进制模式(binary mode)打开文件,否则可能会导致错误
         fileName = os.path.basename(path)
+        key = "{}/{}".format(desPath, fileName) if desPath else fileName
         with open(path, 'rb') as fp:
+            size = os.fstat(fp.fileno()).st_size
             try:
-                response = self.client.put_object(
+                response = CaseInsensitiveDict(self.client.put_object(
                     Bucket=self.bucket,
                     Body=fp,
-                    Key="{}/{}".format(desPath, fileName),
+                    Key=key,
                     StorageClass='STANDARD',
-                    EnableMD5=False
-                )
-            except qcloud_cos.cos_exception.CosServiceError as e:
-                raise e
+                    EnableMD5=True
+                ))
+            except CosException as e:
+                raise RuntimeError(self._errorText("qcloud_put_failed", e)) from e
+        try:
+            metadata = CaseInsensitiveDict(self.client.head_object(
+                Bucket=self.bucket, Key=key
+            ))
+        except CosException as e:
+            raise RuntimeError(self._errorText("qcloud_head_failed", e)) from e
+        etag = response.get("ETag")
+        if not etag or metadata.get("ETag") != etag:
+            raise RuntimeError(Globalization().getText("qcloud_etag_mismatch"))
+        if metadata.get("Content-Length") != str(size):
+            raise RuntimeError(Globalization().getText("qcloud_size_mismatch"))
         if urlEncodeMod == Config.URL_ENCODE_MODE_STANDARD:
-            desPath = urllib.parse.quote(desPath)
-            fileName = urllib.parse.quote(fileName)
-        elif urlEncodeMod == Config.URL_ENCODE_MODE_ONLY_SPACE:
-            desPath = desPath.replace(' ','%20')
-            fileName = fileName.replace(' ','%20')
+            encodedKey = urllib.parse.quote(key, safe="/")
         else:
-            pass
-        url = "https://{}.cos.{}.myqcloud.com/{}/{}".format(
-                self.bucket, self.region, desPath, fileName)
+            encodedKey = "".join(
+                urllib.parse.quote(char, safe="/") if char.isascii() else char
+                for char in key
+            )
+        url = "https://{}.cos.{}.myqcloud.com/{}".format(
+                self.bucket, self.region, encodedKey)
         return url
+
+    def delete(self, key: str) -> None:
+        try:
+            self.client.delete_object(Bucket=self.bucket, Key=key)
+        except CosException as e:
+            raise RuntimeError(self._errorText("qcloud_delete_failed", e)) from e
+
+    @staticmethod
+    def _errorText(message: str, error: CosException) -> str:
+        language = Globalization()
+        detail = str(error)
+        if isinstance(error, CosServiceError):
+            status = error.get_status_code()
+            detail = "HTTP {}: {}".format(status, detail)
+            if status == 400:
+                hint = "qcloud_hint_bad_request"
+            elif status in (401, 403):
+                hint = "qcloud_hint_permission"
+            elif status == 404:
+                hint = "qcloud_hint_not_found"
+            elif status in (408, 429) or 500 <= status < 600:
+                hint = "qcloud_hint_temporary"
+            else:
+                hint = "qcloud_hint_other"
+        else:
+            hint = "qcloud_hint_client"
+        return "{} {}".format(
+            language.getText(message).format(detail), language.getText(hint)
+        )
