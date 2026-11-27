@@ -67,6 +67,12 @@ class QcloudClient():
                 self.bucket, self.region, encodedKey)
         return url
 
+    def delete(self, key: str) -> None:
+        try:
+            self.client.delete_object(Bucket=self.bucket, Key=key)
+        except CosException as e:
+            raise RuntimeError(self._errorText("qcloud_delete_failed", e)) from e
+
     @staticmethod
     def _errorText(message: str, error: CosException) -> str:
         language = Globalization()

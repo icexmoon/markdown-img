@@ -367,6 +367,150 @@ class QcloudUploadTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, 1)
         self.assertEqual(copy.read_text(encoding="utf-8"), "previous copy")
 
+    def test_refresh_confirms_all_folders_before_deleting_and_uploading(self):
+        original = self.directory / "source.md"
+        original.write_text("updated", encoding="utf-8")
+        copy = self.directory / "copy.md"
+        copy.write_text(
+            "![one](https://bucket-123.cos.region.myqcloud.com/a/old%20one.png)\n"
+            "![duplicate](https://bucket-123.cos.region.myqcloud.com/a/old%20one.png)\n"
+            '<img src="https://bucket-123.cos.region.myqcloud.com/b/old.png" />\n'
+            "![other](https://another.cos.region.myqcloud.com/a/other.png)\n"
+            "[link](https://bucket-123.cos.region.myqcloud.com/a/link.png)\n"
+            "`![example](https://bucket-123.cos.region.myqcloud.com/a/inline.png)`\n"
+            "```\n![example](https://bucket-123.cos.region.myqcloud.com/a/code.png)\n```\n",
+            encoding="utf-8",
+        )
+        service = Mock()
+        service.getClient.return_value = self.client
+        config = Mock()
+        config.getConfigParam.return_value = Config.IMG_SERVICE_QCLOUD
+        main = Main()
+        events = []
+        service.delete.side_effect = lambda key: events.append(("delete", key))
+
+        def confirm(prompt):
+            events.append(("confirm", prompt))
+            return "y"
+
+        with patch.object(main, "_Main__loadConfigFromFile"), \
+             patch.object(main, "getCopyFilePath", return_value=str(copy)), \
+             patch.object(main, "dealMdFile", side_effect=lambda *_: events.append(("upload",))), \
+             patch("markdown_img.main.Config.getInstance", return_value=config), \
+             patch("markdown_img.main.QcloudImgService", return_value=service), \
+             patch("markdown_img.main.os.listdir", return_value=[str(original)]), \
+             patch("markdown_img.main.TimeHelper.compareTwoFilsLastModifyTime", return_value=1), \
+             patch("builtins.input", side_effect=confirm), \
+             contextlib.redirect_stdout(io.StringIO()):
+            main.main(refresh=True)
+        self.assertEqual([event[0] for event in events],
+                         ["confirm", "confirm", "delete", "delete", "upload"])
+        self.assertIn("bucket-123", events[0][1])
+        self.assertIn("a", events[0][1])
+        self.assertIn("b", events[1][1])
+        self.assertEqual(events[2:4], [("delete", "a/old one.png"), ("delete", "b/old.png")])
+
+    def test_refusing_a_folder_or_eof_cancels_without_deleting(self):
+        copy = self.directory / "copy.md"
+        copy.write_text(
+            "![a](https://bucket-123.cos.region.myqcloud.com/a/a.png)\n"
+            "![b](https://bucket-123.cos.region.myqcloud.com/b/b.png)",
+            encoding="utf-8",
+        )
+        service = Mock()
+        service.getClient.return_value = self.client
+        main = Main()
+        for answers in (["y", "n"], [EOFError()]):
+            with self.subTest(answers=answers), \
+                 patch("markdown_img.main.QcloudImgService", return_value=service), \
+                 patch("builtins.input", side_effect=answers), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                self.assertFalse(main._deleteOldQcloudImages("source.md", str(copy)))
+            service.delete.assert_not_called()
+
+    def test_cancelled_refresh_does_not_upload_or_modify_copy(self):
+        original = self.directory / "source.md"
+        original.write_text("updated", encoding="utf-8")
+        copy = self.directory / "copy.md"
+        old = "![a](https://bucket-123.cos.region.myqcloud.com/a/a.png)"
+        copy.write_text(old, encoding="utf-8")
+        service = Mock()
+        service.getClient.return_value = self.client
+        config = Mock()
+        config.getConfigParam.return_value = Config.IMG_SERVICE_QCLOUD
+        main = Main()
+        with patch.object(main, "_Main__loadConfigFromFile"), \
+             patch.object(main, "getCopyFilePath", return_value=str(copy)), \
+             patch.object(main, "dealMdFile") as upload, \
+             patch("markdown_img.main.Config.getInstance", return_value=config), \
+             patch("markdown_img.main.QcloudImgService", return_value=service), \
+             patch("markdown_img.main.os.listdir", return_value=[str(original)]), \
+             patch("markdown_img.main.TimeHelper.compareTwoFilsLastModifyTime", return_value=1), \
+             patch("builtins.input", return_value="n"), \
+             contextlib.redirect_stdout(io.StringIO()):
+            main.main(refresh=True)
+        service.delete.assert_not_called()
+        upload.assert_not_called()
+        self.assertEqual(copy.read_text(encoding="utf-8"), old)
+
+    def test_refresh_other_service_does_not_delete_qcloud_images(self):
+        original = self.directory / "source.md"
+        original.write_text("updated", encoding="utf-8")
+        copy = self.directory / "copy.md"
+        copy.write_text("old", encoding="utf-8")
+        config = Mock()
+        config.getConfigParam.return_value = Config.IMG_SERVICE_SMMS
+        main = Main()
+        with patch.object(main, "_Main__loadConfigFromFile"), \
+             patch.object(main, "getCopyFilePath", return_value=str(copy)), \
+             patch.object(main, "dealMdFile") as upload, \
+             patch.object(main, "_deleteOldQcloudImages") as delete, \
+             patch("markdown_img.main.Config.getInstance", return_value=config), \
+             patch("markdown_img.main.os.listdir", return_value=[str(original)]), \
+             patch("markdown_img.main.TimeHelper.compareTwoFilsLastModifyTime", return_value=1), \
+             contextlib.redirect_stdout(io.StringIO()):
+            main.main(refresh=True)
+        delete.assert_not_called()
+        upload.assert_called_once()
+
+    def test_delete_error_stops_refresh_and_preserves_old_copy(self):
+        original = self.directory / "source.md"
+        original.write_text("updated", encoding="utf-8")
+        copy = self.directory / "copy.md"
+        old = "![a](https://bucket-123.cos.region.myqcloud.com/a/a.png)"
+        copy.write_text(old, encoding="utf-8")
+        service = Mock()
+        service.getClient.return_value = self.client
+        service.delete.side_effect = UserException(UserException.CODE_UPLOAD_ERROR, "denied")
+        config = Mock()
+        config.getConfigParam.return_value = Config.IMG_SERVICE_QCLOUD
+        main = Main()
+        with patch.object(main, "_Main__loadConfigFromFile"), \
+             patch.object(main, "getCopyFilePath", return_value=str(copy)), \
+             patch.object(main, "dealMdFile") as upload, \
+             patch("markdown_img.main.Config.getInstance", return_value=config), \
+             patch("markdown_img.main.QcloudImgService", return_value=service), \
+             patch("markdown_img.main.os.listdir", return_value=[str(original)]), \
+             patch("markdown_img.main.TimeHelper.compareTwoFilsLastModifyTime", return_value=1), \
+             patch("builtins.input", return_value="y"), \
+             contextlib.redirect_stdout(io.StringIO()) as output, \
+             self.assertRaises(SystemExit) as raised:
+            main.main(refresh=True)
+        self.assertEqual(raised.exception.code, 1)
+        self.assertIn("denied", output.getvalue())
+        self.assertIn("a/a.png", output.getvalue())
+        upload.assert_not_called()
+        self.assertEqual(copy.read_text(encoding="utf-8"), old)
+
+    def test_delete_reports_cos_errors(self):
+        self.client.client.delete_object.side_effect = CosServiceError("DELETE", "denied", 403)
+        with self.assertRaises(RuntimeError) as raised:
+            self.client.delete("folder/image.png")
+        self.assertIn("403", str(raised.exception))
+        self.client.client.delete_object.assert_called_once_with(
+            Bucket="bucket-123", Key="folder/image.png"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
