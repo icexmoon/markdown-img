@@ -1,4 +1,5 @@
 from .img_service.img_service import ImgService
+from .img_service.qcloud_img_service import QcloudImgService
 from .globalization import Globalization
 from .config import Config
 import os
@@ -134,6 +135,69 @@ class Main:
                 self.findLocalImageFile(line, localImages)
         dealFunc(localImages, mdFile)
 
+    def _deleteOldQcloudImages(self, originalFile: str, copyFilePath: str) -> bool:
+        service = QcloudImgService()
+        client = service.getClient()
+        expectedHost = "{}.cos.{}.myqcloud.com".format(client.bucket, client.region).lower()
+        keys = set()
+        imageUrls = []
+        fence = None
+        with open(copyFilePath, encoding="UTF-8") as copy:
+            for line in copy:
+                marker = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+                if marker:
+                    token = marker.group(1)
+                    if fence is None:
+                        fence = token
+                    elif token[0] == fence[0] and len(token) >= len(fence):
+                        fence = None
+                    continue
+                if fence is not None or line.startswith(("    ", "\t")):
+                    continue
+                line = re.sub(r"(`+)(.+?)\1", "", line)
+                for match in re.finditer(r"(?<!\\)!\[[^\]]*\]\(\s*(?:<([^>\r\n]+)>|([^\s)]+))", line):
+                    imageUrls.append(match.group(1) or match.group(2))
+                for tag in re.finditer(r"<img\b[^>]*>", line, re.IGNORECASE):
+                    match = re.search(r"\bsrc\s*=\s*([\"'])(.*?)\1", tag.group(), re.IGNORECASE)
+                    if match:
+                        imageUrls.append(match.group(2))
+        for url in imageUrls:
+            parsed = urllib.parse.urlsplit(url)
+            if parsed.scheme == "https" and parsed.netloc.lower() == expectedHost:
+                key = urllib.parse.unquote(parsed.path[1:], errors="strict")
+                if key:
+                    keys.add(key)
+        if not keys:
+            return True
+
+        folders = {}
+        for key in sorted(keys):
+            folder = key.rpartition("/")[0]
+            folders.setdefault(folder, []).append(key)
+        print(self.globalization.getText("qcloud_refresh_warning").format(originalFile))
+        for folder, images in folders.items():
+            folderName = folder or self.globalization.getText("upload_root_directory")
+            try:
+                answer = input(self.globalization.getText("qcloud_refresh_confirm").format(
+                    client.bucket, folderName, len(images)
+                ))
+            except EOFError:
+                answer = ""
+            if answer.strip().lower() != "y":
+                print(self.globalization.getText("qcloud_refresh_cancelled").format(originalFile))
+                return False
+        for key in sorted(keys):
+            try:
+                service.delete(key)
+            except UserException as e:
+                raise UserException(
+                    UserException.CODE_QCLOUD_DELETE_ERROR,
+                    self.globalization.getText("qcloud_refresh_delete_error").format(
+                        key, e.getErrorMsg()
+                    ),
+                ) from e
+        return True
+
     def __createWebImgCopy(self, localImages: set, originalFile: str):
         """创建包含网络图片的副本文件
         localImages: 待处理的本地图片文件集合
@@ -216,6 +280,9 @@ class Main:
 
     def dealUserException(self, userExp: UserException):
         sysConfig = Config()
+        if userExp.getErrorCode() == UserException.CODE_QCLOUD_DELETE_ERROR:
+            print(userExp.getErrorMsg())
+            raise SystemExit(1)
         if userExp.getErrorCode() == UserException.CODE_NO_SMMS_TOKEN:
             ImgServiceManager.getImgService().inputConfig()
         elif userExp.getErrorCode() == UserException.CODE_NO_RRUU_TOKEN:
@@ -265,6 +332,7 @@ class Main:
         configFileName: 从指定的配置文件进行加载系统配置
         """
         self.__loadConfigFromFile(configFileName)
+        cancelled = False
         # 检索当前目录中的markdown文件
         for dir in os.listdir():
             if os.path.isfile(dir):
@@ -277,6 +345,12 @@ class Main:
                     ):
                         continue
                     try:
+                        if (refresh and os.path.exists(copyFilePath)
+                                and Config.getInstance().getConfigParam(Config.PARAM_IMG_SERVICE)
+                                == Config.IMG_SERVICE_QCLOUD
+                                and not self._deleteOldQcloudImages(dir, copyFilePath)):
+                            cancelled = True
+                            continue
                         self.dealMdFile(dir, self.__createWebImgCopy)
                     except UserException as e:
                         self.dealUserException(e)
@@ -297,7 +371,8 @@ class Main:
                         )
                     else:
                         print(self.globalization.getText("deal_success"), dir)
-        print(self.globalization.getText("all_file_done"))
+        message = "refresh_some_cancelled" if cancelled else "all_file_done"
+        print(self.globalization.getText(message))
 
     def outputHelpInfo(self):
         sysConfig = Config()

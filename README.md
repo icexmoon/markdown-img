@@ -219,6 +219,10 @@ python -m markdown_img -m refresh
 
 > Scans the current directory for the original md file, and if there is no copy, creates it directly. If there is a copy, but the original file is "newer" than the copy, the copy is recreated.
 
+For Tencent Cloud, refreshing an existing copy asks for confirmation by folder before deleting **images referenced by the old copy in the currently configured bucket and region**. Other objects in the folders are not deleted. Deletion starts only after all folders are confirmed; the local images still referenced by the original are then uploaded and the copy regenerated. Declining any folder, or running without interactive input, cancels that document's refresh without deleting objects or changing the copy. Other image services and first-time copies are unaffected.
+
+Other documents or applications may share these images; check and back them up before confirming. Deletion requires `cos:DeleteObject` permission. If deletion or uploading fails, already deleted objects are not restored automatically and links in the old copy may stop working. Only image URLs using the current bucket's default COS domain are recognized; custom domains and other buckets are not deleted.
+
 ### Backing up the system configuration
 
 If necessary, the system configuration can be backed up by
